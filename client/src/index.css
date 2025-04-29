@@ -84,13 +84,13 @@
   
   body {
     @apply font-sans antialiased bg-background text-foreground;
-    font-family: 'Montserrat', 'Roboto', sans-serif;
+    font-family: 'Sora', sans-serif;
     color: var(--color-gray-black);
     background-color: #ffffff;
   }
   
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Sora', sans-serif;
     font-weight: 700;
     color: var(--color-dark-blue);
     margin-bottom: 1rem;
@@ -377,7 +377,7 @@ html {
 
 /* 
 ===============================
-  UTILIDADES
+  UTILIDADES E ANIMAÇÕES
 ===============================
 */
 
@@ -385,8 +385,61 @@ html {
   box-shadow: 0 4px 20px rgba(43, 48, 140, 0.1);
 }
 
+.shadow-custom-intense {
+  box-shadow: 0 8px 32px rgba(43, 48, 140, 0.25);
+}
+
+.shadow-custom-glow {
+  box-shadow: 0 0 15px rgba(43, 48, 140, 0.5);
+}
+
 .transition-all {
   transition: all 0.3s ease;
+}
+
+/* Animações para botões */
+.btn-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-shine::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: rotate(30deg);
+  transition: transform 0.7s;
+  opacity: 0;
+}
+
+.btn-shine:hover::after {
+  transform: rotate(30deg) translate(100%, 100%);
+  opacity: 1;
+}
+
+.btn-pulse {
+  animation: button-pulse 2s infinite;
+}
+
+@keyframes button-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(43, 48, 140, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(43, 48, 140, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(43, 48, 140, 0);
+  }
 }
 
 /* Ajustes responsivos */

@@ -1,30 +1,35 @@
 import { Link } from "wouter";
+import logoWhite from "@/assets/images/logo-white.png";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-darkblue text-white pt-16 pb-8">
+    <footer className="bg-dark-blue text-white pt-16 pb-8">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           <div>
-            <div className="text-white font-montserrat font-bold text-2xl mb-6">
-              CRC<span className="text-secondary">FARÓIS</span>
+            <div className="mb-6">
+              <img 
+                src={logoWhite} 
+                alt="CRC Faróis" 
+                className="h-16 mb-4"
+              />
             </div>
-            <p className="text-gray-300 mb-6">
+            <p className="text-white mb-6">
               Somos especializados na fabricação e fornecimento de faróis automotivos de alta qualidade para lojas, oficinas e distribuidores.
             </p>
-            <div className="flex space-x-4">
-              <a href="#" className="text-gray-300 hover:text-white transition-colors duration-300">
+            <div className="flex space-x-5">
+              <a href="#" className="text-white hover:text-light-blue transition-colors duration-300 text-xl">
                 <i className="fab fa-facebook-f"></i>
               </a>
-              <a href="#" className="text-gray-300 hover:text-white transition-colors duration-300">
+              <a href="#" className="text-white hover:text-light-blue transition-colors duration-300 text-xl">
                 <i className="fab fa-instagram"></i>
               </a>
-              <a href="#" className="text-gray-300 hover:text-white transition-colors duration-300">
+              <a href="#" className="text-white hover:text-light-blue transition-colors duration-300 text-xl">
                 <i className="fab fa-linkedin-in"></i>
               </a>
-              <a href="#" className="text-gray-300 hover:text-white transition-colors duration-300">
+              <a href="#" className="text-white hover:text-light-blue transition-colors duration-300 text-xl">
                 <i className="fab fa-youtube"></i>
               </a>
             </div>

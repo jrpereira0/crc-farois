@@ -23,23 +23,23 @@ const HeroSection = () => {
             data-aos-duration="1000"
             data-aos-delay="100"
           >
-            <div className="bg-darkblue/30 backdrop-blur-sm p-6 md:p-8 lg:p-10 rounded-xl shadow-xl border border-white/10">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-montserrat mb-6 leading-tight">
-                Soluções em <span className="text-white/90">Faróis Automotivos</span> para o seu Negócio
+            <div className="bg-darkblue/50 backdrop-blur-md p-6 md:p-8 lg:p-10 rounded-xl shadow-custom-intense border border-white/20">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight tracking-tight">
+                Soluções em <span className="text-white">Faróis Automotivos</span> para o seu Negócio
               </h1>
-              <p className="text-xl mb-8 text-white/90">
+              <p className="text-xl mb-8 text-white font-medium">
                 Fornecemos faróis de alta qualidade para lojas, oficinas e distribuidores em todo o Brasil.
               </p>
               <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
                 <Link 
                   href="/contato" 
-                  className="bg-primary hover:bg-secondary text-white text-lg font-medium py-3 px-6 rounded-md transition-all duration-300 text-center shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                  className="bg-dark-blue hover:bg-medium-blue text-white text-lg font-semibold py-3 px-6 rounded-md transition-all duration-500 text-center shadow-custom-intense hover:shadow-custom-glow transform hover:-translate-y-1 btn-shine btn-pulse"
                 >
                   Solicite seu orçamento agora
                 </Link>
                 <Link 
                   href="/quem-somos" 
-                  className="bg-white hover:bg-lightgray text-primary text-lg font-medium py-3 px-6 rounded-md transition-all duration-300 text-center shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                  className="bg-white hover:bg-light-gray text-dark-blue text-lg font-semibold py-3 px-6 rounded-md transition-all duration-500 text-center shadow-custom-intense hover:shadow-custom-glow transform hover:scale-105 btn-shine"
                 >
                   Conheça nossa empresa
                 </Link>
