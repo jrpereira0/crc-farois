@@ -20,59 +20,33 @@ const HeroSection = () => {
       
       {/* Content */}
       <div className="container mx-auto px-4 py-28 md:py-36 lg:py-40 relative z-10">
-        <div className="flex flex-col md:flex-row items-center">
+        <div className="flex justify-center items-center">
           <div 
-            className="md:w-1/2 max-w-3xl mb-12 md:mb-0" 
-            data-aos="fade-right" 
+            className="max-w-4xl text-center"
+            data-aos="fade-up" 
             data-aos-duration="1000"
             data-aos-delay="100"
           >
-            <div className="bg-dark-blue/60 backdrop-blur-xl p-6 md:p-8 lg:p-10 rounded-xl shadow-custom-intense border border-white/20">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight tracking-tight text-white">
+            <div className="bg-dark-blue/60 backdrop-blur-xl p-8 md:p-10 lg:p-12 rounded-xl shadow-custom-intense border border-white/20">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-8 leading-tight tracking-tight text-white">
                 Soluções em <span className="text-light-blue">Faróis Automotivos</span> para o seu Negócio
               </h1>
-              <p className="text-xl mb-8 text-white font-medium leading-relaxed">
+              <p className="text-xl mb-10 text-white font-medium leading-relaxed max-w-3xl mx-auto">
                 Fornecemos faróis de alta qualidade para lojas, oficinas e distribuidores em todo o Brasil.
               </p>
-              <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+              <div className="flex flex-col md:flex-row justify-center space-y-5 md:space-y-0 md:space-x-6">
                 <Link 
                   href="/contato" 
-                  className="bg-dark-blue hover:bg-medium-blue text-white text-lg font-semibold py-3 px-6 rounded-md transition-all duration-500 text-center shadow-custom-intense hover:shadow-custom-glow transform hover:-translate-y-1 btn-shine btn-pulse"
+                  className="bg-medium-blue hover:bg-light-blue text-white text-xl font-bold py-5 px-10 rounded-lg text-center shadow-custom-intense btn-cta"
                 >
                   Solicite seu orçamento agora
                 </Link>
                 <Link 
                   href="/quem-somos" 
-                  className="bg-white hover:bg-light-gray text-dark-blue text-lg font-semibold py-3 px-6 rounded-md transition-all duration-500 text-center shadow-custom-intense hover:shadow-custom-glow transform hover:scale-105 btn-shine"
+                  className="bg-white hover:bg-light-gray text-dark-blue text-xl font-bold py-5 px-10 rounded-lg text-center shadow-custom-intense btn-shine"
                 >
                   Conheça nossa empresa
                 </Link>
-              </div>
-            </div>
-          </div>
-          
-          {/* Animation for light beams */}
-          <div 
-            className="md:w-1/2 flex justify-center items-center"
-            data-aos="fade-left" 
-            data-aos-duration="1200"
-            data-aos-delay="300"
-          >
-            <div className="relative">
-              <div className="w-72 h-72 md:w-96 md:h-96 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center">
-                <div className="w-48 h-48 md:w-64 md:h-64 rounded-full bg-white/20 flex items-center justify-center">
-                  <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-primary/40 flex items-center justify-center animate-pulse">
-                    <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-white shadow-lg shadow-white/50"></div>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Light rays */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full">
-                <div className="absolute h-[300%] w-1 bg-gradient-to-t from-white/0 via-white/30 to-white/0 animate-[spin_8s_linear_infinite] origin-bottom" style={{ transformOrigin: 'bottom center' }}></div>
-                <div className="absolute h-[300%] w-1 bg-gradient-to-t from-white/0 via-white/20 to-white/0 animate-[spin_10s_linear_infinite] origin-bottom rotate-45" style={{ transformOrigin: 'bottom center' }}></div>
-                <div className="absolute h-[300%] w-1 bg-gradient-to-t from-white/0 via-white/10 to-white/0 animate-[spin_12s_linear_infinite] origin-bottom rotate-90" style={{ transformOrigin: 'bottom center' }}></div>
-                <div className="absolute h-[300%] w-1 bg-gradient-to-t from-white/0 via-white/30 to-white/0 animate-[spin_9s_linear_infinite] origin-bottom rotate-135" style={{ transformOrigin: 'bottom center' }}></div>
               </div>
             </div>
           </div>
