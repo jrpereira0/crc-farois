@@ -3,19 +3,21 @@ import backgroundVideo from "@/assets/videos/background-video.mp4";
 
 const HeroSection = () => {
   return (
-    <section className="relative text-white overflow-hidden">
+    <section className="relative text-white overflow-hidden min-h-[90vh]">
       {/* Background video */}
       <div className="absolute inset-0 w-full h-full z-0">
         <video 
           autoPlay 
           muted 
           loop 
-          className="w-full h-full object-cover"
+          playsInline
+          className="absolute w-full h-full object-cover"
+          style={{ minWidth: '100%', minHeight: '100%' }}
         >
           <source src={backgroundVideo} type="video/mp4" />
           Seu navegador não suporta vídeos HTML5.
         </video>
-        <div className="absolute inset-0 bg-gradient-to-r from-dark-blue/95 via-medium-blue/85 to-dark-blue/90 backdrop-blur-[2px]"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-dark-blue/95 via-medium-blue/85 to-dark-blue/90"></div>
       </div>
       
       {/* Content */}
@@ -34,7 +36,7 @@ const HeroSection = () => {
               <p className="text-xl mb-10 text-white font-medium leading-relaxed max-w-3xl mx-auto">
                 Fornecemos faróis de alta qualidade para lojas, oficinas e distribuidores em todo o Brasil.
               </p>
-              <div className="flex flex-col md:flex-row justify-center space-y-5 md:space-y-0 md:space-x-6">
+              <div className="flex flex-col md:flex-row justify-center space-y-5 md:space-y-0 md:space-x-8">
                 <Link 
                   href="/contato" 
                   className="bg-medium-blue hover:bg-light-blue text-white text-xl font-bold py-5 px-10 rounded-lg text-center shadow-custom-intense btn-cta"
@@ -43,7 +45,7 @@ const HeroSection = () => {
                 </Link>
                 <Link 
                   href="/quem-somos" 
-                  className="bg-white hover:bg-light-gray text-dark-blue text-xl font-bold py-5 px-10 rounded-lg text-center shadow-custom-intense btn-shine"
+                  className="bg-white hover:bg-light-gray text-dark-blue text-xl font-bold py-5 px-10 rounded-lg text-center shadow-custom-intense btn-cta"
                 >
                   Conheça nossa empresa
                 </Link>
