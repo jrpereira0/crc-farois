@@ -395,48 +395,38 @@ html {
 ===============================
 */
 
-/* Solução radical para remover todos os scrollbars */
-* {
-  max-width: 100% !important;
-  box-sizing: border-box !important;
-  overflow: visible !important;
-  scrollbar-width: none !important; /* Firefox */
-  -ms-overflow-style: none !important; /* IE and Edge */
-}
-
-/* Esconde scrollbar do Chrome, Safari e Opera */
-*::-webkit-scrollbar {
-  display: none !important;
-  width: 0 !important;
-  height: 0 !important;
-  background: transparent !important;
-}
-
-/* Exceção apenas para html e body que podem ter scroll vertical */
+/* Solução mais simples para controlar scrolls */
 html, body {
-  overflow-x: hidden !important;
-  overflow-y: auto !important;
-  max-width: 100vw !important;
-  max-height: 100vh !important;
+  overflow-x: hidden;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
-/* Outras exceções importantes - garantir que botões e elementos de imagem funcionem corretamente */
-.btn-cta, .btn-shine, img, [class*="overflow-hidden"], [class*="btn-"] {
-  overflow: hidden !important;
+/* Scrollbar moderna personalizada */
+::-webkit-scrollbar {
+  width: 10px;
 }
 
-/* Forçando remoção de scrolls em todos os componentes possíveis */
-section, div, span, p, h1, h2, h3, h4, h5, h6, header, footer, nav, article, aside, figure, 
-figcaption, main, form, input, button, textarea, select, option, ul, ol, li, dl, dt, dd,
-.grid, .container, .row, .col, .bg-lightgray, .bg-white, .rounded, .text-center,
-[class*="flex"], [class*="grid"], [class*="container"], [class*="relative"],
-[class*="absolute"], [class*="fixed"], [class*="sticky"], [class*="static"] {
-  overflow: visible !important;
+::-webkit-scrollbar-track {
+  background: rgba(130, 143, 217, 0.1);
+  border-radius: 10px;
 }
 
-/* As exceções para botões e imagens sobrescrevem a regra anterior */
-.btn-cta, .btn-shine, img, [class*="overflow-hidden"], [class*="btn-"] {
-  overflow: hidden !important;
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #3238A6, #2B308C);
+  border-radius: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(to bottom, #2B308C, #1f2266);
+  box-shadow: 0 0 10px rgba(130, 143, 217, 0.5);
+}
+
+/* Para Firefox */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #3238A6 rgba(130, 143, 217, 0.1);
 }
 
 .shadow-custom {

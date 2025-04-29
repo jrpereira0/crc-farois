@@ -76,16 +76,14 @@ const HeroSection = () => {
                 <div className="mt-10 flex flex-col sm:flex-row gap-5">
                   <Link 
                     href="/contato" 
-                    className="bg-medium-blue hover:bg-dark-blue text-white text-lg font-bold py-4 px-8 rounded-md text-center shadow-xl btn-cta group relative"
-                    style={{ overflow: 'hidden !important' }}
+                    className="bg-medium-blue hover:bg-dark-blue text-white text-lg font-bold py-4 px-8 rounded-md text-center shadow-xl btn-cta group relative overflow-hidden"
                   >
                     <span className="relative z-10 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] text-white group-hover:text-white">Solicite seu orçamento</span>
                     <span className="absolute right-3 top-1/2 transform -translate-y-1/2 transition-all duration-300 opacity-70 group-hover:opacity-100 group-hover:translate-x-2 text-white">→</span>
                   </Link>
                   <Link 
                     href="/quem-somos" 
-                    className="border-2 border-white/50 hover:border-white bg-transparent hover:bg-white/10 text-white hover:text-white text-lg font-bold py-4 px-8 rounded-md text-center shadow-xl btn-cta"
-                    style={{ overflow: 'hidden !important' }}
+                    className="border-2 border-white/50 hover:border-white bg-transparent hover:bg-white/10 text-white hover:text-white text-lg font-bold py-4 px-8 rounded-md text-center shadow-xl btn-cta overflow-hidden"
                   >
                     <span className="drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]">Conheça nossa empresa</span>
                   </Link>
@@ -130,8 +128,8 @@ const HeroSection = () => {
               
               {/* Imagem 1 - Maior e central */}
               <div 
-                className="absolute top-[15%] md:top-[10%] left-1/2 transform -translate-x-1/2 w-[60%] md:w-[55%] h-[50%] z-20 rounded-lg shadow-xl border border-white/30 animate-[bounce_12s_ease-in-out_infinite_alternate] glow-effect"
-                style={{ animationDelay: "0.5s", overflow: "hidden !important" }}
+                className="absolute top-[15%] md:top-[10%] left-1/2 transform -translate-x-1/2 w-[60%] md:w-[55%] h-[50%] z-20 rounded-lg shadow-xl border border-white/30 animate-[bounce_12s_ease-in-out_infinite_alternate] glow-effect overflow-hidden"
+                style={{ animationDelay: "0.5s" }}
               >
                 <img 
                   src={image1} 
@@ -143,8 +141,8 @@ const HeroSection = () => {
               
               {/* Imagem 2 - Esquerda e ligeiramente menor */}
               <div 
-                className="absolute top-[30%] md:top-[25%] left-[8%] md:left-[12%] w-[40%] md:w-[38%] h-[40%] z-10 rounded-lg shadow-lg border border-white/20 animate-[bounce_10s_ease-in-out_infinite_reverse] rotate-[-6deg]"
-                style={{ animationDelay: "1.5s", overflow: "hidden !important" }}
+                className="absolute top-[30%] md:top-[25%] left-[8%] md:left-[12%] w-[40%] md:w-[38%] h-[40%] z-10 rounded-lg shadow-lg border border-white/20 animate-[bounce_10s_ease-in-out_infinite_reverse] rotate-[-6deg] overflow-hidden"
+                style={{ animationDelay: "1.5s" }}
               >
                 <img 
                   src={image2} 
@@ -156,8 +154,8 @@ const HeroSection = () => {
               
               {/* Imagem 3 - Direita */}
               <div 
-                className="absolute top-[50%] md:top-[45%] right-[8%] md:right-[12%] w-[40%] md:w-[38%] h-[40%] z-10 rounded-lg shadow-lg border border-white/20 animate-[bounce_11s_ease-in-out_infinite_alternate] rotate-[8deg]"
-                style={{ animationDelay: "2.5s", overflow: "hidden !important" }}
+                className="absolute top-[50%] md:top-[45%] right-[8%] md:right-[12%] w-[40%] md:w-[38%] h-[40%] z-10 rounded-lg shadow-lg border border-white/20 animate-[bounce_11s_ease-in-out_infinite_alternate] rotate-[8deg] overflow-hidden"
+                style={{ animationDelay: "2.5s" }}
               >
                 <img 
                   src={image3} 
