@@ -66,53 +66,53 @@ const HeroSection = () => {
             <div className="relative">
               <div className="absolute -left-4 top-0 w-2 h-24 bg-light-blue rounded-full"></div>
               <div className="pl-6">
-                <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold mb-8 leading-tight tracking-tight">
-                  <span className="block mb-3 text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]">Soluções Premium em</span>
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 leading-tight tracking-tight">
+                  <span className="block mb-2 text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]">Soluções Premium em</span>
                   <span className="text-light-blue drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">Faróis Automotivos</span>
                 </h1>
-                <p className="text-xl md:text-2xl mb-12 text-white font-medium leading-relaxed max-w-3xl drop-shadow-[0_1px_3px_rgba(0,0,0,0.3)]">
+                <p className="text-lg md:text-xl mb-10 text-white font-medium leading-relaxed max-w-3xl drop-shadow-[0_1px_3px_rgba(0,0,0,0.3)]">
                   Elevando o padrão de iluminação veicular para lojas, oficinas e distribuidores em todo o Brasil.
                 </p>
                 
-                <div className="mt-12 flex flex-col sm:flex-row gap-6">
+                <div className="mt-10 flex flex-col sm:flex-row gap-5">
                   <Link 
                     href="/contato" 
-                    className="bg-medium-blue hover:bg-light-blue text-white text-xl font-extrabold py-6 px-10 rounded-md text-center shadow-xl btn-cta group relative overflow-hidden"
+                    className="bg-medium-blue hover:bg-light-blue text-white text-lg font-bold py-4 px-8 rounded-md text-center shadow-xl btn-cta group relative overflow-hidden"
                   >
                     <span className="relative z-10 drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]">Solicite seu orçamento</span>
-                    <span className="absolute right-4 top-1/2 transform -translate-y-1/2 transition-all duration-300 opacity-70 group-hover:opacity-100 group-hover:translate-x-2">→</span>
+                    <span className="absolute right-3 top-1/2 transform -translate-y-1/2 transition-all duration-300 opacity-70 group-hover:opacity-100 group-hover:translate-x-2">→</span>
                   </Link>
                   <Link 
                     href="/quem-somos" 
-                    className="border-2 border-white/50 hover:border-white bg-transparent hover:bg-white/10 text-white hover:text-white text-xl font-extrabold py-6 px-10 rounded-md text-center shadow-xl btn-cta"
+                    className="border-2 border-white/50 hover:border-white bg-transparent hover:bg-white/10 text-white hover:text-white text-lg font-bold py-4 px-8 rounded-md text-center shadow-xl btn-cta"
                   >
                     <span className="drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]">Conheça nossa empresa</span>
                   </Link>
                 </div>
                 
                 {/* Marcadores de credibilidade */}
-                <div className="mt-12 flex flex-wrap gap-8 items-center">
-                  <div className="flex items-center bg-dark-blue/40 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/10 shadow-lg transform hover:scale-105 transition-transform">
-                    <div className="w-14 h-14 rounded-full bg-light-blue/20 flex items-center justify-center glow-effect">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-light-blue">
+                <div className="mt-10 flex flex-wrap gap-6 items-center">
+                  <div className="flex items-center bg-dark-blue/40 backdrop-blur-sm rounded-xl px-4 py-2 border border-white/10 shadow-lg transform hover:scale-105 transition-transform">
+                    <div className="w-12 h-12 rounded-full bg-light-blue/20 flex items-center justify-center glow-effect">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-light-blue">
                         <path d="M12 22V8" /><path d="m5 12 7-4 7 4" /><path d="M5 12v4a7 7 0 0 0 14 0v-4" />
                       </svg>
                     </div>
-                    <div className="ml-4">
-                      <span className="block text-sm text-white/80 font-medium">Experiência</span>
-                      <span className="block text-2xl font-extrabold text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]">+15 anos</span>
+                    <div className="ml-3">
+                      <span className="block text-xs text-white/80 font-medium">Experiência</span>
+                      <span className="block text-xl font-bold text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]">+15 anos</span>
                     </div>
                   </div>
                   
-                  <div className="flex items-center bg-dark-blue/40 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/10 shadow-lg transform hover:scale-105 transition-transform">
-                    <div className="w-14 h-14 rounded-full bg-light-blue/20 flex items-center justify-center glow-effect">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-light-blue">
+                  <div className="flex items-center bg-dark-blue/40 backdrop-blur-sm rounded-xl px-4 py-2 border border-white/10 shadow-lg transform hover:scale-105 transition-transform">
+                    <div className="w-12 h-12 rounded-full bg-light-blue/20 flex items-center justify-center glow-effect">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-light-blue">
                         <path d="m9 12 2 2 4-4" /><circle cx="12" cy="12" r="10" />
                       </svg>
                     </div>
-                    <div className="ml-4">
-                      <span className="block text-sm text-white/80 font-medium">Garantia</span>
-                      <span className="block text-2xl font-extrabold text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]">Qualidade Premium</span>
+                    <div className="ml-3">
+                      <span className="block text-xs text-white/80 font-medium">Garantia</span>
+                      <span className="block text-xl font-bold text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]">Qualidade Premium</span>
                     </div>
                   </div>
                 </div>
@@ -120,57 +120,67 @@ const HeroSection = () => {
             </div>
           </div>
           
-          {/* Coluna da direita - Carrossel de imagens reais */}
+          {/* Coluna da direita - Composição de imagens flutuantes */}
           <div 
             className={`md:col-span-5 transition-all duration-1000 delay-300 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}
           >
-            <div className="relative mx-auto max-w-md">
-              {/* Carrossel de imagens */}
-              <div className="relative w-full aspect-[4/3] rounded-[30px] border-4 border-white/20 overflow-hidden shadow-2xl glow-effect">
-                {/* Container para as imagens com efeito de transição */}
-                <div className="relative w-full h-full">
-                  {images.map((img, index) => (
-                    <div
-                      key={index}
-                      className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ${
-                        index === activeImage ? 'opacity-100 z-10' : 'opacity-0 z-0'
-                      }`}
-                    >
-                      <img 
-                        src={img} 
-                        alt={`Farol automotivo de alta qualidade ${index + 1}`}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  ))}
-                  
-                  {/* Overlay de gradiente para garantir contraste com os indicadores */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-dark-blue/70 via-transparent to-transparent z-20"></div>
-                </div>
-                
-                {/* Indicadores de imagem */}
-                <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-30">
-                  {images.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setActiveImage(index)}
-                      className={`w-3 h-3 rounded-full transition-all ${
-                        index === activeImage 
-                          ? 'bg-white scale-125' 
-                          : 'bg-white/50 hover:bg-white/80'
-                      }`}
-                      aria-label={`Ver imagem ${index + 1}`}
-                    />
-                  ))}
+            <div className="relative mx-auto h-[400px] md:h-[500px] w-full">
+              {/* Três imagens flutuantes com profundidade */}
+              
+              {/* Imagem 1 - Maior e central */}
+              <div 
+                className="absolute top-[15%] md:top-[10%] left-1/2 transform -translate-x-1/2 w-[70%] md:w-[65%] h-[55%] z-20 rounded-2xl shadow-2xl overflow-hidden border-2 border-white/30 animate-[bounce_12s_ease-in-out_infinite_alternate] glow-effect"
+                style={{ animationDelay: "0.5s" }}
+              >
+                <img 
+                  src={image1} 
+                  alt="Farol automotivo premium"
+                  className="w-full h-full object-cover" 
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-dark-blue/40 to-transparent"></div>
+              </div>
+              
+              {/* Imagem 2 - Esquerda e ligeiramente menor */}
+              <div 
+                className="absolute top-[30%] md:top-[25%] left-[5%] md:left-[10%] w-[50%] md:w-[45%] h-[45%] z-10 rounded-2xl shadow-xl overflow-hidden border-2 border-white/20 animate-[bounce_10s_ease-in-out_infinite_reverse] rotate-[-6deg]"
+                style={{ animationDelay: "1.5s" }}
+              >
+                <img 
+                  src={image2} 
+                  alt="Design de farol moderno"
+                  className="w-full h-full object-cover" 
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-dark-blue/30 to-transparent"></div>
+              </div>
+              
+              {/* Imagem 3 - Direita */}
+              <div 
+                className="absolute top-[40%] md:top-[35%] right-[5%] md:right-[10%] w-[50%] md:w-[45%] h-[45%] z-10 rounded-2xl shadow-xl overflow-hidden border-2 border-white/20 animate-[bounce_11s_ease-in-out_infinite_alternate] rotate-[8deg]"
+                style={{ animationDelay: "2.5s" }}
+              >
+                <img 
+                  src={image3} 
+                  alt="Farol de alta performance"
+                  className="w-full h-full object-cover" 
+                />
+                <div className="absolute inset-0 bg-gradient-to-l from-dark-blue/30 to-transparent"></div>
+              </div>
+              
+              {/* Elementos decorativos */}
+              <div className="absolute top-[5%] left-[20%] w-24 h-24 rounded-full decorative-circle opacity-80 animate-float"></div>
+              <div className="absolute bottom-[10%] right-[15%] w-16 h-16 rounded-full decorative-circle opacity-70 animate-[bounce_7s_ease-in-out_infinite_alternate-reverse]"></div>
+              
+              {/* Detalhe circular com brilho */}
+              <div className="absolute bottom-[5%] left-1/2 transform -translate-x-1/2 w-32 h-32 rounded-full bg-light-blue/10 backdrop-blur-md border border-white/10 shadow-md flex items-center justify-center">
+                <div className="w-20 h-20 rounded-full bg-light-blue/20 flex items-center justify-center animate-[spin_30s_linear_infinite]">
+                  <div className="w-10 h-10 rounded-full bg-light-blue/40 flex items-center justify-center">
+                    <div className="w-5 h-5 rounded-full bg-light-blue/60 glow-effect"></div>
+                  </div>
                 </div>
               </div>
               
-              {/* Elementos decorativos ao redor */}
-              <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full decorative-circle animate-float"></div>
-              <div className="absolute -bottom-10 -left-6 w-16 h-16 rounded-full decorative-circle animate-[bounce_7s_ease-in-out_infinite_alternate-reverse]"></div>
-              
               {/* Badge flutuante */}
-              <div className="absolute -top-2 -left-2 bg-light-blue text-white px-4 py-2 rounded-full shadow-lg text-sm font-bold tracking-wide animate-[bounce_4s_ease-in-out_infinite_alternate] z-30">
+              <div className="absolute top-[3%] right-[15%] bg-light-blue text-white px-4 py-2 rounded-full shadow-lg text-sm font-bold tracking-wide animate-[bounce_4s_ease-in-out_infinite_alternate] z-30">
                 Qualidade Premium
               </div>
             </div>
