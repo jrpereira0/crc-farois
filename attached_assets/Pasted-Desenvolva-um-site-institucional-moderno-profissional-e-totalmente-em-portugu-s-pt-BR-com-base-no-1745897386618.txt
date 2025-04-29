@@ -1,0 +1,56 @@
+Desenvolva um site institucional moderno, profissional e totalmente em português (pt-BR) com base no site de referência: https://crcfarois.ind.br/.
+
+Objetivo do site:
+Apresentar uma empresa especializada na fabricação e fornecimento de faróis automotivos, com foco em atender lojas, oficinas e distribuidores.
+
+Estrutura solicitada:
+
+Home (Página Inicial): Apresentação da empresa, diferenciais competitivos e chamada para ação ("Solicite seu orçamento agora").
+
+Quem Somos: Breve história, missão, visão e valores da empresa.
+
+Contato: Formulário funcional com campos de Nome, E-mail, Telefone e Mensagem, além de informações de localização e telefone de atendimento.
+
+Requisitos de design:
+
+Layout limpo, elegante, responsivo e com aparência profissional.
+
+Paleta de cores inspirada no site de referência: tons de azul, branco e cinza.
+
+Tipografia moderna e de fácil leitura.
+
+Uso de ícones vetoriais para enriquecer a comunicação visual.
+
+Imagens de alta qualidade relacionadas a faróis automotivos (utilizar placeholders se necessário).
+
+Conteúdo e SEO:
+
+Escrever textos institucionais completos e profissionais para cada seção.
+
+Inserir palavras-chave de forma estratégica: "faróis automotivos", "distribuidor de faróis", "fábrica de faróis", "peças automotivas".
+
+Utilizar HTML semântico (header, section, footer, etc.) e boas práticas de SEO básico.
+
+Animações e interações:
+
+Implementar animações suaves e profissionais (ex: fade-in, slide-in) para textos, botões e imagens.
+
+Utilizar bibliotecas modernas e leves como AOS (Animate On Scroll) ou equivalente.
+
+Garantir que as animações não prejudiquem o carregamento e a performance mobile.
+
+Organização e qualidade do código:
+
+Separar HTML, CSS e JavaScript em arquivos independentes.
+
+Comentar o código de forma clara para facilitar a manutenção futura.
+
+Estruturar o projeto para permitir fácil expansão (adição de novas páginas no futuro).
+
+Importante:
+
+Todo o conteúdo e a comunicação devem ser feitos em português do Brasil (pt-BR).
+
+Por favor, todas as respostas e instruções também devem ser fornecidas em português.
+
+Objetivo final: Criar um site institucional altamente profissional, visualmente atraente, funcional, otimizado para SEO e que transmita confiança e autoridade ao público-alvo.
