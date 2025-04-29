@@ -395,38 +395,51 @@ html {
 ===============================
 */
 
-/* Solução mais simples para controlar scrolls */
+/* Solução global para remover todas as barras de rolagens indesejadas */
 html, body {
   overflow-x: hidden;
   max-width: 100%;
   box-sizing: border-box;
 }
 
-/* Scrollbar moderna personalizada */
+/* Remover todas as barras de rolagem de seções */
+section, article, aside, nav, main, header, footer, .container, .row, .col, [class*="section"],
+.bg-primary, .bg-secondary, .bg-white, .bg-light, .bg-dark, .bg-gradient, .bg-transparent,
+.grid, [class*="grid-"], [class*="row-"], [class*="col-"] {
+  overflow: visible !important;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+/* Esconder todas as barras de rolagem */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 8px;
+  display: none !important;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(130, 143, 217, 0.1);
-  border-radius: 10px;
+  display: none !important;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, #3238A6, #2B308C);
-  border-radius: 10px;
-  border: 2px solid rgba(255, 255, 255, 0.1);
+  display: none !important;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(to bottom, #2B308C, #1f2266);
-  box-shadow: 0 0 10px rgba(130, 143, 217, 0.5);
+/* Esconder barras de rolagem para todos elementos */
+* {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
 }
 
-/* Para Firefox */
-html {
-  scrollbar-width: thin;
-  scrollbar-color: #3238A6 rgba(130, 143, 217, 0.1);
+*::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* Exceções apenas para elementos que precisam de overflow:hidden */
+.overflow-hidden, .btn-cta, .btn-shine, img, [class*="overflow-hidden"] {
+  overflow: hidden !important;
 }
 
 .shadow-custom {
