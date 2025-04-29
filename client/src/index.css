@@ -395,14 +395,41 @@ html {
 ===============================
 */
 
-/* Solução global para remover todas as barras de rolagens indesejadas */
+/* Controle básico para o documento */
 html, body {
   overflow-x: hidden;
   max-width: 100%;
   box-sizing: border-box;
 }
 
-/* Remover todas as barras de rolagem de seções */
+/* Scrollbar moderna personalizada para a barra principal */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(130, 143, 217, 0.1);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #3238A6, #2B308C);
+  border-radius: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(to bottom, #2B308C, #1f2266);
+  box-shadow: 0 0 10px rgba(130, 143, 217, 0.5);
+}
+
+/* Para Firefox */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #3238A6 rgba(130, 143, 217, 0.1);
+}
+
+/* Remover barras de rolagem indesejadas em elementos internos */
 section, article, aside, nav, main, header, footer, .container, .row, .col, [class*="section"],
 .bg-primary, .bg-secondary, .bg-white, .bg-light, .bg-dark, .bg-gradient, .bg-transparent,
 .grid, [class*="grid-"], [class*="row-"], [class*="col-"] {
@@ -411,27 +438,9 @@ section, article, aside, nav, main, header, footer, .container, .row, .col, [cla
   -ms-overflow-style: none !important;
 }
 
-/* Esconder todas as barras de rolagem */
-::-webkit-scrollbar {
-  width: 8px;
-  display: none !important;
-}
-
-::-webkit-scrollbar-track {
-  display: none !important;
-}
-
-::-webkit-scrollbar-thumb {
-  display: none !important;
-}
-
-/* Esconder barras de rolagem para todos elementos */
-* {
-  scrollbar-width: none !important;
-  -ms-overflow-style: none !important;
-}
-
-*::-webkit-scrollbar {
+/* Esconder barras de rolagem apenas para elementos internos */
+section::-webkit-scrollbar, div::-webkit-scrollbar, .container::-webkit-scrollbar, 
+.row::-webkit-scrollbar, .col::-webkit-scrollbar, .grid::-webkit-scrollbar {
   display: none !important;
   width: 0 !important;
   height: 0 !important;
