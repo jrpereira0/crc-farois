@@ -78,8 +78,8 @@ const HeroSection = () => {
                     href="/contato" 
                     className="bg-medium-blue hover:bg-dark-blue text-white text-lg font-bold py-4 px-8 rounded-md text-center shadow-xl btn-cta group relative overflow-hidden"
                   >
-                    <span className="relative z-10 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">Solicite seu orçamento</span>
-                    <span className="absolute right-3 top-1/2 transform -translate-y-1/2 transition-all duration-300 opacity-70 group-hover:opacity-100 group-hover:translate-x-2">→</span>
+                    <span className="relative z-10 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] text-white group-hover:text-white">Solicite seu orçamento</span>
+                    <span className="absolute right-3 top-1/2 transform -translate-y-1/2 transition-all duration-300 opacity-70 group-hover:opacity-100 group-hover:translate-x-2 text-white">→</span>
                   </Link>
                   <Link 
                     href="/quem-somos" 

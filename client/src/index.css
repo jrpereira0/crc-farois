@@ -395,11 +395,21 @@ html {
 ===============================
 */
 
-/* Corrige o scroll horizontal em todas as seções */
+/* Corrige o scroll horizontal e vertical em todas as seções */
 section, div, .grid {
   max-width: 100%;
   box-sizing: border-box;
   overflow-x: hidden;
+}
+
+/* Correção específica para o componente de Diferenciais */
+.bg-lightgray {
+  overflow: visible !important;
+}
+
+/* Remove scroll vertical desnecessário */
+.rounded-lg {
+  overflow: visible;
 }
 
 .shadow-custom {

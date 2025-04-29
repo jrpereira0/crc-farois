@@ -46,7 +46,7 @@ const FeaturesSection = () => {
           {features.map((feature, index) => (
             <div 
               key={index} 
-              className="bg-lightgray rounded-lg p-8 shadow-sm transition-transform hover:transform hover:scale-105 duration-300" 
+              className="bg-lightgray rounded-lg p-8 shadow-sm transition-transform hover:transform hover:scale-105 duration-300 overflow-visible" 
               data-aos="fade-up" 
               data-aos-delay={100 * (index + 1)}
             >
