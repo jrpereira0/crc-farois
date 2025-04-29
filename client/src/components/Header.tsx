@@ -36,7 +36,7 @@ const Header = () => {
               <img 
                 src={logoWhite} 
                 alt="CRC Faróis" 
-                className="h-10 md:h-12 transition-transform hover:scale-105 duration-300" 
+                className="h-8 md:h-10 transition-transform hover:scale-105 duration-300" 
               />
             </Link>
           </div>

@@ -1,17 +1,21 @@
 import { Link } from "wouter";
-import heroBackground from "@/assets/images/hero-background.svg";
+import backgroundVideo from "@/assets/videos/background-video.mp4";
 
 const HeroSection = () => {
   return (
     <section className="relative text-white overflow-hidden">
-      {/* Background image */}
+      {/* Background video */}
       <div className="absolute inset-0 w-full h-full z-0">
-        <img 
-          src={heroBackground} 
-          alt="Faróis automotivos" 
+        <video 
+          autoPlay 
+          muted 
+          loop 
           className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-darkblue/90 to-primary/70"></div>
+        >
+          <source src={backgroundVideo} type="video/mp4" />
+          Seu navegador não suporta vídeos HTML5.
+        </video>
+        <div className="absolute inset-0 bg-gradient-to-r from-dark-blue/95 via-medium-blue/85 to-dark-blue/90 backdrop-blur-[2px]"></div>
       </div>
       
       {/* Content */}
@@ -23,11 +27,11 @@ const HeroSection = () => {
             data-aos-duration="1000"
             data-aos-delay="100"
           >
-            <div className="bg-darkblue/50 backdrop-blur-md p-6 md:p-8 lg:p-10 rounded-xl shadow-custom-intense border border-white/20">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight tracking-tight">
-                Soluções em <span className="text-white">Faróis Automotivos</span> para o seu Negócio
+            <div className="bg-dark-blue/60 backdrop-blur-xl p-6 md:p-8 lg:p-10 rounded-xl shadow-custom-intense border border-white/20">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight tracking-tight text-white">
+                Soluções em <span className="text-light-blue">Faróis Automotivos</span> para o seu Negócio
               </h1>
-              <p className="text-xl mb-8 text-white font-medium">
+              <p className="text-xl mb-8 text-white font-medium leading-relaxed">
                 Fornecemos faróis de alta qualidade para lojas, oficinas e distribuidores em todo o Brasil.
               </p>
               <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">

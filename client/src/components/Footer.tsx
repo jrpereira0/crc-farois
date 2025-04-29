@@ -13,7 +13,7 @@ const Footer = () => {
               <img 
                 src={logoWhite} 
                 alt="CRC Faróis" 
-                className="h-16 mb-4"
+                className="h-12 mb-4"
               />
             </div>
             <p className="text-white mb-6">
