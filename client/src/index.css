@@ -395,21 +395,22 @@ html {
 ===============================
 */
 
-/* Corrige o scroll horizontal e vertical em todas as seções */
-section, div, .grid {
+/* Solução global para remover scrolls indesejados */
+* {
   max-width: 100%;
   box-sizing: border-box;
   overflow-x: hidden;
 }
 
-/* Correção específica para o componente de Diferenciais */
-.bg-lightgray {
+/* Remove todas as barras de scroll verticais de cards e seções */
+section, div, .grid, .grid > div, .card, [class*="rounded"], [class*="shadow"], 
+.bg-lightgray, .bg-white, .bg-primary, .bg-secondary {
   overflow: visible !important;
 }
 
-/* Remove scroll vertical desnecessário */
-.rounded-lg {
-  overflow: visible;
+/* Força a remoção de scroll em componentes específicos */
+.rounded-lg, .p-8, .shadow-sm, .shadow-lg, .shadow-xl {
+  overflow: visible !important;
 }
 
 .shadow-custom {
@@ -431,7 +432,7 @@ section, div, .grid {
 /* Animações para botões */
 .btn-shine {
   position: relative;
-  overflow: hidden;
+  overflow: hidden !important; /* Importante manter o overflow hidden para o efeito */
 }
 
 .btn-shine::after {
@@ -477,7 +478,7 @@ section, div, .grid {
 .btn-cta {
   position: relative;
   z-index: 1;
-  overflow: hidden;
+  overflow: hidden !important; /* Importante manter o overflow hidden para o efeito */
   transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
