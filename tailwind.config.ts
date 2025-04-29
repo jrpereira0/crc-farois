@@ -110,8 +110,8 @@ export default {
           to: { height: "0" },
         },
         "pulse-light": {
-          '0%, 100%': { opacity: 1 },
-          '50%': { opacity: 0.7 },
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.7' },
         },
         "float": {
           '0%, 100%': { transform: 'translateY(0)' },
