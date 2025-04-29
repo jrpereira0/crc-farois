@@ -76,9 +76,9 @@ const HeroSection = () => {
                 <div className="mt-10 flex flex-col sm:flex-row gap-5">
                   <Link 
                     href="/contato" 
-                    className="bg-medium-blue hover:bg-light-blue text-white text-lg font-bold py-4 px-8 rounded-md text-center shadow-xl btn-cta group relative overflow-hidden"
+                    className="bg-medium-blue hover:bg-dark-blue text-white text-lg font-bold py-4 px-8 rounded-md text-center shadow-xl btn-cta group relative overflow-hidden"
                   >
-                    <span className="relative z-10 drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]">Solicite seu orçamento</span>
+                    <span className="relative z-10 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">Solicite seu orçamento</span>
                     <span className="absolute right-3 top-1/2 transform -translate-y-1/2 transition-all duration-300 opacity-70 group-hover:opacity-100 group-hover:translate-x-2">→</span>
                   </Link>
                   <Link 
@@ -154,7 +154,7 @@ const HeroSection = () => {
               
               {/* Imagem 3 - Direita */}
               <div 
-                className="absolute top-[40%] md:top-[35%] right-[8%] md:right-[12%] w-[40%] md:w-[38%] h-[40%] z-10 rounded-lg shadow-lg overflow-hidden border border-white/20 animate-[bounce_11s_ease-in-out_infinite_alternate] rotate-[8deg]"
+                className="absolute top-[50%] md:top-[45%] right-[8%] md:right-[12%] w-[40%] md:w-[38%] h-[40%] z-10 rounded-lg shadow-lg overflow-hidden border border-white/20 animate-[bounce_11s_ease-in-out_infinite_alternate] rotate-[8deg]"
                 style={{ animationDelay: "2.5s" }}
               >
                 <img 

@@ -161,6 +161,10 @@ html {
   flex-wrap: wrap;
   margin-left: -15px;
   margin-right: -15px;
+  width: 100%;
+  max-width: 100%;
+  position: relative;
+  box-sizing: border-box;
 }
 
 /* Classes de grid para 12 colunas */
@@ -390,6 +394,13 @@ html {
   UTILIDADES E ANIMAÇÕES
 ===============================
 */
+
+/* Corrige o scroll horizontal em todas as seções */
+section, div, .grid {
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
 
 .shadow-custom {
   box-shadow: 0 4px 20px rgba(43, 48, 140, 0.1);
