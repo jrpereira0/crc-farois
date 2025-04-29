@@ -31,7 +31,7 @@ const HeroSection = () => {
   }, [rotateImages]);
 
   return (
-    <section className="relative text-white overflow-hidden min-h-[100vh] flex items-center">
+    <section className="relative text-white overflow-hidden min-h-[90vh] flex items-center">
       {/* Background video com efeito de overlay mais profissional */}
       <div className="absolute inset-0 w-full h-full z-0">
         <video 
@@ -40,7 +40,6 @@ const HeroSection = () => {
           loop 
           playsInline
           className="absolute w-full h-full object-cover"
-          style={{ minWidth: '100%', minHeight: '100%' }}
         >
           <source src={backgroundVideo} type="video/mp4" />
           Seu navegador não suporta vídeos HTML5.
@@ -66,11 +65,11 @@ const HeroSection = () => {
             <div className="relative">
               <div className="absolute -left-4 top-0 w-2 h-24 bg-light-blue rounded-full"></div>
               <div className="pl-6">
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 leading-tight tracking-tight">
-                  <span className="block mb-2 text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]">Soluções Premium em</span>
+                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-5 leading-tight tracking-tight">
+                  <span className="block mb-1 text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]">Soluções Premium em</span>
                   <span className="text-light-blue drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">Faróis Automotivos</span>
                 </h1>
-                <p className="text-lg md:text-xl mb-10 text-white font-medium leading-relaxed max-w-3xl drop-shadow-[0_1px_3px_rgba(0,0,0,0.3)]">
+                <p className="text-base md:text-lg mb-8 text-white font-medium leading-relaxed max-w-2xl drop-shadow-[0_1px_3px_rgba(0,0,0,0.3)]">
                   Elevando o padrão de iluminação veicular para lojas, oficinas e distribuidores em todo o Brasil.
                 </p>
                 
@@ -124,12 +123,12 @@ const HeroSection = () => {
           <div 
             className={`md:col-span-5 transition-all duration-1000 delay-300 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}
           >
-            <div className="relative mx-auto h-[400px] md:h-[500px] w-full">
+            <div className="relative mx-auto h-[320px] md:h-[380px] w-full max-w-[90%]">
               {/* Três imagens flutuantes com profundidade */}
               
               {/* Imagem 1 - Maior e central */}
               <div 
-                className="absolute top-[15%] md:top-[10%] left-1/2 transform -translate-x-1/2 w-[70%] md:w-[65%] h-[55%] z-20 rounded-2xl shadow-2xl overflow-hidden border-2 border-white/30 animate-[bounce_12s_ease-in-out_infinite_alternate] glow-effect"
+                className="absolute top-[15%] md:top-[10%] left-1/2 transform -translate-x-1/2 w-[60%] md:w-[55%] h-[50%] z-20 rounded-lg shadow-xl overflow-hidden border border-white/30 animate-[bounce_12s_ease-in-out_infinite_alternate] glow-effect"
                 style={{ animationDelay: "0.5s" }}
               >
                 <img 
@@ -142,7 +141,7 @@ const HeroSection = () => {
               
               {/* Imagem 2 - Esquerda e ligeiramente menor */}
               <div 
-                className="absolute top-[30%] md:top-[25%] left-[5%] md:left-[10%] w-[50%] md:w-[45%] h-[45%] z-10 rounded-2xl shadow-xl overflow-hidden border-2 border-white/20 animate-[bounce_10s_ease-in-out_infinite_reverse] rotate-[-6deg]"
+                className="absolute top-[30%] md:top-[25%] left-[8%] md:left-[12%] w-[40%] md:w-[38%] h-[40%] z-10 rounded-lg shadow-lg overflow-hidden border border-white/20 animate-[bounce_10s_ease-in-out_infinite_reverse] rotate-[-6deg]"
                 style={{ animationDelay: "1.5s" }}
               >
                 <img 
@@ -155,7 +154,7 @@ const HeroSection = () => {
               
               {/* Imagem 3 - Direita */}
               <div 
-                className="absolute top-[40%] md:top-[35%] right-[5%] md:right-[10%] w-[50%] md:w-[45%] h-[45%] z-10 rounded-2xl shadow-xl overflow-hidden border-2 border-white/20 animate-[bounce_11s_ease-in-out_infinite_alternate] rotate-[8deg]"
+                className="absolute top-[40%] md:top-[35%] right-[8%] md:right-[12%] w-[40%] md:w-[38%] h-[40%] z-10 rounded-lg shadow-lg overflow-hidden border border-white/20 animate-[bounce_11s_ease-in-out_infinite_alternate] rotate-[8deg]"
                 style={{ animationDelay: "2.5s" }}
               >
                 <img 
@@ -167,20 +166,20 @@ const HeroSection = () => {
               </div>
               
               {/* Elementos decorativos */}
-              <div className="absolute top-[5%] left-[20%] w-24 h-24 rounded-full decorative-circle opacity-80 animate-float"></div>
-              <div className="absolute bottom-[10%] right-[15%] w-16 h-16 rounded-full decorative-circle opacity-70 animate-[bounce_7s_ease-in-out_infinite_alternate-reverse]"></div>
+              <div className="absolute top-[5%] left-[20%] w-16 h-16 rounded-full decorative-circle opacity-80 animate-float"></div>
+              <div className="absolute bottom-[10%] right-[15%] w-12 h-12 rounded-full decorative-circle opacity-70 animate-[bounce_7s_ease-in-out_infinite_alternate-reverse]"></div>
               
               {/* Detalhe circular com brilho */}
-              <div className="absolute bottom-[5%] left-1/2 transform -translate-x-1/2 w-32 h-32 rounded-full bg-light-blue/10 backdrop-blur-md border border-white/10 shadow-md flex items-center justify-center">
-                <div className="w-20 h-20 rounded-full bg-light-blue/20 flex items-center justify-center animate-[spin_30s_linear_infinite]">
-                  <div className="w-10 h-10 rounded-full bg-light-blue/40 flex items-center justify-center">
-                    <div className="w-5 h-5 rounded-full bg-light-blue/60 glow-effect"></div>
+              <div className="absolute bottom-[5%] left-1/2 transform -translate-x-1/2 w-24 h-24 rounded-full bg-light-blue/10 backdrop-blur-md border border-white/10 shadow-md flex items-center justify-center">
+                <div className="w-16 h-16 rounded-full bg-light-blue/20 flex items-center justify-center animate-[spin_30s_linear_infinite]">
+                  <div className="w-8 h-8 rounded-full bg-light-blue/40 flex items-center justify-center">
+                    <div className="w-4 h-4 rounded-full bg-light-blue/60 glow-effect"></div>
                   </div>
                 </div>
               </div>
               
               {/* Badge flutuante */}
-              <div className="absolute top-[3%] right-[15%] bg-light-blue text-white px-4 py-2 rounded-full shadow-lg text-sm font-bold tracking-wide animate-[bounce_4s_ease-in-out_infinite_alternate] z-30">
+              <div className="absolute top-[3%] right-[15%] bg-light-blue text-white px-3 py-1 rounded-full shadow-md text-xs font-bold tracking-wide animate-[bounce_4s_ease-in-out_infinite_alternate] z-30">
                 Qualidade Premium
               </div>
             </div>
