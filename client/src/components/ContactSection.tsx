@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -13,9 +13,24 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormDescription,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { 
+  AlertCircle, 
+  CheckCircle2, 
+  MapPin, 
+  Phone, 
+  Mail, 
+  Clock, 
+  Send, 
+  Loader2,
+  User,
+  AtSign,
+  PhoneCall,
+  MessageSquare
+} from "lucide-react";
 
 const contactFormSchema = z.object({
   name: z.string().min(3, { message: "Nome deve ter pelo menos 3 caracteres" }),
@@ -28,6 +43,7 @@ type ContactFormValues = z.infer<typeof contactFormSchema>;
 
 const ContactSection = () => {
   const { toast } = useToast();
+  const [formSubmitted, setFormSubmitted] = useState(false);
   
   const form = useForm<ContactFormValues>({
     resolver: zodResolver(contactFormSchema),
@@ -38,6 +54,17 @@ const ContactSection = () => {
       message: "",
     },
   });
+
+  // Reset formSubmitted status after some time
+  useEffect(() => {
+    let timeout: NodeJS.Timeout;
+    if (formSubmitted) {
+      timeout = setTimeout(() => {
+        setFormSubmitted(false);
+      }, 5000);
+    }
+    return () => clearTimeout(timeout);
+  }, [formSubmitted]);
 
   const contactMutation = useMutation({
     mutationFn: async (data: ContactFormValues) => {
@@ -50,6 +77,7 @@ const ContactSection = () => {
         description: "Entraremos em contato em breve.",
       });
       form.reset();
+      setFormSubmitted(true);
     },
     onError: (error) => {
       toast({
@@ -65,9 +93,10 @@ const ContactSection = () => {
   }
 
   return (
-    <section className="py-20 bg-lightgray">
+    <section className="py-20 bg-gradient-to-b from-white to-lightgray/50">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16" data-aos="fade-up" data-aos-duration="800">
+          <span className="text-primary font-semibold bg-blue-100 px-4 py-1 rounded-full text-sm mb-4 inline-block">FALE CONOSCO</span>
           <h2 className="text-3xl md:text-4xl font-bold font-montserrat mb-4 text-darkgray">
             Entre em Contato
           </h2>
@@ -79,135 +108,223 @@ const ContactSection = () => {
         <div className="flex flex-col lg:flex-row gap-12">
           {/* Contact Form */}
           <div className="lg:w-1/2" data-aos="fade-right" data-aos-duration="1000">
-            <div className="bg-white rounded-lg p-8 shadow-sm">
-              <h3 className="text-2xl font-bold font-montserrat mb-6 text-darkgray">
-                Envie uma mensagem
-              </h3>
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Nome completo*</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Seu nome" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>E-mail*</FormLabel>
-                        <FormControl>
-                          <Input placeholder="seu@email.com.br" type="email" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={form.control}
-                    name="phone"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Telefone*</FormLabel>
-                        <FormControl>
-                          <Input placeholder="(11) 98765-4321" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={form.control}
-                    name="message"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Mensagem*</FormLabel>
-                        <FormControl>
-                          <Textarea 
-                            placeholder="Digite sua mensagem aqui..." 
-                            className="resize-none" 
-                            rows={5}
-                            {...field} 
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
+            {formSubmitted ? (
+              <div className="bg-white rounded-xl p-10 shadow-lg border border-green-100">
+                <div className="text-center">
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-6">
+                    <CheckCircle2 className="h-8 w-8 text-green-600" />
+                  </div>
+                  <h3 className="text-2xl font-bold font-montserrat mb-4 text-darkgray">
+                    Mensagem Enviada com Sucesso!
+                  </h3>
+                  <p className="text-gray-600 mb-6">
+                    Obrigado por entrar em contato. Nossa equipe responderá sua mensagem em breve.
+                  </p>
                   <Button 
-                    type="submit" 
-                    className="w-full bg-primary hover:bg-darkblue text-white font-medium py-3 px-4 rounded-md transition-colors duration-300"
-                    disabled={contactMutation.isPending}
+                    type="button" 
+                    onClick={() => setFormSubmitted(false)}
+                    className="bg-primary hover:bg-darkblue text-white font-medium py-3 px-6 rounded-md transition-all duration-300 shadow-md hover:shadow-lg"
                   >
-                    {contactMutation.isPending ? "Enviando..." : "Enviar mensagem"}
+                    Enviar Nova Mensagem
                   </Button>
-                </form>
-              </Form>
-            </div>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-100">
+                <h3 className="text-2xl font-bold font-montserrat mb-6 text-darkgray flex items-center">
+                  <MessageSquare className="mr-2 h-6 w-6 text-primary" />
+                  Envie uma mensagem
+                </h3>
+                <p className="text-gray-600 mb-6">
+                  Preencha o formulário abaixo para solicitar orçamentos, tirar dúvidas ou conhecer mais sobre nossos produtos.
+                </p>
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <FormField
+                        control={form.control}
+                        name="name"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="flex items-center">
+                              <User className="mr-1.5 h-4 w-4 text-primary" />
+                              Nome completo*
+                            </FormLabel>
+                            <FormControl>
+                              <Input 
+                                placeholder="Seu nome" 
+                                {...field} 
+                                className="border-gray-300 focus:border-primary focus:ring-primary/20" 
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={form.control}
+                        name="email"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="flex items-center">
+                              <AtSign className="mr-1.5 h-4 w-4 text-primary" />
+                              E-mail*
+                            </FormLabel>
+                            <FormControl>
+                              <Input 
+                                placeholder="seu@email.com.br" 
+                                type="email" 
+                                {...field} 
+                                className="border-gray-300 focus:border-primary focus:ring-primary/20"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    
+                    <FormField
+                      control={form.control}
+                      name="phone"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="flex items-center">
+                            <PhoneCall className="mr-1.5 h-4 w-4 text-primary" />
+                            Telefone*
+                          </FormLabel>
+                          <FormControl>
+                            <Input 
+                              placeholder="(11) 98765-4321" 
+                              {...field} 
+                              className="border-gray-300 focus:border-primary focus:ring-primary/20"
+                            />
+                          </FormControl>
+                          <FormDescription className="text-xs text-gray-500">
+                            Formato recomendado: (DDD) XXXXX-XXXX
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="message"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="flex items-center">
+                            <MessageSquare className="mr-1.5 h-4 w-4 text-primary" />
+                            Mensagem*
+                          </FormLabel>
+                          <FormControl>
+                            <Textarea 
+                              placeholder="Digite sua mensagem aqui..." 
+                              className="resize-none min-h-[120px] border-gray-300 focus:border-primary focus:ring-primary/20" 
+                              rows={5}
+                              {...field} 
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <div className="pt-2">
+                      <Button 
+                        type="submit" 
+                        className="w-full bg-primary hover:bg-darkblue text-white font-medium py-6 rounded-md transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+                        disabled={contactMutation.isPending}
+                        size="lg"
+                      >
+                        {contactMutation.isPending ? (
+                          <>
+                            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                            Enviando...
+                          </>
+                        ) : (
+                          <>
+                            <Send className="mr-2 h-5 w-5" />
+                            Enviar mensagem
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                    
+                    <p className="text-xs text-gray-500 text-center">
+                      Seus dados estão seguros conosco e não serão compartilhados com terceiros.
+                    </p>
+                  </form>
+                </Form>
+              </div>
+            )}
           </div>
 
           {/* Contact Information */}
           <div className="lg:w-1/2" data-aos="fade-left" data-aos-duration="1000">
-            <div className="bg-white rounded-lg p-8 shadow-sm mb-8">
-              <h3 className="text-2xl font-bold font-montserrat mb-6 text-darkgray">
+            <div className="bg-primary rounded-xl p-8 shadow-lg text-white mb-8 relative overflow-hidden">
+              {/* Decorative pattern */}
+              <div className="absolute top-0 right-0 w-32 h-32 opacity-10">
+                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M100 0H0V100H100V0Z" fill="white"/>
+                  <path d="M92 8H8V92H92V8Z" fill="white"/>
+                  <path d="M83 17H17V83H83V17Z" fill="white"/>
+                </svg>
+              </div>
+              
+              <h3 className="text-2xl font-bold font-montserrat mb-8 relative">
                 Informações de contato
+                <div className="absolute bottom-0 left-0 h-1 w-16 bg-white mt-2 rounded-full"></div>
               </h3>
-              <div className="space-y-6">
+              
+              <div className="space-y-8">
                 <div className="flex items-start">
-                  <div className="text-primary text-xl mt-1 mr-4">
-                    <i className="fas fa-map-marker-alt"></i>
+                  <div className="flex items-center justify-center bg-white/10 p-3 rounded-lg mr-4">
+                    <MapPin className="h-6 w-6 text-white" />
                   </div>
                   <div>
                     <h4 className="font-bold mb-1">Endereço</h4>
-                    <p className="text-gray-600">
+                    <p className="text-white/90">
                       Av. Industrial, 1500 - Distrito Industrial<br />
                       São Paulo - SP, 04000-000
                     </p>
                   </div>
                 </div>
+                
                 <div className="flex items-start">
-                  <div className="text-primary text-xl mt-1 mr-4">
-                    <i className="fas fa-phone-alt"></i>
+                  <div className="flex items-center justify-center bg-white/10 p-3 rounded-lg mr-4">
+                    <Phone className="h-6 w-6 text-white" />
                   </div>
                   <div>
                     <h4 className="font-bold mb-1">Telefone</h4>
-                    <p className="text-gray-600">
+                    <p className="text-white/90">
                       (11) 5555-0000<br />
                       (11) 98765-4321
                     </p>
                   </div>
                 </div>
+                
                 <div className="flex items-start">
-                  <div className="text-primary text-xl mt-1 mr-4">
-                    <i className="fas fa-envelope"></i>
+                  <div className="flex items-center justify-center bg-white/10 p-3 rounded-lg mr-4">
+                    <Mail className="h-6 w-6 text-white" />
                   </div>
                   <div>
                     <h4 className="font-bold mb-1">E-mail</h4>
-                    <p className="text-gray-600">
+                    <p className="text-white/90">
                       contato@crcfarois.com.br<br />
                       vendas@crcfarois.com.br
                     </p>
                   </div>
                 </div>
+                
                 <div className="flex items-start">
-                  <div className="text-primary text-xl mt-1 mr-4">
-                    <i className="fas fa-clock"></i>
+                  <div className="flex items-center justify-center bg-white/10 p-3 rounded-lg mr-4">
+                    <Clock className="h-6 w-6 text-white" />
                   </div>
                   <div>
                     <h4 className="font-bold mb-1">Horário de atendimento</h4>
-                    <p className="text-gray-600">
+                    <p className="text-white/90">
                       Segunda a Sexta: 08:00 - 18:00<br />
                       Sábado: 08:00 - 12:00
                     </p>
@@ -216,22 +333,28 @@ const ContactSection = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg p-8 shadow-sm">
+            <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-100">
               <h3 className="text-2xl font-bold font-montserrat mb-6 text-darkgray">
                 Redes Sociais
               </h3>
+              <p className="text-gray-600 mb-6">
+                Siga-nos nas redes sociais para ficar por dentro das novidades, lançamentos e promoções.
+              </p>
               <div className="flex space-x-4">
-                <a href="#" className="bg-primary hover:bg-darkblue text-white w-12 h-12 rounded-full flex items-center justify-center transition-colors duration-300">
+                <a href="#" className="bg-[#1877F2] hover:bg-[#0E67E0] text-white w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1">
                   <i className="fab fa-facebook-f"></i>
                 </a>
-                <a href="#" className="bg-primary hover:bg-darkblue text-white w-12 h-12 rounded-full flex items-center justify-center transition-colors duration-300">
+                <a href="#" className="bg-[#E4405F] hover:bg-[#D32E4D] text-white w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1">
                   <i className="fab fa-instagram"></i>
                 </a>
-                <a href="#" className="bg-primary hover:bg-darkblue text-white w-12 h-12 rounded-full flex items-center justify-center transition-colors duration-300">
+                <a href="#" className="bg-[#0A66C2] hover:bg-[#084E96] text-white w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1">
                   <i className="fab fa-linkedin-in"></i>
                 </a>
-                <a href="#" className="bg-primary hover:bg-darkblue text-white w-12 h-12 rounded-full flex items-center justify-center transition-colors duration-300">
+                <a href="#" className="bg-[#FF0000] hover:bg-[#CC0000] text-white w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1">
                   <i className="fab fa-youtube"></i>
+                </a>
+                <a href="#" className="bg-[#25D366] hover:bg-[#20BD5C] text-white w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1">
+                  <i className="fab fa-whatsapp"></i>
                 </a>
               </div>
             </div>

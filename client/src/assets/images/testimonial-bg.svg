@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="1200" height="600" viewBox="0 0 1200 600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="smallGrid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#CCCCCC" stroke-width="0.5" opacity="0.1"/>
+    </pattern>
+    <pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse">
+      <rect width="100" height="100" fill="url(#smallGrid)"/>
+      <path d="M 100 0 L 0 0 0 100" fill="none" stroke="#CCCCCC" stroke-width="1" opacity="0.15"/>
+    </pattern>
+  </defs>
+  
+  <rect width="1200" height="600" fill="#FFFFFF"/>
+  <rect width="1200" height="600" fill="url(#grid)"/>
+  
+  <!-- Large light circle decorations -->
+  <circle cx="200" cy="100" r="150" fill="#0047AB" opacity="0.03"/>
+  <circle cx="1000" cy="500" r="200" fill="#0047AB" opacity="0.05"/>
+  
+  <!-- Smaller decorative elements -->
+  <circle cx="900" cy="150" r="50" fill="#0047AB" opacity="0.1"/>
+  <circle cx="300" cy="450" r="80" fill="#0047AB" opacity="0.07"/>
+  
+  <!-- Quote marks -->
+  <path d="M100,200 Q120,160 150,160 Q170,160 180,180 Q190,200 180,220 Q170,240 150,240 Q120,240 100,200 Z" fill="#0047AB" opacity="0.1"/>
+  <path d="M1100,400 Q1080,360 1050,360 Q1030,360 1020,380 Q1010,400 1020,420 Q1030,440 1050,440 Q1080,440 1100,400 Z" fill="#0047AB" opacity="0.1"/>
+</svg>
