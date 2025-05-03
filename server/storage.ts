@@ -1,4 +1,4 @@
-import { users, type User, type InsertUser, contact, type Contact, type InsertContact } from "@shared/schema";
+import type { User, InsertUser, Contact, InsertContact } from "@shared/schema";
 
 // Interface de armazenamento com métodos necessários
 export interface IStorage {
