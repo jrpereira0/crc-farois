@@ -2,6 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .animate-pulse-border {
+    animation: pulse-border 0.6s ease;
+  }
+  
+  @keyframes pulse-border {
+    0% {
+      box-shadow: 0 0 0 0 rgba(43, 48, 140, 0.4);
+    }
+    70% {
+      box-shadow: 0 0 0 8px rgba(43, 48, 140, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(43, 48, 140, 0);
+    }
+  }
+}
+
 /* 
 ===============================
   VARIÁVEIS DE CORES E ESTILOS
