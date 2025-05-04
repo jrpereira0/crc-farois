@@ -41,6 +41,7 @@ const Admin = () => {
   // Redirecionar para o dashboard se estiver na raiz do admin
   useEffect(() => {
     if (location === "/admin") {
+      console.log("Redirecionando da raiz do admin para o dashboard");
       navigate("/admin/dashboard");
     }
   }, [location, navigate]);

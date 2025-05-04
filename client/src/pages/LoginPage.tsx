@@ -28,7 +28,7 @@ const LoginPage = () => {
   // Verificar se o usuário já está autenticado
   useEffect(() => {
     if (user) {
-      navigate("/admin");
+      navigate("/admin/dashboard");
     }
   }, [user, navigate]);
   
@@ -52,8 +52,8 @@ const LoginPage = () => {
           description: "Redirecionando para o painel administrativo...",
           variant: "default",
         });
-        // Forçar redirecionamento para o admin
-        navigate("/admin");
+        // Forçar redirecionamento para o dashboard admin
+        navigate("/admin/dashboard");
       }
     } catch (error) {
       toast({

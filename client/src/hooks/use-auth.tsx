@@ -155,14 +155,16 @@ interface ProtectedRouteProps {
 export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { user, isLoading } = useAuth();
   const [, navigate] = useLocation();
+  const [redirected, setRedirected] = useState(false);
 
   // Solução mais direta sem estados adicionais
   useEffect(() => {
-    // Se não estiver carregando e não houver usuário, redirecionar para login
-    if (!isLoading && !user) {
+    // Se não estiver carregando, não tiver usuário e ainda não redirecionou
+    if (!isLoading && !user && !redirected) {
+      setRedirected(true); // Marca que já redirecionou para evitar loops
       navigate("/login");
     }
-  }, [user, isLoading, navigate]);
+  }, [user, isLoading, navigate, redirected]);
 
   // Mostra o spinner enquanto carrega
   if (isLoading) {
