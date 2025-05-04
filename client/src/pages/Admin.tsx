@@ -179,23 +179,13 @@ const AdminSidebar = ({ activeTab, isMobileMenuOpen, toggleMobileMenu }: {
       {/* Logo */}
       <div className="px-6 py-4 bg-[#1a237e] border-b border-white/10 shadow-md relative">
         {!collapsed && (
-          <div className="flex items-center justify-center mb-4">
+          <div className="flex items-center justify-center mb-2">
             <img 
               src="/assets/LOGO BRANCA_1746383304420.png" 
               alt="CRC Faróis" 
               className="h-auto w-full mx-auto max-w-[160px]" 
             />
           </div>
-        )}
-        {!collapsed && (
-          <Button 
-            variant="secondary" 
-            className="w-full font-semibold text-[#1a237e] bg-white hover:bg-white/90 border-2 border-white focus:ring-white focus:ring-offset-[#1a237e]"
-            onClick={() => window.location.href = "/"}
-          >
-            <HomeIcon className="h-4 w-4 mr-2" />
-            Voltar ao site
-          </Button>
         )}
         
         {/* Botão de colapsar */}
