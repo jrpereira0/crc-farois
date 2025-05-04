@@ -787,12 +787,8 @@ const AdminContacts = () => {
   const handleTabClick = (tab: "all" | "pending" | "in-progress" | "completed") => {
     setFilter(tab);
     
-    // Atualizar a URL sem recarregar a página
-    if (tab === "all") {
-      navigate("/admin/contacts", { replace: true });
-    } else {
-      navigate(`/admin/contacts/${tab}`, { replace: true });
-    }
+    // Não vamos mais alterar a URL, apenas o estado
+    // Isso evita o problema de páginas não encontradas
   };
 
   return (
@@ -1171,6 +1167,15 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
       setContacts(prev => 
         prev.map(c => c.id === id ? { ...c, isStatusUpdating: true } : c)
       );
+      
+      // Atualizar também o contato selecionado se estiver aberto no modal
+      if (selectedContact && selectedContact.id === id) {
+        setSelectedContact({
+          ...selectedContact,
+          status,
+          isStatusUpdating: true
+        });
+      }
     }
     
     fetch(`/api/admin/contacts/${id}/status`, {
@@ -1185,11 +1190,21 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
         return res.json();
       })
       .then(updatedContact => {
+        // Atualizar a lista de contatos
         setContacts(prevContacts => 
           prevContacts.map(contact => 
             contact.id === id ? { ...contact, status: updatedContact.status, isStatusUpdating: false } : contact
           )
         );
+        
+        // Atualizar o contato selecionado se estiver aberto no modal
+        if (selectedContact && selectedContact.id === id) {
+          setSelectedContact({
+            ...selectedContact,
+            status: updatedContact.status,
+            isStatusUpdating: false
+          });
+        }
         
         toast({
           title: "Status atualizado",
@@ -1202,6 +1217,15 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
         setContacts(prev => 
           prev.map(c => c.id === id ? { ...c, isStatusUpdating: false } : c)
         );
+        
+        // Restaurar o estado original do contato selecionado em caso de erro
+        if (selectedContact && selectedContact.id === id) {
+          setSelectedContact({
+            ...selectedContact,
+            isStatusUpdating: false
+          });
+        }
+        
         toast({
           title: "Erro ao atualizar status",
           description: "Não foi possível atualizar o status do contato. Tente novamente.",
@@ -1217,6 +1241,15 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
       prev.map(c => c.id === id ? { ...c, isReadUpdating: true } : c)
     );
     
+    // Atualizar também o contato selecionado se estiver aberto no modal
+    if (selectedContact && selectedContact.id === id) {
+      setSelectedContact({
+        ...selectedContact,
+        isRead: !currentIsRead,
+        isReadUpdating: true
+      });
+    }
+    
     fetch(`/api/admin/contacts/${id}/read-status`, {
       method: "PATCH",
       headers: {
@@ -1229,11 +1262,21 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
         return res.json();
       })
       .then(updatedContact => {
+        // Atualizar a lista de contatos
         setContacts(prevContacts => 
           prevContacts.map(contact => 
             contact.id === id ? { ...contact, isRead: updatedContact.isRead, isReadUpdating: false } : contact
           )
         );
+        
+        // Atualizar o contato selecionado se estiver aberto no modal
+        if (selectedContact && selectedContact.id === id) {
+          setSelectedContact({
+            ...selectedContact,
+            isRead: updatedContact.isRead,
+            isReadUpdating: false
+          });
+        }
         
         toast({
           title: "Estado de leitura atualizado",
@@ -1246,6 +1289,15 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
         setContacts(prev => 
           prev.map(c => c.id === id ? { ...c, isReadUpdating: false } : c)
         );
+        
+        // Restaurar o estado original do contato selecionado em caso de erro
+        if (selectedContact && selectedContact.id === id) {
+          setSelectedContact({
+            ...selectedContact,
+            isReadUpdating: false
+          });
+        }
+        
         toast({
           title: "Erro ao atualizar estado de leitura",
           description: "Não foi possível atualizar o estado de leitura do contato. Tente novamente.",
@@ -1390,8 +1442,14 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
                           e.stopPropagation();
                           toggleReadStatus(contact.id, contact.isRead);
                         }}
+                        disabled={contact.isReadUpdating}
                       >
-                        {contact.isRead ? (
+                        {contact.isReadUpdating ? (
+                          <>
+                            <div className="animate-spin mr-1 h-4 w-4 border-2 border-primary border-r-transparent rounded-full" />
+                            Atualizando...
+                          </>
+                        ) : contact.isRead ? (
                           <>
                             <EyeOff className="h-4 w-4 mr-1" />
                             Marcar como não lido
@@ -1523,8 +1581,14 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
                     e.stopPropagation();
                     toggleReadStatus(contact.id, contact.isRead);
                   }}
+                  disabled={contact.isReadUpdating}
                 >
-                  {contact.isRead ? (
+                  {contact.isReadUpdating ? (
+                    <>
+                      <div className="animate-spin mr-1 h-4 w-4 border-2 border-primary border-r-transparent rounded-full" />
+                      Atualizando...
+                    </>
+                  ) : contact.isRead ? (
                     <>
                       <EyeOff className="h-4 w-4 mr-1" />
                       Marcar como não lido
