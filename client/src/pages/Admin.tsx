@@ -9,6 +9,11 @@ import { useAuth } from "../hooks/use-auth";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import crcLogo from "../assets/crc-logo.png";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { 
   Users, 
   Inbox, 
@@ -24,7 +29,12 @@ import {
   ChevronLeft,
   LogOut,
   Eye,
-  MessageSquare
+  MessageSquare,
+  UserPlus,
+  Check,
+  Key,
+  ShieldAlert,
+  X
 } from "lucide-react";
 
 // Componente principal do painel administrativo
@@ -1072,12 +1082,290 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
   );
 };
 
+// Esquema de validação para criação de usuário
+const createUserSchema = z.object({
+  username: z.string()
+    .min(3, "Nome de usuário deve ter pelo menos 3 caracteres")
+    .max(50, "Nome de usuário deve ter no máximo 50 caracteres")
+    .regex(/^[a-zA-Z0-9_]+$/, "Nome de usuário deve conter apenas letras, números e underscores"),
+  name: z.string()
+    .min(3, "Nome completo deve ter pelo menos 3 caracteres")
+    .max(100, "Nome completo deve ter no máximo 100 caracteres"),
+  password: z.string()
+    .min(6, "Senha deve ter pelo menos 6 caracteres")
+    .max(100, "Senha deve ter no máximo 100 caracteres"),
+  confirmPassword: z.string()
+}).refine(data => data.password === data.confirmPassword, {
+  message: "As senhas não coincidem",
+  path: ["confirmPassword"],
+});
+
+type CreateUserFormValues = z.infer<typeof createUserSchema>;
+
 // Página de configurações
 const AdminSettings = () => {
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
+  const [users, setUsers] = useState<{id: number, username: string, name: string}[]>([]);
+  const [showUserForm, setShowUserForm] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+
+  // Buscar usuários existentes
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch('/api/admin/users');
+      if (response.ok) {
+        const data = await response.json();
+        setUsers(data);
+      }
+    } catch (error) {
+      console.error('Erro ao buscar usuários:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  // Formulário para criar novo usuário
+  const form = useForm<CreateUserFormValues>({
+    resolver: zodResolver(createUserSchema),
+    defaultValues: {
+      username: '',
+      name: '',
+      password: '',
+      confirmPassword: '',
+    },
+  });
+
+  // Função para criar um novo usuário
+  const onSubmit = async (data: CreateUserFormValues) => {
+    setIsLoading(true);
+    setSuccessMessage('');
+    
+    try {
+      const response = await fetch('/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: data.username,
+          name: data.name,
+          password: data.password,
+        }),
+      });
+
+      if (response.ok) {
+        const newUser = await response.json();
+        
+        // Atualizar a lista de usuários
+        setUsers(prev => [...prev, {
+          id: newUser.id,
+          username: newUser.username,
+          name: newUser.name
+        }]);
+        
+        // Limpar o formulário
+        form.reset();
+        
+        // Exibir mensagem de sucesso
+        setSuccessMessage(`Usuário ${data.username} criado com sucesso!`);
+        
+        toast({
+          title: 'Usuário criado com sucesso!',
+          description: `O usuário ${data.username} foi criado com permissões de administrador.`,
+          variant: 'default',
+        });
+        
+        // Esconder o formulário
+        setShowUserForm(false);
+      } else {
+        const errorData = await response.json();
+        toast({
+          title: 'Erro ao criar usuário',
+          description: errorData.message || 'Ocorreu um erro ao criar o usuário. Tente novamente.',
+          variant: 'destructive',
+        });
+      }
+    } catch (error) {
+      console.error('Erro ao criar usuário:', error);
+      toast({
+        title: 'Erro',
+        description: 'Ocorreu um erro inesperado. Tente novamente mais tarde.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div>
       <h2 className="text-3xl font-bold text-gray-800 mb-6">Configurações</h2>
       
+      {/* Gerenciamento de Usuários Administradores */}
+      <Card className="mb-8">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <div>
+            <CardTitle className="text-2xl">Gerenciar Usuários</CardTitle>
+            <CardDescription>
+              Crie e gerencie usuários administradores do sistema
+            </CardDescription>
+          </div>
+          <Button 
+            onClick={() => setShowUserForm(!showUserForm)} 
+            className="bg-[#1a237e] hover:bg-[#303f9f]"
+          >
+            {showUserForm ? <X className="mr-2 h-4 w-4" /> : <UserPlus className="mr-2 h-4 w-4" />}
+            {showUserForm ? "Cancelar" : "Novo Usuário"}
+          </Button>
+        </CardHeader>
+        
+        <CardContent>
+          {successMessage && (
+            <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded mb-4 flex items-center">
+              <Check className="h-5 w-5 mr-2" />
+              {successMessage}
+            </div>
+          )}
+          
+          {showUserForm && (
+            <Card className="mb-6 border-dashed border-2">
+              <CardHeader>
+                <CardTitle className="text-lg">Criar Novo Usuário Administrador</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="username"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Nome de Usuário</FormLabel>
+                          <FormControl>
+                            <Input 
+                              placeholder="Digite o nome de usuário" 
+                              {...field} 
+                              disabled={isLoading}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Nome Completo</FormLabel>
+                          <FormControl>
+                            <Input 
+                              placeholder="Digite o nome completo" 
+                              {...field} 
+                              disabled={isLoading}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="password"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Senha</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="password" 
+                                placeholder="Digite a senha" 
+                                {...field} 
+                                disabled={isLoading}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={form.control}
+                        name="confirmPassword"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Confirmar Senha</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="password" 
+                                placeholder="Confirme a senha" 
+                                {...field} 
+                                disabled={isLoading}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    
+                    <div className="flex justify-end">
+                      <Button 
+                        type="submit" 
+                        className="bg-[#1a237e] hover:bg-[#303f9f]"
+                        disabled={isLoading}
+                      >
+                        <ShieldAlert className="mr-2 h-4 w-4" />
+                        {isLoading ? "Criando..." : "Criar Usuário Administrador"}
+                      </Button>
+                    </div>
+                  </form>
+                </Form>
+              </CardContent>
+            </Card>
+          )}
+          
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium">Usuários Existentes</h3>
+            
+            {users.length === 0 ? (
+              <p className="text-gray-500">Nenhum usuário encontrado além do seu.</p>
+            ) : (
+              <div className="border rounded-lg overflow-hidden">
+                <table className="w-full">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usuário</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nome</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {users.map(user => (
+                      <tr key={user.id}>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">{user.id}</td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">{user.username}</td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{user.name}</td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm">
+                          <Badge className="bg-[#1a237e]">Administrador</Badge>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+      
+      {/* Preferências de Email */}
       <Card className="mb-8">
         <CardHeader>
           <CardTitle>Preferências de Email</CardTitle>
@@ -1090,6 +1378,7 @@ const AdminSettings = () => {
         </CardContent>
       </Card>
       
+      {/* Redefinição de Senha */}
       <Card className="mb-8">
         <CardHeader>
           <CardTitle>Segurança</CardTitle>
@@ -1098,7 +1387,11 @@ const AdminSettings = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-gray-500 mb-4">Este recurso estará disponível em breve.</p>
+          <p className="text-gray-500 mb-4">Para redefinir sua senha, utilize o link abaixo:</p>
+          <Button variant="outline">
+            <Key className="mr-2 h-4 w-4" />
+            Redefinir Senha
+          </Button>
         </CardContent>
       </Card>
     </div>

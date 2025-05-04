@@ -214,6 +214,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
+  
+  // Listar usuários administrativos
+  app.get("/api/admin/users", async (req, res) => {
+    try {
+      // Verificar se o usuário está autenticado
+      if (!req.isAuthenticated() || !req.user.isAdmin) {
+        return res.status(403).json({
+          message: "Acesso negado. Apenas administradores podem ver a lista de usuários."
+        });
+      }
+
+      // Obter todos os usuários do storage
+      const users = await storage.getAllUsers();
+      
+      // Retornar apenas os dados necessários (excluindo senhas)
+      const safeUsers = users.map(user => ({
+        id: user.id,
+        username: user.username,
+        name: user.name,
+        isAdmin: user.isAdmin,
+      }));
+      
+      res.status(200).json(safeUsers);
+    } catch (error: any) {
+      console.error('Erro ao buscar usuários:', error);
+      res.status(500).json({
+        message: "Erro ao buscar usuários",
+        error: error.message
+      });
+    }
+  });
 
   const httpServer = createServer(app);
   return httpServer;
