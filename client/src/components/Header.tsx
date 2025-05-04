@@ -114,32 +114,37 @@ const Header = () => {
 
         {/* Mobile Navigation */}
         <div className={`md:hidden transform transition-all duration-300 ease-in-out ${mobileMenuOpen ? 'opacity-100 max-h-96' : 'opacity-0 max-h-0 overflow-hidden'}`}>
-          <div className="px-2 pt-2 pb-3 space-y-1 mt-2 bg-white rounded-md shadow-custom">
-            <Link 
+          <motion.div 
+            className="px-2 pt-2 pb-3 space-y-1 mt-2 bg-white rounded-md shadow-custom"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: mobileMenuOpen ? 1 : 0, y: mobileMenuOpen ? 0 : -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            <TransitionLink 
               href="/" 
               className={`block px-3 py-2 rounded-md ${location === '/' ? 'text-dark-blue font-bold' : 'text-gray-black'} hover:bg-light-gray hover:text-medium-blue font-medium transition-colors duration-300`}
             >
               Home
-            </Link>
-            <Link 
+            </TransitionLink>
+            <TransitionLink 
               href="/quem-somos" 
               className={`block px-3 py-2 rounded-md ${location === '/quem-somos' ? 'text-dark-blue font-bold' : 'text-gray-black'} hover:bg-light-gray hover:text-medium-blue font-medium transition-colors duration-300`}
             >
               Quem Somos
-            </Link>
-            <Link 
+            </TransitionLink>
+            <TransitionLink 
               href="/contato" 
               className={`block px-3 py-2 rounded-md ${location === '/contato' ? 'text-dark-blue font-bold' : 'text-gray-black'} hover:bg-light-gray hover:text-medium-blue font-medium transition-colors duration-300`}
             >
               Contato
-            </Link>
-            <Link 
+            </TransitionLink>
+            <TransitionLink 
               href="/contato" 
               className="block px-3 py-2 mt-2 bg-dark-blue hover:bg-medium-blue text-white font-medium rounded-md transition-colors duration-300 text-center shadow-custom"
             >
               Solicitar Orçamento
-            </Link>
-          </div>
+            </TransitionLink>
+          </motion.div>
         </div>
       </div>
     </header>
