@@ -226,10 +226,10 @@ const AdminSidebar = ({ activeTab, isMobileMenuOpen, toggleMobileMenu }: {
           </div>
         )}
         
-        {/* Botão de colapsar */}
+        {/* Botão de colapsar - apenas visível na versão desktop */}
         <button 
           onClick={toggleCollapse}
-          className="absolute -right-3 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center text-[#1a237e] hover:bg-gray-100 focus:outline-none border-2 border-blue-500 z-10"
+          className="hidden md:flex absolute -right-3 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-white rounded-full shadow-md items-center justify-center text-[#1a237e] hover:bg-gray-100 focus:outline-none border-2 border-blue-500 z-10"
         >
           {collapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
         </button>
