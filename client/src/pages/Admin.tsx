@@ -408,7 +408,7 @@ const AdminDashboard = () => {
           value={counts.pending}
           icon={<AlertCircle className="w-full h-full text-amber-500" />}
           linkText="Ver pendentes"
-          linkUrl="/admin/contacts/pending"
+          linkUrl="/admin/contacts"
           color="amber"
         />
         <DashboardCard 
@@ -416,7 +416,7 @@ const AdminDashboard = () => {
           value={counts.inProgress}
           icon={<RefreshCcw className="w-full h-full text-blue-500" />}
           linkText="Ver em andamento"
-          linkUrl="/admin/contacts/in-progress"
+          linkUrl="/admin/contacts"
           color="blue"
         />
         <DashboardCard 
@@ -424,7 +424,7 @@ const AdminDashboard = () => {
           value={counts.completed}
           icon={<CheckCircle className="w-full h-full text-green-500" />}
           linkText="Ver concluídos"
-          linkUrl="/admin/contacts/completed"
+          linkUrl="/admin/contacts"
           color="green"
         />
       </div>
@@ -487,7 +487,17 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
   
   const handleCardLinkClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    navigate(linkUrl);
+    
+    // Determinar qual filtro aplicar com base na cor do card
+    if (color === "amber") {
+      navigate("/admin/contacts", { state: { filter: "pending" } });
+    } else if (color === "blue") {
+      navigate("/admin/contacts", { state: { filter: "in-progress" } });
+    } else if (color === "green") {
+      navigate("/admin/contacts", { state: { filter: "completed" } });
+    } else {
+      navigate(linkUrl);
+    }
   };
   
   return (
@@ -682,9 +692,16 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status, className = "" }) => 
 // Página de todos os contatos
 const AdminContacts = () => {
   const [location, navigate] = useLocation();
+  const locationState: any = typeof window !== 'undefined' ? window.history.state?.usr || {} : {};
   
-  // Função para determinar qual aba deve estar ativa com base na URL
+  // Função para determinar qual aba deve estar ativa com base na URL ou estado de navegação
   const determineFilter = (): "all" | "pending" | "in-progress" | "completed" => {
+    // Primeiro verificar o estado da navegação
+    if (locationState && locationState.filter) {
+      return locationState.filter;
+    }
+    
+    // Caso não tenha estado, verificar pela URL
     if (location.includes("/contacts/pending")) return "pending";
     if (location.includes("/contacts/in-progress")) return "in-progress";
     if (location.includes("/contacts/completed")) return "completed";
@@ -696,7 +713,7 @@ const AdminContacts = () => {
     determineFilter()
   );
   
-  // Atualizar o filtro quando a localização mudar
+  // Atualizar o filtro quando a localização ou estado mudar
   useEffect(() => {
     setFilter(determineFilter());
   }, [location]);
