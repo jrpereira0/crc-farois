@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Switch, Route, useLocation } from "wouter";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
@@ -11,7 +12,6 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import BackToTop from "./components/BackToTop";
 import LoginPage from "./pages/LoginPage";
-import { useEffect } from "react";
 import { AuthProvider, ProtectedRoute } from "./hooks/use-auth";
 
 // Componente que envolve as rotas administrativas com o ProtectedRoute
