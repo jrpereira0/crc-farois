@@ -245,6 +245,57 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
+  
+  // Excluir usuário administrativo
+  app.delete("/api/admin/users/:id", async (req, res) => {
+    try {
+      // Verificar se o usuário está autenticado
+      if (!req.isAuthenticated() || !req.user.isAdmin) {
+        return res.status(403).json({
+          message: "Acesso negado. Apenas administradores podem excluir usuários."
+        });
+      }
+      
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({
+          message: "ID inválido"
+        });
+      }
+      
+      // Não permitir autoexclusão
+      if (id === req.user.id) {
+        return res.status(400).json({
+          message: "Não é possível excluir seu próprio usuário."
+        });
+      }
+      
+      // Não permitir excluir o admin principal
+      if (id === 1) {
+        return res.status(400).json({
+          message: "Não é possível excluir o administrador principal."
+        });
+      }
+
+      const success = await storage.deleteUser(id);
+      
+      if (success) {
+        res.status(200).json({
+          message: "Usuário excluído com sucesso."
+        });
+      } else {
+        res.status(404).json({
+          message: "Usuário não encontrado ou não pode ser excluído."
+        });
+      }
+    } catch (error: any) {
+      console.error('Erro ao excluir usuário:', error);
+      res.status(500).json({
+        message: "Erro ao excluir usuário",
+        error: error.message
+      });
+    }
+  });
 
   const httpServer = createServer(app);
   return httpServer;

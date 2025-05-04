@@ -18,6 +18,7 @@ export interface IStorage {
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(userData: RegisterUser): Promise<User>;
   getAllUsers(): Promise<User[]>;
+  deleteUser(id: number): Promise<boolean>;
 }
 
 // Armazenamento em banco de dados
@@ -130,6 +131,30 @@ export class DatabaseStorage implements IStorage {
       .select()
       .from(users)
       .orderBy(desc(users.createdAt));
+  }
+
+  async deleteUser(id: number): Promise<boolean> {
+    try {
+      // Não permitir excluir o usuário admin principal (id = 1)
+      if (id === 1) {
+        return false;
+      }
+
+      // Verificar se o usuário existe
+      const user = await this.getUser(id);
+      if (!user) {
+        return false;
+      }
+
+      // Excluir o usuário
+      await db.delete(users).where(eq(users.id, id));
+      
+      // Se não ocorreu erro, consideramos a operação bem-sucedida
+      return true;
+    } catch (error) {
+      console.error('DatabaseStorage: erro ao excluir usuário:', error);
+      throw error;
+    }
   }
 }
 
