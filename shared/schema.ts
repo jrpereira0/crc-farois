@@ -14,15 +14,3 @@ export const insertContactSchema = contactSchema.omit({ id: true, createdAt: tru
 
 export type InsertContact = z.infer<typeof insertContactSchema>;
 export type Contact = z.infer<typeof contactSchema>;
-
-// Definição simplificada de usuário (sem dependência do PostgreSQL)
-export const userSchema = z.object({
-  id: z.number(),
-  username: z.string().min(1),
-  password: z.string().min(1)
-});
-
-export const insertUserSchema = userSchema.omit({ id: true });
-
-export type InsertUser = z.infer<typeof insertUserSchema>;
-export type User = z.infer<typeof userSchema>;
