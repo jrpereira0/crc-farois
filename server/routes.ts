@@ -132,6 +132,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Alternar estado de leitura (lido/não lido)
+  app.patch("/api/admin/contacts/:id/read-status", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({
+          message: "ID inválido"
+        });
+      }
+
+      const { isRead } = req.body;
+      if (typeof isRead !== 'boolean') {
+        return res.status(400).json({
+          message: "O campo 'isRead' é obrigatório e deve ser um booleano"
+        });
+      }
+
+      // Obter o contato atual
+      const contact = await storage.getContact(id);
+      if (!contact) {
+        return res.status(404).json({
+          message: "Contato não encontrado"
+        });
+      }
+
+      // Se isRead for true, marcar como lido, senão marcar como não lido
+      let updatedContact;
+      if (isRead) {
+        updatedContact = await storage.markContactAsRead(id);
+      } else {
+        // Pegamos o status atual do contato e garantimos que ele está no formato esperado
+        const contactStatus = contact.status as "pending" | "in-progress" | "completed";
+        // Usamos updateContactStatus pois não temos uma função específica para marcar como não lido
+        updatedContact = await storage.updateContactStatus(id, { status: contactStatus, isRead: false });
+      }
+
+      res.status(200).json(updatedContact);
+    } catch (error: any) {
+      console.error('Erro ao alternar estado de leitura:', error);
+      res.status(500).json({
+        message: "Erro ao alternar estado de leitura",
+        error: error.message
+      });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

@@ -173,15 +173,14 @@ const AdminSidebar = ({ activeTab, isMobileMenuOpen, toggleMobileMenu }: {
       <div className="px-6 py-4 bg-[#1a237e] border-b border-white/10 shadow-md">
         <div className="flex items-center mb-4">
           <img 
-            src="/favicon.ico" 
+            src="/assets/LOGO BRANCA_1745898146908.png" 
             alt="CRC Faróis" 
-            className="w-8 h-8 mr-2" 
+            className="h-10 mr-2" 
           />
-          <h2 className="text-xl font-bold text-white">CRC Faróis</h2>
         </div>
         <Button 
-          variant="outline" 
-          className="w-full text-white border-white hover:bg-white/20 focus:ring-white focus:ring-offset-[#1a237e]"
+          variant="secondary" 
+          className="w-full font-semibold text-[#1a237e] bg-white hover:bg-white/90 border-2 border-white focus:ring-white focus:ring-offset-[#1a237e]"
           onClick={() => window.location.href = "/"}
         >
           <HomeIcon className="h-4 w-4 mr-2" />
@@ -757,6 +756,42 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
       });
   };
   
+  // Função para alternar entre lido/não lido
+  const toggleReadStatus = (id: number, currentIsRead: boolean) => {
+    fetch(`/api/admin/contacts/${id}/read-status`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ isRead: !currentIsRead }),
+    })
+      .then(res => {
+        if (!res.ok) throw new Error("Falha ao atualizar estado de leitura");
+        return res.json();
+      })
+      .then(updatedContact => {
+        setContacts(prevContacts => 
+          prevContacts.map(contact => 
+            contact.id === id ? { ...contact, isRead: updatedContact.isRead } : contact
+          )
+        );
+        
+        toast({
+          title: "Estado de leitura atualizado",
+          description: `Contato marcado como "${!currentIsRead ? 'lido' : 'não lido'}"`,
+          variant: "default",
+        });
+      })
+      .catch(error => {
+        console.error("Erro ao atualizar estado de leitura:", error);
+        toast({
+          title: "Erro ao atualizar estado de leitura",
+          description: "Não foi possível atualizar o estado de leitura do contato. Tente novamente.",
+          variant: "destructive",
+        });
+      });
+  };
+  
   if (loading) {
     return (
       <div className="py-20 text-center">
@@ -841,33 +876,53 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
                     <StatusBadge status={contact.status} />
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <div className="flex space-x-2">
+                    <div className="flex flex-col space-y-2">
+                      <div className="flex space-x-2">
+                        <Button 
+                          variant={contact.status === "pending" ? "default" : "outline"} 
+                          size="sm" 
+                          className={contact.status === "pending" ? "bg-amber-500 hover:bg-amber-600" : "text-amber-500 border-amber-500 hover:bg-amber-50"}
+                          onClick={() => updateContactStatus(contact.id, "pending")}
+                        >
+                          <Clock className="h-4 w-4 mr-1" />
+                          Pendente
+                        </Button>
+                        <Button 
+                          variant={contact.status === "in-progress" ? "default" : "outline"} 
+                          size="sm" 
+                          className={contact.status === "in-progress" ? "bg-blue-500 hover:bg-blue-600" : "text-blue-500 border-blue-500 hover:bg-blue-50"}
+                          onClick={() => updateContactStatus(contact.id, "in-progress")}
+                        >
+                          <RefreshCcw className="h-4 w-4 mr-1" />
+                          Andamento
+                        </Button>
+                        <Button 
+                          variant={contact.status === "completed" ? "default" : "outline"} 
+                          size="sm" 
+                          className={contact.status === "completed" ? "bg-green-500 hover:bg-green-600" : "text-green-500 border-green-500 hover:bg-green-50"}
+                          onClick={() => updateContactStatus(contact.id, "completed")}
+                        >
+                          <CheckCircle className="h-4 w-4 mr-1" />
+                          Concluído
+                        </Button>
+                      </div>
                       <Button 
-                        variant={contact.status === "pending" ? "default" : "outline"} 
+                        variant="outline" 
                         size="sm" 
-                        className={contact.status === "pending" ? "bg-amber-500 hover:bg-amber-600" : "text-amber-500 border-amber-500 hover:bg-amber-50"}
-                        onClick={() => updateContactStatus(contact.id, "pending")}
+                        className="text-primary border-primary hover:bg-primary/10"
+                        onClick={() => toggleReadStatus(contact.id, contact.isRead)}
                       >
-                        <Clock className="h-4 w-4 mr-1" />
-                        Pendente
-                      </Button>
-                      <Button 
-                        variant={contact.status === "in-progress" ? "default" : "outline"} 
-                        size="sm" 
-                        className={contact.status === "in-progress" ? "bg-blue-500 hover:bg-blue-600" : "text-blue-500 border-blue-500 hover:bg-blue-50"}
-                        onClick={() => updateContactStatus(contact.id, "in-progress")}
-                      >
-                        <RefreshCcw className="h-4 w-4 mr-1" />
-                        Andamento
-                      </Button>
-                      <Button 
-                        variant={contact.status === "completed" ? "default" : "outline"} 
-                        size="sm" 
-                        className={contact.status === "completed" ? "bg-green-500 hover:bg-green-600" : "text-green-500 border-green-500 hover:bg-green-50"}
-                        onClick={() => updateContactStatus(contact.id, "completed")}
-                      >
-                        <CheckCircle className="h-4 w-4 mr-1" />
-                        Concluído
+                        {contact.isRead ? (
+                          <>
+                            <Eye className="h-4 w-4 mr-1" />
+                            Marcar como não lido
+                          </>
+                        ) : (
+                          <>
+                            <CheckCircle className="h-4 w-4 mr-1" />
+                            Marcar como lido
+                          </>
+                        )}
                       </Button>
                     </div>
                   </td>
@@ -928,40 +983,61 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
                 </div>
               </div>
               
-              <div className="flex justify-between items-center">
-                <div className="text-xs text-gray-500">
-                  {contact.createdAt ? formatDistanceToNow(new Date(contact.createdAt), { 
-                    addSuffix: true,
-                    locale: ptBR 
-                  }) : "Data desconhecida"}
+              <div className="flex flex-col space-y-3">
+                <div className="flex justify-between items-center">
+                  <div className="text-xs text-gray-500">
+                    {contact.createdAt ? formatDistanceToNow(new Date(contact.createdAt), { 
+                      addSuffix: true,
+                      locale: ptBR 
+                    }) : "Data desconhecida"}
+                  </div>
+                  
+                  <div className="flex space-x-1">
+                    <Button 
+                      variant={contact.status === "pending" ? "default" : "outline"} 
+                      size="sm" 
+                      className={contact.status === "pending" ? "bg-amber-500 hover:bg-amber-600 px-2" : "text-amber-500 border-amber-500 hover:bg-amber-50 px-2"} 
+                      onClick={() => updateContactStatus(contact.id, "pending")}
+                    >
+                      <Clock className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      variant={contact.status === "in-progress" ? "default" : "outline"} 
+                      size="sm" 
+                      className={contact.status === "in-progress" ? "bg-blue-500 hover:bg-blue-600 px-2" : "text-blue-500 border-blue-500 hover:bg-blue-50 px-2"}
+                      onClick={() => updateContactStatus(contact.id, "in-progress")}
+                    >
+                      <RefreshCcw className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      variant={contact.status === "completed" ? "default" : "outline"} 
+                      size="sm" 
+                      className={contact.status === "completed" ? "bg-green-500 hover:bg-green-600 px-2" : "text-green-500 border-green-500 hover:bg-green-50 px-2"}
+                      onClick={() => updateContactStatus(contact.id, "completed")}
+                    >
+                      <CheckCircle className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
                 
-                <div className="flex space-x-1">
-                  <Button 
-                    variant={contact.status === "pending" ? "default" : "outline"} 
-                    size="sm" 
-                    className={contact.status === "pending" ? "bg-amber-500 hover:bg-amber-600 px-2" : "text-amber-500 border-amber-500 hover:bg-amber-50 px-2"} 
-                    onClick={() => updateContactStatus(contact.id, "pending")}
-                  >
-                    <Clock className="h-4 w-4" />
-                  </Button>
-                  <Button 
-                    variant={contact.status === "in-progress" ? "default" : "outline"} 
-                    size="sm" 
-                    className={contact.status === "in-progress" ? "bg-blue-500 hover:bg-blue-600 px-2" : "text-blue-500 border-blue-500 hover:bg-blue-50 px-2"}
-                    onClick={() => updateContactStatus(contact.id, "in-progress")}
-                  >
-                    <RefreshCcw className="h-4 w-4" />
-                  </Button>
-                  <Button 
-                    variant={contact.status === "completed" ? "default" : "outline"} 
-                    size="sm" 
-                    className={contact.status === "completed" ? "bg-green-500 hover:bg-green-600 px-2" : "text-green-500 border-green-500 hover:bg-green-50 px-2"}
-                    onClick={() => updateContactStatus(contact.id, "completed")}
-                  >
-                    <CheckCircle className="h-4 w-4" />
-                  </Button>
-                </div>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="text-primary border-primary hover:bg-primary/10 py-1"
+                  onClick={() => toggleReadStatus(contact.id, contact.isRead)}
+                >
+                  {contact.isRead ? (
+                    <>
+                      <Eye className="h-4 w-4 mr-1" />
+                      Marcar como não lido
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle className="h-4 w-4 mr-1" />
+                      Marcar como lido
+                    </>
+                  )}
+                </Button>
               </div>
             </CardContent>
           </Card>
