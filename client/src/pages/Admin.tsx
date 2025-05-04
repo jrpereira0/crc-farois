@@ -26,24 +26,22 @@ import {
 
 // Componente principal do painel administrativo
 const Admin = () => {
-  const [, navigate] = useLocation();
-  const [matchesDashboard] = useRoute("/admin");
-  const [matchesContacts] = useRoute("/admin/contacts");
-  const [matchesContactsAll] = useRoute("/admin/contacts/all");
-  const [matchesContactsPending] = useRoute("/admin/contacts/pending");
-  const [matchesContactsInProgress] = useRoute("/admin/contacts/in-progress");
-  const [matchesContactsCompleted] = useRoute("/admin/contacts/completed");
-  const [matchesSettings] = useRoute("/admin/settings");
+  const [location, navigate] = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Determinar a guia ativa com base na URL
   const getActiveTab = () => {
-    if (matchesDashboard) return "dashboard";
-    if (matchesContacts || matchesContactsAll || matchesContactsPending || 
-        matchesContactsInProgress || matchesContactsCompleted) return "contacts";
-    if (matchesSettings) return "settings";
-    return "dashboard";
+    if (location.startsWith("/admin/contacts")) return "contacts";
+    if (location.startsWith("/admin/settings")) return "settings";
+    return "dashboard"; // Default inclui "/admin" e "/admin/dashboard"
   };
+
+  // Redirecionar para o dashboard se estiver na raiz do admin
+  useEffect(() => {
+    if (location === "/admin") {
+      navigate("/admin/dashboard");
+    }
+  }, [location, navigate]);
 
   // Alternar menu mobile
   const toggleMobileMenu = () => {
@@ -63,6 +61,23 @@ const Admin = () => {
     };
   }, [isMobileMenuOpen]);
 
+  // Renderizar o componente correto com base na rota
+  const renderContent = () => {
+    if (location === "/admin/dashboard" || location === "/admin") {
+      return <AdminDashboard />;
+    }
+    
+    if (location.startsWith("/admin/contacts")) {
+      return <AdminContacts />;
+    }
+    
+    if (location === "/admin/settings") {
+      return <AdminSettings />;
+    }
+    
+    return <AdminDashboard />; // Fallback
+  };
+
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar */}
@@ -80,13 +95,7 @@ const Admin = () => {
         {/* Conteúdo principal */}
         <main className="flex-1 overflow-y-auto py-4 px-4 md:px-6 bg-gray-50">
           <div className="container mx-auto max-w-7xl">
-            {matchesDashboard && <AdminDashboard />}
-            {matchesContacts && <AdminContacts />}
-            {matchesContactsAll && <AdminContactsList filter="all" />}
-            {matchesContactsPending && <AdminContactsList filter="pending" />}
-            {matchesContactsInProgress && <AdminContactsList filter="in-progress" />}
-            {matchesContactsCompleted && <AdminContactsList filter="completed" />}
-            {matchesSettings && <AdminSettings />}
+            {renderContent()}
           </div>
         </main>
       </div>
@@ -276,6 +285,7 @@ const AdminSidebar = ({ activeTab, isMobileMenuOpen, toggleMobileMenu }: {
 
 // Dashboard - Página inicial do painel administrativo
 const AdminDashboard = () => {
+  const [, navigate] = useLocation();
   const [counts, setCounts] = useState({
     total: 0,
     pending: 0,
@@ -356,7 +366,13 @@ const AdminDashboard = () => {
           <RecentContactsList />
         </CardContent>
         <CardFooter className="flex justify-center">
-          <Button variant="outline" onClick={() => window.location.href = "/admin/contacts"}>
+          <Button 
+            variant="outline" 
+            onClick={(e) => {
+              e.preventDefault();
+              navigate("/admin/contacts");
+            }}
+          >
             Ver todos os contatos
           </Button>
         </CardFooter>
@@ -383,6 +399,8 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
   linkUrl,
   color = "primary" 
 }) => {
+  const [, navigate] = useLocation();
+  
   const getColorClass = () => {
     switch (color) {
       case "amber": return "text-amber-500 hover:text-amber-600";
@@ -390,6 +408,11 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
       case "green": return "text-green-500 hover:text-green-600";
       default: return "text-primary hover:text-secondary";
     }
+  };
+  
+  const handleCardLinkClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    navigate(linkUrl);
   };
   
   return (
@@ -404,13 +427,13 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
         </div>
       </CardContent>
       <CardFooter className="pt-2">
-        <a 
-          href={linkUrl} 
-          className={`inline-flex items-center text-sm font-medium ${getColorClass()}`}
+        <button
+          onClick={handleCardLinkClick}
+          className={`inline-flex items-center text-sm font-medium ${getColorClass()} bg-transparent border-none cursor-pointer p-0`}
         >
           {linkText}
           <ChevronRight className="h-4 w-4 ml-1" />
-        </a>
+        </button>
       </CardFooter>
     </Card>
   );
@@ -581,26 +604,39 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status, className = "" }) => 
 
 // Página de todos os contatos
 const AdminContacts = () => {
-  const [, navigate] = useLocation();
-  const [matchesAll] = useRoute("/admin/contacts/all");
-  const [matchesPending] = useRoute("/admin/contacts/pending");
-  const [matchesInProgress] = useRoute("/admin/contacts/in-progress");
-  const [matchesCompleted] = useRoute("/admin/contacts/completed");
-  const [matchesRoot] = useRoute("/admin/contacts");
+  const [location, navigate] = useLocation();
   
+  // Determinar a aba ativa com base na URL
   const getActiveTab = () => {
-    if (matchesAll) return "all";
-    if (matchesPending) return "pending";
-    if (matchesInProgress) return "in-progress";
-    if (matchesCompleted) return "completed";
-    return "all"; // Default 
+    if (location.includes("/contacts/pending")) return "pending";
+    if (location.includes("/contacts/in-progress")) return "in-progress";
+    if (location.includes("/contacts/completed")) return "completed";
+    return "all"; // Padrão para qualquer outra URL (incluindo /admin/contacts)
   };
   
   const activeTab = getActiveTab();
   
+  // Estado para controlar qual lista mostrar
+  const [filter, setFilter] = useState<"all" | "pending" | "in-progress" | "completed">(
+    activeTab as "all" | "pending" | "in-progress" | "completed"
+  );
+  
+  // Atualizar o filtro quando a localização mudar
+  useEffect(() => {
+    setFilter(getActiveTab() as "all" | "pending" | "in-progress" | "completed");
+  }, [location]);
+  
+  // Manipuladores de clique para as abas
   const handleTabClick = (tab: string) => (e: React.MouseEvent) => {
     e.preventDefault();
-    navigate(`/admin/contacts/${tab}`);
+    setFilter(tab as "all" | "pending" | "in-progress" | "completed");
+    
+    // Atualizar a URL sem recarregar a página
+    if (tab === "all") {
+      navigate("/admin/contacts");
+    } else {
+      navigate(`/admin/contacts/${tab}`);
+    }
   };
 
   return (
@@ -652,10 +688,8 @@ const AdminContacts = () => {
         </div>
       </div>
       
-      {(matchesRoot || matchesAll) && <AdminContactsList filter="all" />}
-      {matchesPending && <AdminContactsList filter="pending" />}
-      {matchesInProgress && <AdminContactsList filter="in-progress" />}
-      {matchesCompleted && <AdminContactsList filter="completed" />}
+      {/* Renderizar a lista de contatos com o filtro atual */}
+      <AdminContactsList filter={filter} />
     </div>
   );
 };
