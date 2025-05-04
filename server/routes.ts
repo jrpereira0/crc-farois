@@ -2,45 +2,17 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertContactSchema, updateContactStatusSchema } from "@shared/schema";
-import { setupAuth, resetAdminPassword } from "./auth";
+import { setupAuth } from "./auth";
+import bcrypt from "bcrypt";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Configurar autenticação
   setupAuth(app);
   
-  // Criar ou resetar senha do admin (padrão: admin123)
-  await resetAdminPassword('admin123');
+  // Não criamos mais usuário admin padrão
   
-  // Rota para redefinir a senha do administrador (protegida, apenas admins podem acessar)
-  app.post("/api/admin/reset-password", async (req, res) => {
-    try {
-      const { password } = req.body;
-      
-      if (!password || typeof password !== 'string' || password.length < 6) {
-        return res.status(400).json({
-          message: "Senha inválida. A senha deve ter pelo menos 6 caracteres."
-        });
-      }
-      
-      const success = await resetAdminPassword(password);
-      
-      if (success) {
-        return res.status(200).json({
-          message: "Senha do administrador redefinida com sucesso."
-        });
-      } else {
-        return res.status(500).json({
-          message: "Erro ao redefinir a senha do administrador."
-        });
-      }
-    } catch (error: any) {
-      console.error('Erro ao redefinir senha do administrador:', error);
-      res.status(500).json({
-        message: "Erro ao redefinir senha",
-        error: error.message
-      });
-    }
-  });
+  // Remover admin reset password
+  
   // Rota para processar o envio do formulário de contato
   app.post("/api/contact", async (req, res) => {
     try {
@@ -246,6 +218,77 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Atualizar usuário administrativo
+  app.patch("/api/admin/users/:id", async (req, res) => {
+    try {
+      // Verificar se o usuário está autenticado
+      if (!req.isAuthenticated() || !req.user.isAdmin) {
+        return res.status(403).json({
+          message: "Acesso negado. Apenas administradores podem editar usuários."
+        });
+      }
+      
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({
+          message: "ID inválido"
+        });
+      }
+      
+      // Validar dados de entrada
+      const { name, password } = req.body;
+      
+      if (!name && !password) {
+        return res.status(400).json({
+          message: "Nenhum dado fornecido para atualização"
+        });
+      }
+      
+      // Se tiver senha, validar e fazer hash
+      let hashedPassword;
+      if (password) {
+        if (password.length < 6) {
+          return res.status(400).json({
+            message: "A senha deve ter pelo menos 6 caracteres"
+          });
+        }
+        
+        // Hash da senha
+        const saltRounds = 10;
+        hashedPassword = await bcrypt.hash(password, 10);
+      }
+      
+      // Preparar dados para atualização
+      const updateData: { name?: string; password?: string } = {};
+      if (name) updateData.name = name;
+      if (hashedPassword) updateData.password = hashedPassword;
+      
+      // Atualizar usuário
+      const updatedUser = await storage.updateUser(id, updateData);
+      
+      if (!updatedUser) {
+        return res.status(404).json({
+          message: "Usuário não encontrado"
+        });
+      }
+      
+      // Retornar dados do usuário (sem senha)
+      res.status(200).json({
+        id: updatedUser.id,
+        username: updatedUser.username,
+        name: updatedUser.name,
+        isAdmin: updatedUser.isAdmin,
+        message: "Usuário atualizado com sucesso"
+      });
+    } catch (error: any) {
+      console.error('Erro ao atualizar usuário:', error);
+      res.status(500).json({
+        message: "Erro ao atualizar usuário",
+        error: error.message
+      });
+    }
+  });
+
   // Excluir usuário administrativo
   app.delete("/api/admin/users/:id", async (req, res) => {
     try {

@@ -4,6 +4,12 @@ import { db } from "./db";
 import { eq, desc } from "drizzle-orm";
 
 // Interface de armazenamento com métodos necessários
+// Interface para atualizar usuário
+export interface UpdateUser {
+  name?: string;
+  password?: string;
+}
+
 export interface IStorage {
   // Métodos para contato
   getContact(id: number): Promise<Contact | undefined>;
@@ -17,6 +23,7 @@ export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(userData: RegisterUser): Promise<User>;
+  updateUser(id: number, userData: UpdateUser): Promise<User | undefined>;
   getAllUsers(): Promise<User[]>;
   deleteUser(id: number): Promise<boolean>;
 }
@@ -131,6 +138,42 @@ export class DatabaseStorage implements IStorage {
       .select()
       .from(users)
       .orderBy(desc(users.createdAt));
+  }
+  
+  async updateUser(id: number, userData: UpdateUser): Promise<User | undefined> {
+    try {
+      // Verificar se usuário existe
+      const existingUser = await this.getUser(id);
+      if (!existingUser) {
+        return undefined;
+      }
+      
+      // Preparar os dados para atualização (apenas campos fornecidos)
+      const updateData: { name?: string; password?: string } = {};
+      if (userData.name) {
+        updateData.name = userData.name;
+      }
+      if (userData.password) {
+        updateData.password = userData.password; // Deve ser hash antes de chegar aqui
+      }
+      
+      // Se não tiver dados para atualizar, retornar o usuário existente
+      if (Object.keys(updateData).length === 0) {
+        return existingUser;
+      }
+      
+      // Atualizar o usuário
+      const [updatedUser] = await db
+        .update(users)
+        .set(updateData)
+        .where(eq(users.id, id))
+        .returning();
+      
+      return updatedUser;
+    } catch (error) {
+      console.error('DatabaseStorage: erro ao atualizar usuário:', error);
+      throw error;
+    }
   }
 
   async deleteUser(id: number): Promise<boolean> {

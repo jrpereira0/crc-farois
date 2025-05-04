@@ -199,41 +199,4 @@ export function setupAuth(app: Express) {
   });
 }
 
-// Função para redefinir a senha do administrador ou criar um novo se não existir
-export async function resetAdminPassword(newPassword: string = 'admin123') {
-  try {
-    // Verificar se existe um usuário admin
-    const [adminUser] = await db.select().from(users).where(eq(users.username, 'admin'));
-    
-    // Hash da nova senha
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-    
-    if (adminUser) {
-      // Atualizar a senha do admin existente
-      await db.update(users)
-        .set({ password: hashedPassword })
-        .where(eq(users.id, adminUser.id));
-      
-      console.log('Senha do administrador redefinida com sucesso!');
-      console.log('Username: admin');
-      console.log(`Senha: ${newPassword}`);
-    } else {
-      // Criar um novo usuário admin
-      await db.insert(users).values({
-        username: 'admin',
-        password: hashedPassword,
-        name: 'Administrador',
-        isAdmin: true
-      });
-      
-      console.log('Usuário administrador criado com sucesso!');
-      console.log('Username: admin');
-      console.log(`Senha: ${newPassword}`);
-    }
-    
-    return true;
-  } catch (error) {
-    console.error('Erro ao redefinir/criar senha do administrador:', error);
-    return false;
-  }
-}
+// Admin relacionado completamente removido
