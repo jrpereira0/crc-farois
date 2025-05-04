@@ -27,8 +27,14 @@ const LoginPage = () => {
 
   // Verificar se o usuário já está autenticado
   useEffect(() => {
+    // Teste de conexão para debug
+    console.log("Verificando estado de autenticação na página de login");
+
     if (user) {
+      console.log("Usuário já autenticado, redirecionando para o dashboard");
       navigate("/admin/dashboard");
+    } else {
+      console.log("Usuário não autenticado, permanecendo na página de login");
     }
   }, [user, navigate]);
   
@@ -44,7 +50,11 @@ const LoginPage = () => {
   const onSubmit = async (data: LoginFormValues) => {
     setIsLoading(true);
     try {
+      console.log("Iniciando tentativa de login com:", data.username);
+      
       const success = await login(data.username, data.password);
+      
+      console.log("Resultado do login:", success ? "Sucesso" : "Falha");
       
       if (success) {
         toast({
@@ -52,12 +62,21 @@ const LoginPage = () => {
           description: "Redirecionando para o painel administrativo...",
           variant: "default",
         });
-        // Forçar redirecionamento para o dashboard admin
-        navigate("/admin/dashboard");
+        
+        console.log("Redirecionando para o dashboard após login bem-sucedido");
+        
+        // Aguardar um momento antes de navegar para garantir que o estado foi atualizado
+        setTimeout(() => {
+          navigate("/admin/dashboard");
+        }, 300);
+      } else {
+        console.log("Login falhou, permanecendo na página de login");
       }
     } catch (error) {
+      console.error("Erro durante o login:", error);
+      
       toast({
-        title: "Erro",
+        title: "Erro no sistema",
         description: "Ocorreu um erro ao tentar fazer login. Tente novamente mais tarde.",
         variant: "destructive",
       });

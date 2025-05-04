@@ -43,27 +43,40 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const checkAuth = async (): Promise<boolean> => {
     try {
       setIsLoading(true);
-      const response = await fetch("/api/me");
+      console.log("Verificando autenticação...");
+      
+      const response = await fetch("/api/me", {
+        credentials: "include", // Importante: enviar cookies para autenticação
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
       
       if (response.ok) {
         const userData = await response.json();
+        console.log("Autenticação verificada com sucesso:", userData);
         setUser(userData);
         setError(null);
         return true;
       } else {
         // Se tivemos um usuário antes e agora não temos, a sessão provavelmente expirou
         if (user) {
+          console.log("Sessão expirada ou inválida");
           setError("Sua sessão expirou. Por favor, faça login novamente.");
           toast({
             title: "Sessão expirada",
             description: "Sua sessão expirou ou foi invalidada. Por favor, faça login novamente.",
             variant: "destructive",
           });
+        } else {
+          console.log("Usuário não autenticado");
         }
+        
         setUser(null);
         return false;
       }
     } catch (err) {
+      console.error("Erro ao verificar autenticação:", err);
       setUser(null);
       setError("Erro ao verificar autenticação");
       return false;
@@ -78,29 +91,39 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setIsLoading(true);
       setError(null);
 
+      console.log("Tentando fazer login com:", username);
+
       const response = await fetch("/api/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include", // Importante: enviar cookies para autenticação
         body: JSON.stringify({ username, password }),
       });
 
+      const data = await response.json();
+      
       if (response.ok) {
-        const userData = await response.json();
-        setUser(userData);
+        console.log("Login bem-sucedido:", data);
+        setUser(data);
+        
+        // Verificar autenticação após o login para garantir que a sessão foi estabelecida
+        await checkAuth();
+        
         return true;
       } else {
-        const errorData = await response.json();
-        setError(errorData.message || "Credenciais inválidas");
+        console.error("Falha no login:", data);
+        setError(data.message || "Credenciais inválidas");
         toast({
           title: "Falha no login",
-          description: errorData.message || "Credenciais inválidas. Tente novamente.",
+          description: data.message || "Credenciais inválidas. Tente novamente.",
           variant: "destructive",
         });
         return false;
       }
     } catch (err) {
+      console.error("Erro ao fazer login:", err);
       setError("Erro ao tentar fazer login");
       toast({
         title: "Erro",

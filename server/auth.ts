@@ -96,17 +96,29 @@ export function setupAuth(app: Express) {
 
   // Rota de login
   app.post("/api/login", (req: Request, res: Response, next: NextFunction) => {
+    console.log("Tentativa de login - Dados recebidos:", { username: req.body.username });
+    
     passport.authenticate("local", (err: Error, user: Express.User, info: { message: string }) => {
       if (err) {
+        console.error("Erro na autenticação:", err);
         return next(err);
       }
+      
       if (!user) {
+        console.log("Login falhou:", info.message || "Credenciais inválidas");
         return res.status(401).json({ message: info.message || "Credenciais inválidas" });
       }
+      
+      console.log("Usuário autenticado, iniciando sessão:", { id: user.id, username: user.username });
+      
       req.logIn(user, (err) => {
         if (err) {
+          console.error("Erro ao iniciar sessão:", err);
           return next(err);
         }
+        
+        console.log("Sessão iniciada com sucesso para:", { id: user.id, username: user.username });
+        
         return res.json({
           id: user.id,
           username: user.username,
