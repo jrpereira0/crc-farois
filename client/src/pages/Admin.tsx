@@ -1373,7 +1373,8 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
         {contacts.map((contact) => (
           <Card 
             key={contact.id} 
-            className={`overflow-hidden ${!contact.isRead ? 'border-l-4 border-l-blue-500' : ''}`}
+            className={`overflow-hidden ${!contact.isRead ? 'border-l-4 border-l-blue-500' : ''} cursor-pointer`}
+            onClick={() => openContactModal(contact)}
           >
             <CardContent className="p-0">
               <div className="px-4 py-3 flex items-center justify-between border-b">
@@ -1475,6 +1476,20 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
           </Card>
         ))}
       </div>
+      
+      {/* Modal de detalhes do contato */}
+      {selectedContact && (
+        <ContactDetailModal 
+          contact={selectedContact} 
+          isOpen={isModalOpen} 
+          onClose={() => {
+            setIsModalOpen(false);
+            setTimeout(() => setSelectedContact(null), 300); // Limpa o contato depois da animação
+          }}
+          onStatusChange={updateContactStatus}
+          onReadStatusChange={toggleReadStatus}
+        />
+      )}
     </>
   );
 };
