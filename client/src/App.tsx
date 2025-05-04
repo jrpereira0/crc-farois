@@ -44,6 +44,7 @@ function Router() {
         <Route path="/login" component={LoginPage} />
 
         {/* Todas as rotas admin são protegidas */}
+        <Route path="/admin" component={ProtectedAdminRoute} />
         <Route path="/admin/:rest*" component={ProtectedAdminRoute} />
         
         {/* Rotas públicas */}

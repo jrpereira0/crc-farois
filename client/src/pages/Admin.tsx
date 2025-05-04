@@ -63,13 +63,13 @@ const Admin = () => {
   const isDashboardPage = location === '/admin' || location === '/admin/dashboard' || 
                           (!isContactsPage && !isSettingsPage);
 
-  // Redirecionar para o dashboard se estiver na raiz do admin
-  useEffect(() => {
-    if (location === "/admin") {
-      console.log("Redirecionando da raiz do admin para o dashboard");
-      navigate("/admin/dashboard");
-    }
-  }, [location, navigate]);
+  // Não precisamos mais redirecionar, pois o dashboard é exibido diretamente na raiz
+  // useEffect(() => {
+  //   if (location === "/admin") {
+  //     console.log("Redirecionando da raiz do admin para o dashboard");
+  //     navigate("/admin");
+  //   }
+  // }, [location, navigate]);
 
   // Alternar menu mobile
   const toggleMobileMenu = () => {
