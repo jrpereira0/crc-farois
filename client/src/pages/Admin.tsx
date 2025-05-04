@@ -173,11 +173,10 @@ const AdminSidebar = ({ activeTab, isMobileMenuOpen, toggleMobileMenu }: {
       {/* Logo */}
       <div className="px-6 py-4 bg-[#1a237e] border-b border-white/10 shadow-md">
         <div className="flex items-center justify-center mb-4">
-          <img 
-            src={crcLogo} 
-            alt="CRC Faróis" 
-            className="h-auto w-full mx-auto" 
-          />
+          <div className="bg-[#1a237e] py-2 px-1 flex items-center rounded">
+            <span className="text-white text-xl font-bold">CRC</span>
+            <span className="text-white ml-1 text-lg">Faróis</span>
+          </div>
         </div>
         <Button 
           variant="secondary" 
