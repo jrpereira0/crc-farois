@@ -1111,6 +1111,11 @@ const AdminSettings = () => {
   const [showUserForm, setShowUserForm] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [deletingUserId, setDeletingUserId] = useState<number | null>(null);
+  
+  // Estados para o modal de edição
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingUser, setEditingUser] = useState<{id: number, username: string, name: string} | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
 
   // Buscar usuários existentes
   const fetchUsers = async () => {
@@ -1199,6 +1204,112 @@ const AdminSettings = () => {
       });
     } finally {
       setIsLoading(false);
+    }
+  };
+  
+  // Esquema de validação para o formulário de edição de usuário
+  const editUserSchema = z.object({
+    name: z.string()
+      .min(3, "Nome completo deve ter pelo menos 3 caracteres")
+      .max(100, "Nome completo deve ter no máximo 100 caracteres"),
+    password: z.string()
+      .min(6, "Senha deve ter pelo menos 6 caracteres")
+      .max(100, "Senha deve ter no máximo 100 caracteres")
+      .optional()
+      .or(z.literal('')),
+    confirmPassword: z.string()
+      .optional()
+      .or(z.literal('')),
+  }).refine((data) => !data.password || data.password === data.confirmPassword, {
+    message: "As senhas não coincidem",
+    path: ["confirmPassword"],
+  });
+  
+  // Tipo para o valor do formulário de edição de usuário
+  type EditUserFormValues = z.infer<typeof editUserSchema>;
+  
+  // Configuração do formulário de edição de usuário
+  const editForm = useForm<EditUserFormValues>({
+    resolver: zodResolver(editUserSchema),
+    defaultValues: {
+      name: '',
+      password: '',
+      confirmPassword: '',
+    }
+  });
+  
+  // Função para abrir o formulário de edição
+  const handleEditUser = (user: {id: number, username: string, name: string}) => {
+    setEditingUser(user);
+    editForm.reset({
+      name: user.name,
+      password: '',
+      confirmPassword: '',
+    });
+    setShowEditModal(true);
+  };
+  
+  // Função para cancelar a edição
+  const handleCancelEdit = () => {
+    setShowEditModal(false);
+    setEditingUser(null);
+    editForm.reset();
+  };
+  
+  // Função para salvar a edição do usuário
+  const onEditSubmit = async (data: EditUserFormValues) => {
+    if (!editingUser) return;
+    
+    setIsEditing(true);
+    
+    try {
+      const updateData: {name?: string, password?: string} = {};
+      if (data.name) updateData.name = data.name;
+      if (data.password) updateData.password = data.password;
+      
+      const response = await fetch(`/api/admin/users/${editingUser.id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updateData),
+      });
+      
+      if (response.ok) {
+        const updatedUser = await response.json();
+        
+        // Atualizar a lista de usuários
+        setUsers(prev => prev.map(user => 
+          user.id === editingUser.id ? { ...user, name: updatedUser.name } : user
+        ));
+        
+        // Fechar o modal
+        setShowEditModal(false);
+        setEditingUser(null);
+        
+        // Exibir mensagem de sucesso
+        toast({
+          title: 'Usuário atualizado',
+          description: `Os dados do usuário ${editingUser.username} foram atualizados com sucesso.`,
+          variant: 'default',
+        });
+      } else {
+        const errorData = await response.json();
+        toast({
+          title: 'Erro ao atualizar usuário',
+          description: errorData.message || 'Ocorreu um erro ao atualizar o usuário. Tente novamente.',
+          variant: 'destructive',
+        });
+      }
+    } catch (error) {
+      console.error('Erro ao atualizar usuário:', error);
+      toast({
+        title: 'Erro',
+        description: 'Ocorreu um erro inesperado. Tente novamente mais tarde.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsEditing(false);
     }
   };
   
@@ -1479,6 +1590,124 @@ const AdminSettings = () => {
           </Button>
         </CardContent>
       </Card>
+      
+      {/* Modal de edição de usuário */}
+      {showEditModal && editingUser && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-lg w-full max-w-md mx-4 overflow-hidden">
+            <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+              <h3 className="text-xl font-semibold text-gray-800">Editar Usuário</h3>
+              <button 
+                onClick={handleCancelEdit}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            
+            <div className="p-6">
+              <Form {...editForm}>
+                <form onSubmit={editForm.handleSubmit(onEditSubmit)} className="space-y-4">
+                  <div className="mb-4">
+                    <p className="text-sm font-medium text-gray-500 mb-1">Nome de Usuário</p>
+                    <p className="text-base font-medium">{editingUser.username}</p>
+                    <p className="text-xs text-gray-500 mt-1">O nome de usuário não pode ser alterado</p>
+                  </div>
+                  
+                  <FormField
+                    control={editForm.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Nome Completo</FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder="Digite o nome completo" 
+                            {...field} 
+                            disabled={isEditing}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormField
+                      control={editForm.control}
+                      name="password"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Nova Senha</FormLabel>
+                          <FormControl>
+                            <Input 
+                              type="password" 
+                              placeholder="Nova senha (opcional)" 
+                              {...field} 
+                              disabled={isEditing}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={editForm.control}
+                      name="confirmPassword"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Confirmar Senha</FormLabel>
+                          <FormControl>
+                            <Input 
+                              type="password" 
+                              placeholder="Confirme a nova senha" 
+                              {...field} 
+                              disabled={isEditing}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  
+                  <div className="flex justify-between mt-6">
+                    <Button 
+                      type="button"
+                      variant="outline"
+                      onClick={handleCancelEdit}
+                      disabled={isEditing}
+                    >
+                      Cancelar
+                    </Button>
+                    <Button 
+                      type="submit" 
+                      className="bg-[#1a237e] hover:bg-[#303f9f]"
+                      disabled={isEditing}
+                    >
+                      {isEditing ? (
+                        <>
+                          <svg className="animate-spin mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          Salvando...
+                        </>
+                      ) : (
+                        <>
+                          <Check className="mr-2 h-4 w-4" />
+                          Salvar Alterações
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </form>
+              </Form>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
