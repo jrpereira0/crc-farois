@@ -173,9 +173,9 @@ const AdminSidebar = ({ activeTab, isMobileMenuOpen, toggleMobileMenu }: {
       <div className="px-6 py-4 bg-[#1a237e] border-b border-white/10 shadow-md">
         <div className="flex items-center justify-center mb-4">
           <img 
-            src="/assets/image_1746382939699.png" 
+            src="/assets/LOGO BRANCA_1746383304420.png" 
             alt="CRC Faróis" 
-            className="h-auto w-full mx-auto" 
+            className="h-auto w-4/5 mx-auto" 
           />
         </div>
         <Button 
