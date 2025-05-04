@@ -1052,7 +1052,10 @@ const ContactDetailModal: React.FC<ContactModalProps> = ({
                   variant={contact.status === "pending" ? "default" : "outline"} 
                   size="sm" 
                   className={contact.status === "pending" ? "bg-amber-500 hover:bg-amber-600" : "text-amber-500 border-amber-500 hover:bg-amber-50"}
-                  onClick={() => onStatusChange(contact.id, "pending")}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onStatusChange(contact.id, "pending");
+                  }}
                 >
                   <Clock className="h-4 w-4 mr-2" />
                   Pendente
@@ -1061,7 +1064,10 @@ const ContactDetailModal: React.FC<ContactModalProps> = ({
                   variant={contact.status === "in-progress" ? "default" : "outline"} 
                   size="sm" 
                   className={contact.status === "in-progress" ? "bg-blue-500 hover:bg-blue-600" : "text-blue-500 border-blue-500 hover:bg-blue-50"}
-                  onClick={() => onStatusChange(contact.id, "in-progress")}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onStatusChange(contact.id, "in-progress");
+                  }}
                 >
                   <RefreshCcw className="h-4 w-4 mr-2" />
                   Em andamento
@@ -1070,7 +1076,10 @@ const ContactDetailModal: React.FC<ContactModalProps> = ({
                   variant={contact.status === "completed" ? "default" : "outline"} 
                   size="sm" 
                   className={contact.status === "completed" ? "bg-green-500 hover:bg-green-600" : "text-green-500 border-green-500 hover:bg-green-50"}
-                  onClick={() => onStatusChange(contact.id, "completed")}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onStatusChange(contact.id, "completed");
+                  }}
                 >
                   <CheckCircle className="h-4 w-4 mr-2" />
                   Concluído
@@ -1083,7 +1092,10 @@ const ContactDetailModal: React.FC<ContactModalProps> = ({
                   variant={contact.isRead ? "outline" : "default"} 
                   size="sm"
                   className={!contact.isRead ? "bg-blue-500 hover:bg-blue-600" : "text-blue-500 border-blue-500 hover:bg-blue-50"}
-                  onClick={() => onReadStatusChange(contact.id, contact.isRead)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onReadStatusChange(contact.id, contact.isRead);
+                  }}
                 >
                   {contact.isRead ? (
                     <>
@@ -1333,7 +1345,10 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
                         variant={contact.status === "pending" ? "default" : "outline"} 
                         size="sm" 
                         className={contact.status === "pending" ? "bg-amber-500 hover:bg-amber-600 rounded-full" : "text-amber-500 border-amber-500 hover:bg-amber-50 rounded-full"}
-                        onClick={() => updateContactStatus(contact.id, "pending")}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          updateContactStatus(contact.id, "pending");
+                        }}
                         title="Marcar como pendente"
                       >
                         <Clock className="h-4 w-4 mr-1" />
@@ -1343,7 +1358,10 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
                         variant={contact.status === "in-progress" ? "default" : "outline"} 
                         size="sm" 
                         className={contact.status === "in-progress" ? "bg-blue-500 hover:bg-blue-600 rounded-full" : "text-blue-500 border-blue-500 hover:bg-blue-50 rounded-full"}
-                        onClick={() => updateContactStatus(contact.id, "in-progress")}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          updateContactStatus(contact.id, "in-progress");
+                        }}
                         title="Marcar como em andamento"
                       >
                         <RefreshCcw className="h-4 w-4 mr-1" />
@@ -1353,7 +1371,10 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
                         variant={contact.status === "completed" ? "default" : "outline"} 
                         size="sm" 
                         className={contact.status === "completed" ? "bg-green-500 hover:bg-green-600 rounded-full" : "text-green-500 border-green-500 hover:bg-green-50 rounded-full"}
-                        onClick={() => updateContactStatus(contact.id, "completed")}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          updateContactStatus(contact.id, "completed");
+                        }}
                         title="Marcar como concluído"
                       >
                         <CheckCircle className="h-4 w-4 mr-1" />
@@ -1365,10 +1386,22 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
                         variant="outline" 
                         size="sm" 
                         className="text-primary border-primary hover:bg-primary/10 w-full rounded-full"
-                        onClick={() => toggleReadStatus(contact.id, contact.isRead)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleReadStatus(contact.id, contact.isRead);
+                        }}
                       >
-                        <Eye className="h-4 w-4 mr-1" />
-                        Marcar como {contact.isRead ? "não lido" : "lido"}
+                        {contact.isRead ? (
+                          <>
+                            <EyeOff className="h-4 w-4 mr-1" />
+                            Marcar como não lido
+                          </>
+                        ) : (
+                          <>
+                            <Eye className="h-4 w-4 mr-1" />
+                            Marcar como lido
+                          </>
+                        )}
                       </Button>
                     </div>
                   </td>
@@ -1447,7 +1480,10 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
                   variant={contact.status === "pending" ? "default" : "outline"} 
                   size="sm" 
                   className={contact.status === "pending" ? "bg-amber-500 hover:bg-amber-600 rounded-full flex-1" : "text-amber-500 border-amber-500 hover:bg-amber-50 rounded-full flex-1"}
-                  onClick={() => updateContactStatus(contact.id, "pending")}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    updateContactStatus(contact.id, "pending");
+                  }}
                 >
                   <Clock className="h-4 w-4 mr-1" />
                   Pendente
@@ -1456,7 +1492,10 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
                   variant={contact.status === "in-progress" ? "default" : "outline"} 
                   size="sm" 
                   className={contact.status === "in-progress" ? "bg-blue-500 hover:bg-blue-600 rounded-full flex-1" : "text-blue-500 border-blue-500 hover:bg-blue-50 rounded-full flex-1"}
-                  onClick={() => updateContactStatus(contact.id, "in-progress")}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    updateContactStatus(contact.id, "in-progress");
+                  }}
                 >
                   <RefreshCcw className="h-4 w-4 mr-1" />
                   Andamento
@@ -1465,7 +1504,10 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
                   variant={contact.status === "completed" ? "default" : "outline"} 
                   size="sm" 
                   className={contact.status === "completed" ? "bg-green-500 hover:bg-green-600 rounded-full flex-1" : "text-green-500 border-green-500 hover:bg-green-50 rounded-full flex-1"}
-                  onClick={() => updateContactStatus(contact.id, "completed")}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    updateContactStatus(contact.id, "completed");
+                  }}
                 >
                   <CheckCircle className="h-4 w-4 mr-1" />
                   Concluído
@@ -1477,10 +1519,22 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
                   variant="outline" 
                   size="sm" 
                   className="text-primary border-primary hover:bg-primary/10 w-full rounded-full"
-                  onClick={() => toggleReadStatus(contact.id, contact.isRead)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleReadStatus(contact.id, contact.isRead);
+                  }}
                 >
-                  <Eye className="h-4 w-4 mr-1" />
-                  Marcar como {contact.isRead ? "não lido" : "lido"}
+                  {contact.isRead ? (
+                    <>
+                      <EyeOff className="h-4 w-4 mr-1" />
+                      Marcar como não lido
+                    </>
+                  ) : (
+                    <>
+                      <Eye className="h-4 w-4 mr-1" />
+                      Marcar como lido
+                    </>
+                  )}
                 </Button>
               </div>
             </CardContent>
