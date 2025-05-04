@@ -20,6 +20,7 @@ import {
   AlertCircle,
   RefreshCcw,
   ChevronRight,
+  ChevronLeft,
   LogOut,
   Eye,
   MessageSquare
@@ -159,6 +160,7 @@ const AdminSidebar = ({ activeTab, isMobileMenuOpen, toggleMobileMenu }: {
   toggleMobileMenu?: () => void;
 }) => {
   const [, navigate] = useLocation();
+  const [collapsed, setCollapsed] = useState(false);
   
   const handleNavigation = (path: string) => (e: React.MouseEvent) => {
     e.preventDefault();
@@ -168,80 +170,115 @@ const AdminSidebar = ({ activeTab, isMobileMenuOpen, toggleMobileMenu }: {
     }
   };
   
+  const toggleCollapse = () => {
+    setCollapsed(!collapsed);
+  };
+  
   const sidebarContent = (
     <>
       {/* Logo */}
-      <div className="px-6 py-4 bg-[#1a237e] border-b border-white/10 shadow-md">
+      <div className="px-6 py-4 bg-[#1a237e] border-b border-white/10 shadow-md relative">
         <div className="flex items-center justify-center mb-4">
           <img 
             src="/assets/LOGO BRANCA_1746383304420.png" 
             alt="CRC Faróis" 
-            className="h-auto w-full max-w-[160px] mx-auto" 
+            className={`h-auto w-full mx-auto ${collapsed ? "max-w-[40px]" : "max-w-[160px]"}`} 
           />
         </div>
-        <Button 
-          variant="secondary" 
-          className="w-full font-semibold text-[#1a237e] bg-white hover:bg-white/90 border-2 border-white focus:ring-white focus:ring-offset-[#1a237e]"
-          onClick={() => window.location.href = "/"}
+        {!collapsed && (
+          <Button 
+            variant="secondary" 
+            className="w-full font-semibold text-[#1a237e] bg-white hover:bg-white/90 border-2 border-white focus:ring-white focus:ring-offset-[#1a237e]"
+            onClick={() => window.location.href = "/"}
+          >
+            <HomeIcon className="h-4 w-4 mr-2" />
+            Voltar ao site
+          </Button>
+        )}
+        {collapsed && (
+          <Button 
+            variant="secondary" 
+            className="w-10 h-10 flex items-center justify-center rounded-full font-semibold text-[#1a237e] bg-white hover:bg-white/90 border-2 border-white focus:ring-white focus:ring-offset-[#1a237e] mx-auto"
+            onClick={() => window.location.href = "/"}
+            title="Voltar ao site"
+          >
+            <HomeIcon className="h-4 w-4" />
+          </Button>
+        )}
+        
+        {/* Botão de colapsar */}
+        <button 
+          onClick={toggleCollapse}
+          className="absolute -right-3 top-1/2 transform -translate-y-1/2 w-6 h-6 bg-white rounded-full shadow-md flex items-center justify-center text-[#1a237e] hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#1a237e] focus:ring-offset-2 z-10"
         >
-          <HomeIcon className="h-4 w-4 mr-2" />
-          Voltar ao site
-        </Button>
+          {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+        </button>
       </div>
       
       {/* Links de navegação */}
-      <nav className="flex-1 px-4 py-6">
+      <nav className={`flex-1 ${collapsed ? "px-2" : "px-4"} py-6`}>
         <ul className="space-y-1">
           <li>
             <a 
               href="/admin" 
               onClick={handleNavigation("/admin")}
-              className={`flex items-center px-4 py-3 rounded-md transition-colors duration-200 ${activeTab === "dashboard" 
+              className={`flex items-center ${collapsed ? "justify-center px-2" : "px-4"} py-3 rounded-md transition-colors duration-200 ${activeTab === "dashboard" 
                 ? "bg-white text-[#1a237e] font-semibold shadow-md" 
                 : "text-white hover:bg-white/20"}`}
+              title={collapsed ? "Dashboard" : ""}
             >
-              <ClipboardList className="h-5 w-5 mr-3" />
-              Dashboard
+              <ClipboardList className="h-5 w-5 flex-shrink-0" />
+              {!collapsed && <span className="ml-3">Dashboard</span>}
             </a>
           </li>
           <li>
             <a 
               href="/admin/contacts" 
               onClick={handleNavigation("/admin/contacts")}
-              className={`flex items-center px-4 py-3 rounded-md transition-colors duration-200 ${activeTab === "contacts" 
+              className={`flex items-center ${collapsed ? "justify-center px-2" : "px-4"} py-3 rounded-md transition-colors duration-200 ${activeTab === "contacts" 
                 ? "bg-white text-[#1a237e] font-semibold shadow-md" 
                 : "text-white hover:bg-white/20"}`}
+              title={collapsed ? "Contatos" : ""}
             >
-              <Inbox className="h-5 w-5 mr-3" />
-              Contatos
+              <Inbox className="h-5 w-5 flex-shrink-0" />
+              {!collapsed && <span className="ml-3">Contatos</span>}
             </a>
           </li>
           <li>
             <a 
               href="/admin/settings"
               onClick={handleNavigation("/admin/settings")} 
-              className={`flex items-center px-4 py-3 rounded-md transition-colors duration-200 ${activeTab === "settings" 
+              className={`flex items-center ${collapsed ? "justify-center px-2" : "px-4"} py-3 rounded-md transition-colors duration-200 ${activeTab === "settings" 
                 ? "bg-white text-[#1a237e] font-semibold shadow-md" 
                 : "text-white hover:bg-white/20"}`}
+              title={collapsed ? "Configurações" : ""}
             >
-              <Settings className="h-5 w-5 mr-3" />
-              Configurações
+              <Settings className="h-5 w-5 flex-shrink-0" />
+              {!collapsed && <span className="ml-3">Configurações</span>}
             </a>
           </li>
         </ul>
       </nav>
       
       {/* Informações do usuário */}
-      <div className="px-6 py-4 border-t border-white/10 bg-[#303f9f] shadow-inner">
-        <div className="flex items-center">
-          <div className="w-10 h-10 rounded-full bg-white/30 flex items-center justify-center mr-3 shadow-md">
-            <Users className="h-5 w-5 text-white" />
+      <div className={`${collapsed ? "px-2" : "px-6"} py-4 border-t border-white/10 bg-[#303f9f] shadow-inner`}>
+        {!collapsed ? (
+          <div className="flex items-center">
+            <div className="w-10 h-10 rounded-full bg-white/30 flex items-center justify-center mr-3 shadow-md flex-shrink-0">
+              <Users className="h-5 w-5 text-white" />
+            </div>
+            <div>
+              <p className="font-medium text-white">Administrador</p>
+              <p className="text-sm text-white/90">Logado agora</p>
+            </div>
           </div>
-          <div>
-            <p className="font-medium text-white">Administrador</p>
-            <p className="text-sm text-white/90">Logado agora</p>
+        ) : (
+          <div className="flex justify-center">
+            <div className="w-10 h-10 rounded-full bg-white/30 flex items-center justify-center shadow-md">
+              <Users className="h-5 w-5 text-white" />
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </>
   );
@@ -250,7 +287,7 @@ const AdminSidebar = ({ activeTab, isMobileMenuOpen, toggleMobileMenu }: {
   return (
     <>
       {/* Versão desktop */}
-      <aside className="hidden md:flex w-64 bg-[#283593] text-white flex-col shadow-xl z-10">
+      <aside className={`hidden md:flex ${collapsed ? "w-16" : "w-64"} bg-[#283593] text-white flex-col shadow-xl z-10 transition-all duration-300 ease-in-out relative`}>
         {sidebarContent}
       </aside>
       
@@ -880,7 +917,7 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex flex-col space-y-2">
-                      <div className="flex space-x-2">
+                      <div className="flex flex-wrap gap-2">
                         <Button 
                           variant={contact.status === "pending" ? "default" : "outline"} 
                           size="sm" 
@@ -995,12 +1032,13 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
                     }) : "Data desconhecida"}
                   </div>
                   
-                  <div className="flex space-x-1">
+                  <div className="flex flex-wrap gap-1">
                     <Button 
                       variant={contact.status === "pending" ? "default" : "outline"} 
                       size="sm" 
                       className={contact.status === "pending" ? "bg-amber-500 hover:bg-amber-600 px-2" : "text-amber-500 border-amber-500 hover:bg-amber-50 px-2"} 
                       onClick={() => updateContactStatus(contact.id, "pending")}
+                      title="Marcar como pendente"
                     >
                       <Clock className="h-4 w-4" />
                     </Button>
@@ -1009,6 +1047,7 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
                       size="sm" 
                       className={contact.status === "in-progress" ? "bg-blue-500 hover:bg-blue-600 px-2" : "text-blue-500 border-blue-500 hover:bg-blue-50 px-2"}
                       onClick={() => updateContactStatus(contact.id, "in-progress")}
+                      title="Marcar como em andamento"
                     >
                       <RefreshCcw className="h-4 w-4" />
                     </Button>
@@ -1017,6 +1056,7 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
                       size="sm" 
                       className={contact.status === "completed" ? "bg-green-500 hover:bg-green-600 px-2" : "text-green-500 border-green-500 hover:bg-green-50 px-2"}
                       onClick={() => updateContactStatus(contact.id, "completed")}
+                      title="Marcar como concluído"
                     >
                       <CheckCircle className="h-4 w-4" />
                     </Button>
