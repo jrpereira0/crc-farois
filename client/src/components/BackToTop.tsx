@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 
 const BackToTop = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -27,55 +26,15 @@ const BackToTop = () => {
   };
 
   return (
-    <AnimatePresence>
-      {isVisible && (
-        <motion.button
-          onClick={scrollToTop}
-          className="fixed bottom-8 right-8 bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg z-50"
-          aria-label="Voltar ao topo"
-          initial={{ opacity: 0, scale: 0, y: 20 }}
-          animate={{ 
-            opacity: 1, 
-            scale: 1, 
-            y: 0,
-            transition: { 
-              type: "spring", 
-              stiffness: 260, 
-              damping: 20 
-            } 
-          }}
-          exit={{ 
-            opacity: 0, 
-            scale: 0, 
-            y: 20,
-            transition: { duration: 0.3 } 
-          }}
-          whileHover={{ 
-            scale: 1.1,
-            rotate: 360,
-            backgroundColor: "#1a237e",
-            boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
-            transition: { type: "spring", stiffness: 400, damping: 10 }
-          }}
-          whileTap={{ scale: 0.9 }}
-        >
-          <svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            className="h-6 w-6" 
-            fill="none" 
-            viewBox="0 0 24 24" 
-            stroke="currentColor"
-          >
-            <path 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-              strokeWidth={2} 
-              d="M5 10l7-7m0 0l7 7m-7-7v18" 
-            />
-          </svg>
-        </motion.button>
-      )}
-    </AnimatePresence>
+    <button
+      onClick={scrollToTop}
+      className={`fixed bottom-8 right-8 bg-primary hover:bg-darkblue text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 z-50 ${
+        isVisible ? "opacity-100 visible" : "opacity-0 invisible"
+      }`}
+      aria-label="Voltar ao topo"
+    >
+      <i className="fas fa-arrow-up"></i>
+    </button>
   );
 };
 

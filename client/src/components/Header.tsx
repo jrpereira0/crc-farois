@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import logoWhite from "@/assets/images/logo-white.png";
-import TransitionLink from "./TransitionLink";
-import { motion } from "framer-motion";
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -34,56 +32,42 @@ const Header = () => {
         <div className="row items-center">
           <div className="col-6 col-md-3">
             {/* Logo */}
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 400, damping: 10 }}
-            >
-              <TransitionLink href="/" className="flex items-center">
-                <img 
-                  src={logoWhite} 
-                  alt="CRC Faróis" 
-                  className="h-8 md:h-10" 
-                />
-              </TransitionLink>
-            </motion.div>
+            <Link href="/" className="flex items-center">
+              <img 
+                src={logoWhite} 
+                alt="CRC Faróis" 
+                className="h-8 md:h-10 transition-transform hover:scale-105 duration-300" 
+              />
+            </Link>
           </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:block col-md-9">
             <nav className="flex justify-end items-center space-x-8">
-              <TransitionLink 
+              <Link 
                 href="/" 
                 className={`${location === '/' ? 'text-white font-bold' : 'text-white text-opacity-90'} hover:text-white font-medium transition-colors duration-300`}
               >
                 Home
-              </TransitionLink>
-              <TransitionLink 
+              </Link>
+              <Link 
                 href="/quem-somos" 
                 className={`${location === '/quem-somos' ? 'text-white font-bold' : 'text-white text-opacity-90'} hover:text-white font-medium transition-colors duration-300`}
               >
                 Quem Somos
-              </TransitionLink>
-              <TransitionLink 
+              </Link>
+              <Link 
                 href="/contato" 
                 className={`${location === '/contato' ? 'text-white font-bold' : 'text-white text-opacity-90'} hover:text-white font-medium transition-colors duration-300`}
               >
                 Contato
-              </TransitionLink>
-              <motion.div
-                whileHover={{ 
-                  scale: 1.05,
-                  y: -2,
-                  boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)"
-                }}
-                transition={{ type: "spring", stiffness: 400, damping: 10 }}
+              </Link>
+              <Link 
+                href="/contato" 
+                className="bg-white hover:bg-light-gray text-dark-blue font-medium py-2.5 px-5 rounded-md transition-all duration-300 shadow-custom hover:shadow-custom-hover transform hover:-translate-y-0.5"
               >
-                <TransitionLink 
-                  href="/contato" 
-                  className="bg-white hover:bg-light-gray text-dark-blue font-medium py-2.5 px-5 rounded-md shadow-custom"
-                >
-                  Solicitar Orçamento
-                </TransitionLink>
-              </motion.div>
+                Solicitar Orçamento
+              </Link>
             </nav>
           </div>
 
@@ -114,37 +98,32 @@ const Header = () => {
 
         {/* Mobile Navigation */}
         <div className={`md:hidden transform transition-all duration-300 ease-in-out ${mobileMenuOpen ? 'opacity-100 max-h-96' : 'opacity-0 max-h-0 overflow-hidden'}`}>
-          <motion.div 
-            className="px-2 pt-2 pb-3 space-y-1 mt-2 bg-white rounded-md shadow-custom"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: mobileMenuOpen ? 1 : 0, y: mobileMenuOpen ? 0 : -20 }}
-            transition={{ duration: 0.3 }}
-          >
-            <TransitionLink 
+          <div className="px-2 pt-2 pb-3 space-y-1 mt-2 bg-white rounded-md shadow-custom">
+            <Link 
               href="/" 
               className={`block px-3 py-2 rounded-md ${location === '/' ? 'text-dark-blue font-bold' : 'text-gray-black'} hover:bg-light-gray hover:text-medium-blue font-medium transition-colors duration-300`}
             >
               Home
-            </TransitionLink>
-            <TransitionLink 
+            </Link>
+            <Link 
               href="/quem-somos" 
               className={`block px-3 py-2 rounded-md ${location === '/quem-somos' ? 'text-dark-blue font-bold' : 'text-gray-black'} hover:bg-light-gray hover:text-medium-blue font-medium transition-colors duration-300`}
             >
               Quem Somos
-            </TransitionLink>
-            <TransitionLink 
+            </Link>
+            <Link 
               href="/contato" 
               className={`block px-3 py-2 rounded-md ${location === '/contato' ? 'text-dark-blue font-bold' : 'text-gray-black'} hover:bg-light-gray hover:text-medium-blue font-medium transition-colors duration-300`}
             >
               Contato
-            </TransitionLink>
-            <TransitionLink 
+            </Link>
+            <Link 
               href="/contato" 
               className="block px-3 py-2 mt-2 bg-dark-blue hover:bg-medium-blue text-white font-medium rounded-md transition-colors duration-300 text-center shadow-custom"
             >
               Solicitar Orçamento
-            </TransitionLink>
-          </motion.div>
+            </Link>
+          </div>
         </div>
       </div>
     </header>
