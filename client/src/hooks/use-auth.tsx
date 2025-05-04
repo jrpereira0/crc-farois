@@ -51,6 +51,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setError(null);
         return true;
       } else {
+        // Se tivemos um usuário antes e agora não temos, a sessão provavelmente expirou
+        if (user) {
+          setError("Sua sessão expirou. Por favor, faça login novamente.");
+          toast({
+            title: "Sessão expirada",
+            description: "Sua sessão expirou ou foi invalidada. Por favor, faça login novamente.",
+            variant: "destructive",
+          });
+        }
         setUser(null);
         return false;
       }
