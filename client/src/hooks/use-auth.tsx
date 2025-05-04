@@ -1,4 +1,4 @@
-import { createContext, useState, useContext, useEffect, ReactNode } from "react";
+import { createContext, useState, useContext, useEffect, ReactNode, useRef } from "react";
 import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 
@@ -29,18 +29,37 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
+  
+  // Usar ref para controlar se a verificação de autenticação já está em andamento
+  const isCheckingAuth = useRef(false);
+  const initialCheckComplete = useRef(false);
 
   // Verificar autenticação quando o componente é montado
   useEffect(() => {
     const initAuth = async () => {
-      await checkAuth();
-      setIsLoading(false);
+      if (!initialCheckComplete.current && !isCheckingAuth.current) {
+        isCheckingAuth.current = true;
+        try {
+          await checkAuth();
+        } finally {
+          initialCheckComplete.current = true;
+          isCheckingAuth.current = false;
+          setIsLoading(false);
+        }
+      }
     };
     initAuth();
   }, []);
 
   // Verificar se o usuário está autenticado
   const checkAuth = async (): Promise<boolean> => {
+    // Se já estiver verificando, não faça nada
+    if (isCheckingAuth.current) {
+      return !!user; // Retorna o estado atual
+    }
+    
+    isCheckingAuth.current = true;
+    
     try {
       setIsLoading(true);
       console.log("Verificando autenticação...");
@@ -82,11 +101,22 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       return false;
     } finally {
       setIsLoading(false);
+      isCheckingAuth.current = false;
     }
   };
 
+  // Referência para controlar se já existe um login em andamento
+  const isLoggingIn = useRef(false);
+
   // Login
   const login = async (username: string, password: string): Promise<boolean> => {
+    // Evitar chamadas simultâneas
+    if (isLoggingIn.current) {
+      return false;
+    }
+    
+    isLoggingIn.current = true;
+    
     try {
       setIsLoading(true);
       setError(null);
@@ -106,11 +136,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       
       if (response.ok) {
         console.log("Login bem-sucedido:", data);
+        // Atualizar o estado do usuário diretamente com os dados retornados
         setUser(data);
-        
-        // Verificar autenticação após o login para garantir que a sessão foi estabelecida
-        await checkAuth();
-        
         return true;
       } else {
         console.error("Falha no login:", data);
@@ -133,14 +160,32 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       return false;
     } finally {
       setIsLoading(false);
+      isLoggingIn.current = false;
     }
   };
 
+  // Referência para controlar se já existe um logout em andamento
+  const isLoggingOut = useRef(false);
+
   // Logout
   const logout = async (): Promise<void> => {
+    // Evitar chamadas simultâneas
+    if (isLoggingOut.current) {
+      return;
+    }
+    
+    isLoggingOut.current = true;
+    
     try {
       setIsLoading(true);
-      await fetch("/api/logout", { method: "POST" });
+      
+      console.log("Executando logout...");
+      await fetch("/api/logout", { 
+        method: "POST",
+        credentials: "include" // Importante: enviar cookies para autenticação
+      });
+      
+      console.log("Logout realizado com sucesso");
       setUser(null);
       setError(null);
       toast({
@@ -148,6 +193,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         description: "Você saiu do sistema com sucesso.",
       });
     } catch (err) {
+      console.error("Erro ao fazer logout:", err);
       setError("Erro ao tentar fazer logout");
       toast({
         title: "Erro no logout",
@@ -156,6 +202,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       });
     } finally {
       setIsLoading(false);
+      isLoggingOut.current = false;
     }
   };
 
@@ -187,18 +234,18 @@ interface ProtectedRouteProps {
 export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { user, isLoading } = useAuth();
   const [, navigate] = useLocation();
-  const [redirected, setRedirected] = useState(false);
+  const hasRedirected = useRef(false);
 
-  // Solução mais direta sem estados adicionais
   useEffect(() => {
     // Se não estiver carregando, não tiver usuário e ainda não redirecionou
-    if (!isLoading && !user && !redirected) {
-      setRedirected(true); // Marca que já redirecionou para evitar loops
+    if (!isLoading && !user && !hasRedirected.current) {
+      console.log("ProtectedRoute: Redirecionando para tela de login...");
+      hasRedirected.current = true; // Marca que já redirecionou para evitar loops
       navigate("/login");
     }
-  }, [user, isLoading, navigate, redirected]);
+  }, [user, isLoading, navigate]);
 
-  // Mostra o spinner enquanto carrega
+  // Se ainda estiver carregando, mostre um spinner
   if (isLoading) {
     return (
       <div className="min-h-screen flex justify-center items-center">
@@ -207,11 +254,17 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     );
   }
 
-  // Se não tiver usuário, não renderiza nada (o redirecionamento acontecerá pelo useEffect)
+  // Se não estiver carregando e não tiver usuário, não renderiza nada
+  // (o redirecionamento acontecerá pelo useEffect)
   if (!user) {
+    console.log("ProtectedRoute: Usuário não está autenticado");
     return null;
   }
 
+  // Resetar o flag de redirecionamento se o usuário estiver autenticado
+  hasRedirected.current = false;
+  
+  console.log("ProtectedRoute: Usuário autenticado, renderizando conteúdo protegido");
   // Só renderiza os filhos se houver um usuário autenticado
   return <>{children}</>;
 };
