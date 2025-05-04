@@ -559,16 +559,34 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
   const handleCardLinkClick = (e: React.MouseEvent) => {
     e.preventDefault();
     
-    // Determinar qual filtro aplicar com base na cor do card
-    if (color === "amber") {
-      navigate("/admin/contacts", { state: { filter: "pending" } });
-    } else if (color === "blue") {
-      navigate("/admin/contacts", { state: { filter: "in-progress" } });
-    } else if (color === "green") {
-      navigate("/admin/contacts", { state: { filter: "completed" } });
-    } else {
-      navigate(linkUrl);
-    }
+    // Navegar para a página de contatos e então aplicar o filtro com base na cor do card
+    navigate("/admin/contacts");
+    
+    // Usamos setTimeout para garantir que a navegação seja concluída antes de tentar acessar o filtro
+    setTimeout(() => {
+      const contactsSection = document.getElementById("contacts-filter-section");
+      if (contactsSection) {
+        // Rolar para a seção de contatos para garantir que o usuário veja os resultados
+        contactsSection.scrollIntoView({ behavior: "smooth" });
+        
+        // Simular o clique no botão de filtro apropriado
+        let filterButton: HTMLElement | null = null;
+        
+        if (color === "amber") {
+          filterButton = document.getElementById("filter-pending");
+        } else if (color === "blue") {
+          filterButton = document.getElementById("filter-in-progress");
+        } else if (color === "green") {
+          filterButton = document.getElementById("filter-completed");
+        } else {
+          filterButton = document.getElementById("filter-all");
+        }
+        
+        if (filterButton) {
+          filterButton.click();
+        }
+      }
+    }, 100);
   };
   
   return (
@@ -795,9 +813,10 @@ const AdminContacts = () => {
     <div>
       <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4 md:mb-6">Contatos</h2>
       
-      <div className="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
+      <div id="contacts-filter-section" className="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
         <div className="flex overflow-x-auto scrollbar-hide border-b">
           <button 
+            id="filter-all"
             onClick={() => handleTabClick("all")}
             className={`px-4 sm:px-6 py-3 text-sm font-medium transition-colors duration-200 relative whitespace-nowrap ${
               filter === "all" 
@@ -808,6 +827,7 @@ const AdminContacts = () => {
             Todos
           </button>
           <button 
+            id="filter-pending"
             onClick={() => handleTabClick("pending")}
             className={`px-4 sm:px-6 py-3 text-sm font-medium transition-colors duration-200 relative whitespace-nowrap ${
               filter === "pending" 
@@ -818,6 +838,7 @@ const AdminContacts = () => {
             Pendentes
           </button>
           <button 
+            id="filter-in-progress"
             onClick={() => handleTabClick("in-progress")}
             className={`px-4 sm:px-6 py-3 text-sm font-medium transition-colors duration-200 relative whitespace-nowrap ${
               filter === "in-progress" 
@@ -828,6 +849,7 @@ const AdminContacts = () => {
             Em andamento
           </button>
           <button 
+            id="filter-completed"
             onClick={() => handleTabClick("completed")}
             className={`px-4 sm:px-6 py-3 text-sm font-medium transition-colors duration-200 relative whitespace-nowrap ${
               filter === "completed" 
