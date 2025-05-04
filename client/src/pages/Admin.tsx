@@ -315,14 +315,14 @@ const AdminDashboard = () => {
         <DashboardCard 
           title="Total de Contatos"
           value={counts.total}
-          icon={<Inbox className="h-12 w-12 text-primary" />}
+          icon={<Inbox className="w-full h-full text-primary" />}
           linkText="Ver todos"
           linkUrl="/admin/contacts"
         />
         <DashboardCard 
           title="Pendentes"
           value={counts.pending}
-          icon={<AlertCircle className="h-12 w-12 text-amber-500" />}
+          icon={<AlertCircle className="w-full h-full text-amber-500" />}
           linkText="Ver pendentes"
           linkUrl="/admin/contacts/pending"
           color="amber"
@@ -330,7 +330,7 @@ const AdminDashboard = () => {
         <DashboardCard 
           title="Em Andamento"
           value={counts.inProgress}
-          icon={<RefreshCcw className="h-12 w-12 text-blue-500" />}
+          icon={<RefreshCcw className="w-full h-full text-blue-500" />}
           linkText="Ver em andamento"
           linkUrl="/admin/contacts/in-progress"
           color="blue"
@@ -338,7 +338,7 @@ const AdminDashboard = () => {
         <DashboardCard 
           title="Concluídos"
           value={counts.completed}
-          icon={<CheckCircle className="h-12 w-12 text-green-500" />}
+          icon={<CheckCircle className="w-full h-full text-green-500" />}
           linkText="Ver concluídos"
           linkUrl="/admin/contacts/completed"
           color="green"
@@ -412,9 +412,11 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
         <CardTitle className="text-lg font-semibold text-gray-700">{title}</CardTitle>
       </CardHeader>
       <CardContent className="pb-2">
-        <div className="flex justify-between items-center">
+        <div className="flex items-center space-x-4">
           <span className="text-3xl font-bold text-gray-800">{value}</span>
-          {icon}
+          <div className="h-8 w-8">
+            {icon}
+          </div>
         </div>
       </CardContent>
       <CardFooter className="pt-2">
