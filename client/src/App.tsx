@@ -29,10 +29,17 @@ function Router() {
     <>
       {!isAdminRoute && <Header />}
       <Switch>
-        <Route path="/" component={Home} />
+        <Route path="/admin" component={Admin} />
+        <Route path="/admin/dashboard" component={Admin} />
+        <Route path="/admin/contacts" component={Admin} />
+        <Route path="/admin/contacts/all" component={Admin} />
+        <Route path="/admin/contacts/pending" component={Admin} />
+        <Route path="/admin/contacts/in-progress" component={Admin} />
+        <Route path="/admin/contacts/completed" component={Admin} />
+        <Route path="/admin/settings" component={Admin} />
         <Route path="/quem-somos" component={QuemSomos} />
         <Route path="/contato" component={Contato} />
-        <Route path="/admin/:path*" component={Admin} />
+        <Route path="/" component={Home} />
         <Route component={NotFound} />
       </Switch>
       {!isAdminRoute && <Footer />}

@@ -29,12 +29,11 @@ const Admin = () => {
   const [location, navigate] = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Determinar a guia ativa com base na URL
-  const getActiveTab = () => {
-    if (location.startsWith("/admin/contacts")) return "contacts";
-    if (location.startsWith("/admin/settings")) return "settings";
-    return "dashboard"; // Default inclui "/admin" e "/admin/dashboard"
-  };
+  // Verificar qual página mostrar com base no URL
+  const isContactsPage = location.includes('/contacts');
+  const isSettingsPage = location === '/admin/settings';
+  const isDashboardPage = location === '/admin' || location === '/admin/dashboard' || 
+                          (!isContactsPage && !isSettingsPage);
 
   // Redirecionar para o dashboard se estiver na raiz do admin
   useEffect(() => {
@@ -61,21 +60,11 @@ const Admin = () => {
     };
   }, [isMobileMenuOpen]);
 
-  // Renderizar o componente correto com base na rota
-  const renderContent = () => {
-    if (location === "/admin/dashboard" || location === "/admin") {
-      return <AdminDashboard />;
-    }
-    
-    if (location.startsWith("/admin/contacts")) {
-      return <AdminContacts />;
-    }
-    
-    if (location === "/admin/settings") {
-      return <AdminSettings />;
-    }
-    
-    return <AdminDashboard />; // Fallback
+  // Determinar a guia ativa com base na URL
+  const getActiveTab = () => {
+    if (isContactsPage) return "contacts";
+    if (isSettingsPage) return "settings";
+    return "dashboard";
   };
 
   return (
@@ -95,7 +84,9 @@ const Admin = () => {
         {/* Conteúdo principal */}
         <main className="flex-1 overflow-y-auto py-4 px-4 md:px-6 bg-gray-50">
           <div className="container mx-auto max-w-7xl">
-            {renderContent()}
+            {isDashboardPage && <AdminDashboard />}
+            {isContactsPage && <AdminContacts />}
+            {isSettingsPage && <AdminSettings />}
           </div>
         </main>
       </div>
@@ -326,7 +317,7 @@ const AdminDashboard = () => {
           value={counts.total}
           icon={<Inbox className="h-12 w-12 text-primary" />}
           linkText="Ver todos"
-          linkUrl="/admin/contacts/all"
+          linkUrl="/admin/contacts"
         />
         <DashboardCard 
           title="Pendentes"
