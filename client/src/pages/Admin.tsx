@@ -197,16 +197,6 @@ const AdminSidebar = ({ activeTab, isMobileMenuOpen, toggleMobileMenu }: {
             Voltar ao site
           </Button>
         )}
-        {collapsed && (
-          <Button 
-            variant="secondary" 
-            className="w-10 h-10 flex items-center justify-center rounded-full font-semibold text-[#1a237e] bg-white hover:bg-white/90 border-2 border-white focus:ring-white focus:ring-offset-[#1a237e] mx-auto"
-            onClick={() => window.location.href = "/"}
-            title="Voltar ao site"
-          >
-            <HomeIcon className="h-5 w-5" />
-          </Button>
-        )}
         
         {/* Botão de colapsar */}
         <button 
@@ -220,6 +210,20 @@ const AdminSidebar = ({ activeTab, isMobileMenuOpen, toggleMobileMenu }: {
       {/* Links de navegação */}
       <nav className={`flex-1 ${collapsed ? "px-2" : "px-4"} py-6`}>
         <ul className="space-y-1">
+          <li>
+            <a 
+              href="/"
+              onClick={(e) => {
+                e.preventDefault();
+                window.location.href = '/';
+              }}
+              className={`flex items-center ${collapsed ? "justify-center px-2" : "px-4"} py-3 rounded-md transition-colors duration-200 text-white hover:bg-white/20`}
+              title={collapsed ? "Voltar ao site" : ""}
+            >
+              <HomeIcon className="h-5 w-5 flex-shrink-0" />
+              {!collapsed && <span className="ml-3">Voltar ao site</span>}
+            </a>
+          </li>
           <li>
             <a 
               href="/admin" 
