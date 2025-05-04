@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,8 +18,7 @@ const loginSchema = z.object({
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 const LoginPage = () => {
-  const navigate = useNavigate();
-  const [, setLocation] = useLocation();
+  const [, navigate] = useLocation();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -67,7 +66,7 @@ const LoginPage = () => {
         });
         // Redirecionar para o dashboard
         setTimeout(() => {
-          setLocation("/admin");
+          navigate("/admin");
         }, 1000);
       } else {
         const errorData = await response.json();
@@ -89,13 +88,9 @@ const LoginPage = () => {
   };
 
   // Verificar autenticação ao carregar a página
-  useState(() => {
-    checkAuth().then((isAuthenticated) => {
-      if (isAuthenticated) {
-        navigate("/admin");
-      }
-    });
-  });
+  useEffect(() => {
+    checkAuth();
+  }, []);
 
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);

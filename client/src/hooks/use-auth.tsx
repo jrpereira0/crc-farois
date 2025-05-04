@@ -1,4 +1,5 @@
 import { createContext, useState, useContext, useEffect, ReactNode } from "react";
+import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 
 interface User {
@@ -153,7 +154,7 @@ interface ProtectedRouteProps {
 
 export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { user, isLoading, checkAuth } = useAuth();
-  const [, setLocation] = useState("");
+  const [, setLocation] = useLocation();
   const [checking, setChecking] = useState(true);
 
   useEffect(() => {
@@ -161,12 +162,12 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
       setChecking(true);
       const isAuthenticated = await checkAuth();
       if (!isAuthenticated) {
-        window.location.href = "/login";
+        setLocation("/login");
       }
       setChecking(false);
     };
     verifyAuth();
-  }, [checkAuth]);
+  }, [checkAuth, setLocation]);
 
   if (isLoading || checking) {
     return (
@@ -177,7 +178,7 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   }
 
   if (!user) {
-    window.location.href = "/login";
+    setLocation("/login");
     return null;
   }
 
