@@ -358,6 +358,53 @@ const AdminSidebar = ({ activeTab, isMobileMenuOpen, toggleMobileMenu }: {
   );
 };
 
+// Skeleton para os cards do dashboard
+const DashboardCardSkeleton = () => {
+  return (
+    <Card className="bg-white shadow-sm transition-shadow duration-300 animate-pulse">
+      <CardHeader className="pb-2">
+        <div className="h-5 w-1/2 bg-gray-200 rounded"></div>
+      </CardHeader>
+      <CardContent className="pb-2">
+        <div className="flex items-center space-x-4">
+          <div className="h-8 w-8 bg-gray-200 rounded"></div>
+          <div className="h-8 w-12 bg-gray-200 rounded"></div>
+        </div>
+      </CardContent>
+      <CardFooter className="pt-2">
+        <div className="h-4 w-24 bg-gray-200 rounded"></div>
+      </CardFooter>
+    </Card>
+  );
+};
+
+// Skeleton para a lista de contatos recentes
+const RecentContactsListSkeleton = () => {
+  return (
+    <div className="space-y-4 divide-y divide-gray-200">
+      {[1, 2, 3].map((item) => (
+        <div key={item} className="py-4 animate-pulse">
+          <div className="flex items-start">
+            <div className="flex-1">
+              <div className="flex items-center flex-wrap mb-2">
+                <div className="h-4 w-32 bg-gray-200 rounded"></div>
+                <div className="ml-2 h-4 w-16 bg-gray-200 rounded"></div>
+              </div>
+              <div className="h-3 w-48 bg-gray-200 rounded mb-2"></div>
+              <div className="h-16 w-full bg-gray-200 rounded"></div>
+              <div className="h-3 w-24 bg-gray-200 rounded mt-2"></div>
+            </div>
+            <div className="ml-2 flex flex-col space-y-2">
+              <div className="h-8 w-8 bg-gray-200 rounded"></div>
+              <div className="h-8 w-8 bg-gray-200 rounded"></div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
 // Dashboard - Página inicial do painel administrativo
 const AdminDashboard = () => {
   const [, navigate] = useLocation();
@@ -368,8 +415,10 @@ const AdminDashboard = () => {
     completed: 0,
     unread: 0
   });
+  const [isLoading, setIsLoading] = useState(true);
   
   useEffect(() => {
+    setIsLoading(true);
     // Em um cenário real, faríamos uma chamada para a API para obter esses dados
     fetch("/api/admin/contacts")
       .then(res => res.json())
@@ -386,8 +435,16 @@ const AdminDashboard = () => {
           completed,
           unread
         });
+        
+        // Adicionar um pequeno delay para tornar a transição mais suave
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 300);
       })
-      .catch(err => console.error("Erro ao buscar estatísticas:", err));
+      .catch(err => {
+        console.error("Erro ao buscar estatísticas:", err);
+        setIsLoading(false);
+      });
   }, []);
   
   return (
@@ -396,37 +453,48 @@ const AdminDashboard = () => {
       
       {/* Cards de estatísticas */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <DashboardCard 
-          title="Total de Contatos"
-          value={counts.total}
-          icon={<Inbox className="w-full h-full text-primary" />}
-          linkText="Ver todos"
-          linkUrl="/admin/contacts"
-        />
-        <DashboardCard 
-          title="Pendentes"
-          value={counts.pending}
-          icon={<AlertCircle className="w-full h-full text-amber-500" />}
-          linkText="Ver pendentes"
-          linkUrl="/admin/contacts"
-          color="amber"
-        />
-        <DashboardCard 
-          title="Em Andamento"
-          value={counts.inProgress}
-          icon={<RefreshCcw className="w-full h-full text-blue-500" />}
-          linkText="Ver em andamento"
-          linkUrl="/admin/contacts"
-          color="blue"
-        />
-        <DashboardCard 
-          title="Concluídos"
-          value={counts.completed}
-          icon={<CheckCircle className="w-full h-full text-green-500" />}
-          linkText="Ver concluídos"
-          linkUrl="/admin/contacts"
-          color="green"
-        />
+        {isLoading ? (
+          <>
+            <DashboardCardSkeleton />
+            <DashboardCardSkeleton />
+            <DashboardCardSkeleton />
+            <DashboardCardSkeleton />
+          </>
+        ) : (
+          <>
+            <DashboardCard 
+              title="Total de Contatos"
+              value={counts.total}
+              icon={<Inbox className="w-full h-full text-primary" />}
+              linkText="Ver todos"
+              linkUrl="/admin/contacts"
+            />
+            <DashboardCard 
+              title="Pendentes"
+              value={counts.pending}
+              icon={<AlertCircle className="w-full h-full text-amber-500" />}
+              linkText="Ver pendentes"
+              linkUrl="/admin/contacts"
+              color="amber"
+            />
+            <DashboardCard 
+              title="Em Andamento"
+              value={counts.inProgress}
+              icon={<RefreshCcw className="w-full h-full text-blue-500" />}
+              linkText="Ver em andamento"
+              linkUrl="/admin/contacts"
+              color="blue"
+            />
+            <DashboardCard 
+              title="Concluídos"
+              value={counts.completed}
+              icon={<CheckCircle className="w-full h-full text-green-500" />}
+              linkText="Ver concluídos"
+              linkUrl="/admin/contacts"
+              color="green"
+            />
+          </>
+        )}
       </div>
       
       {/* Últimos contatos recebidos */}
@@ -438,7 +506,7 @@ const AdminDashboard = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <RecentContactsList />
+          {isLoading ? <RecentContactsListSkeleton /> : <RecentContactsList />}
         </CardContent>
         <CardFooter className="flex justify-center">
           <Button 
@@ -447,6 +515,7 @@ const AdminDashboard = () => {
               e.preventDefault();
               navigate("/admin/contacts");
             }}
+            disabled={isLoading}
           >
             Ver todos os contatos
           </Button>
@@ -785,6 +854,85 @@ const AdminContacts = () => {
   );
 };
 
+// Skeleton para tabela de contatos
+const ContactsTableSkeleton = () => {
+  return (
+    <div className="hidden md:block bg-white rounded-lg shadow overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Nome</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Contato</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Mensagem</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Data</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Status</th>
+              <th className="px-4 py-3 text-right text-xs font-medium text-gray-600 uppercase tracking-wider">Ações</th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {[1, 2, 3, 4, 5].map((row) => (
+              <tr key={row} className="animate-pulse">
+                <td className="px-4 py-4">
+                  <div className="h-4 w-32 bg-gray-200 rounded"></div>
+                </td>
+                <td className="px-4 py-4">
+                  <div className="h-4 w-40 bg-gray-200 rounded mb-2"></div>
+                  <div className="h-3 w-24 bg-gray-200 rounded"></div>
+                </td>
+                <td className="px-4 py-4">
+                  <div className="h-4 w-full max-w-xs bg-gray-200 rounded"></div>
+                </td>
+                <td className="px-4 py-4">
+                  <div className="h-4 w-24 bg-gray-200 rounded"></div>
+                </td>
+                <td className="px-4 py-4">
+                  <div className="h-6 w-24 bg-gray-200 rounded-full"></div>
+                </td>
+                <td className="px-4 py-4 text-right">
+                  <div className="flex flex-row justify-end space-x-2">
+                    <div className="h-8 w-8 bg-gray-200 rounded-full"></div>
+                    <div className="h-8 w-8 bg-gray-200 rounded-full"></div>
+                    <div className="h-8 w-8 bg-gray-200 rounded-full"></div>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+// Skeleton para cartões de contatos mobile
+const ContactsCardsSkeleton = () => {
+  return (
+    <div className="md:hidden space-y-4">
+      {[1, 2, 3].map((card) => (
+        <div key={card} className="bg-white shadow rounded-lg p-4 animate-pulse">
+          <div className="flex justify-between items-start mb-2">
+            <div>
+              <div className="h-5 w-32 bg-gray-200 rounded mb-2"></div>
+              <div className="h-4 w-40 bg-gray-200 rounded mb-2"></div>
+              <div className="h-4 w-24 bg-gray-200 rounded"></div>
+            </div>
+            <div className="h-6 w-20 bg-gray-200 rounded-full"></div>
+          </div>
+          <div className="h-20 w-full bg-gray-200 rounded my-3"></div>
+          <div className="flex justify-between items-center mt-2">
+            <div className="h-4 w-24 bg-gray-200 rounded"></div>
+            <div className="flex space-x-2">
+              <div className="h-8 w-8 bg-gray-200 rounded-full"></div>
+              <div className="h-8 w-8 bg-gray-200 rounded-full"></div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
 // Lista de contatos com filtro
 interface AdminContactsListProps {
   filter: "all" | "pending" | "in-progress" | "completed";
@@ -811,8 +959,11 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
     fetch(url)
       .then(res => res.json())
       .then(data => {
-        setContacts(data);
-        setLoading(false);
+        // Adicionar um pequeno delay para tornar a transição mais suave
+        setTimeout(() => {
+          setContacts(data);
+          setLoading(false);
+        }, 300);
       })
       .catch(err => {
         console.error(`Erro ao buscar contatos com filtro ${filter}:`, err);
@@ -826,6 +977,14 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
   }, [filter, toast]);
   
   const updateContactStatus = (id: number, status: string) => {
+    // Exibir um indicador de carregamento para ações específicas
+    const contactToUpdate = contacts.find(c => c.id === id);
+    if (contactToUpdate) {
+      setContacts(prev => 
+        prev.map(c => c.id === id ? { ...c, isStatusUpdating: true } : c)
+      );
+    }
+    
     fetch(`/api/admin/contacts/${id}/status`, {
       method: "PATCH",
       headers: {
@@ -840,7 +999,7 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
       .then(updatedContact => {
         setContacts(prevContacts => 
           prevContacts.map(contact => 
-            contact.id === id ? { ...contact, status: updatedContact.status } : contact
+            contact.id === id ? { ...contact, status: updatedContact.status, isStatusUpdating: false } : contact
           )
         );
         
@@ -852,6 +1011,9 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
       })
       .catch(error => {
         console.error("Erro ao atualizar status:", error);
+        setContacts(prev => 
+          prev.map(c => c.id === id ? { ...c, isStatusUpdating: false } : c)
+        );
         toast({
           title: "Erro ao atualizar status",
           description: "Não foi possível atualizar o status do contato. Tente novamente.",
@@ -862,6 +1024,11 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
   
   // Função para alternar entre lido/não lido
   const toggleReadStatus = (id: number, currentIsRead: boolean) => {
+    // Exibir um indicador de carregamento para ações específicas
+    setContacts(prev => 
+      prev.map(c => c.id === id ? { ...c, isReadUpdating: true } : c)
+    );
+    
     fetch(`/api/admin/contacts/${id}/read-status`, {
       method: "PATCH",
       headers: {
@@ -876,7 +1043,7 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
       .then(updatedContact => {
         setContacts(prevContacts => 
           prevContacts.map(contact => 
-            contact.id === id ? { ...contact, isRead: updatedContact.isRead } : contact
+            contact.id === id ? { ...contact, isRead: updatedContact.isRead, isReadUpdating: false } : contact
           )
         );
         
@@ -888,6 +1055,9 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
       })
       .catch(error => {
         console.error("Erro ao atualizar estado de leitura:", error);
+        setContacts(prev => 
+          prev.map(c => c.id === id ? { ...c, isReadUpdating: false } : c)
+        );
         toast({
           title: "Erro ao atualizar estado de leitura",
           description: "Não foi possível atualizar o estado de leitura do contato. Tente novamente.",
@@ -898,12 +1068,10 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
   
   if (loading) {
     return (
-      <div className="py-20 text-center">
-        <div className="flex justify-center mb-4">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-        </div>
-        <p className="text-gray-500">Carregando contatos...</p>
-      </div>
+      <>
+        <ContactsTableSkeleton />
+        <ContactsCardsSkeleton />
+      </>
     );
   }
   
@@ -1162,10 +1330,63 @@ const createUserSchema = z.object({
 
 type CreateUserFormValues = z.infer<typeof createUserSchema>;
 
+// Skeleton para a tabela de usuários
+const UsersTableSkeleton = () => {
+  return (
+    <div className="border rounded-lg overflow-hidden animate-pulse">
+      <table className="w-full">
+        <thead className="bg-gray-50">
+          <tr>
+            <th className="px-4 py-3 text-left">
+              <div className="h-4 w-8 bg-gray-200 rounded"></div>
+            </th>
+            <th className="px-4 py-3 text-left">
+              <div className="h-4 w-20 bg-gray-200 rounded"></div>
+            </th>
+            <th className="px-4 py-3 text-left">
+              <div className="h-4 w-16 bg-gray-200 rounded"></div>
+            </th>
+            <th className="px-4 py-3 text-left">
+              <div className="h-4 w-12 bg-gray-200 rounded"></div>
+            </th>
+            <th className="px-4 py-3 text-right">
+              <div className="h-4 w-16 bg-gray-200 rounded ml-auto"></div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {[1, 2, 3].map(row => (
+            <tr key={row} className="border-t">
+              <td className="px-4 py-3">
+                <div className="h-5 w-8 bg-gray-200 rounded"></div>
+              </td>
+              <td className="px-4 py-3">
+                <div className="h-5 w-24 bg-gray-200 rounded"></div>
+              </td>
+              <td className="px-4 py-3">
+                <div className="h-5 w-32 bg-gray-200 rounded"></div>
+              </td>
+              <td className="px-4 py-3">
+                <div className="h-6 w-20 bg-gray-200 rounded-full"></div>
+              </td>
+              <td className="px-4 py-3">
+                <div className="flex justify-end space-x-2">
+                  <div className="h-8 w-16 bg-gray-200 rounded"></div>
+                  <div className="h-8 w-16 bg-gray-200 rounded"></div>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
 // Página de configurações
 const AdminSettings = () => {
   const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); // Iniciamos com true para mostrar o skeleton
   const [users, setUsers] = useState<{id: number, username: string, name: string}[]>([]);
   const [showUserForm, setShowUserForm] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
@@ -1178,14 +1399,32 @@ const AdminSettings = () => {
 
   // Buscar usuários existentes
   const fetchUsers = async () => {
+    setIsLoading(true);
     try {
       const response = await fetch('/api/admin/users');
       if (response.ok) {
         const data = await response.json();
-        setUsers(data);
+        // Adicionar um pequeno delay para exibir o skeleton
+        setTimeout(() => {
+          setUsers(data);
+          setIsLoading(false);
+        }, 300);
+      } else {
+        setIsLoading(false);
+        toast({
+          title: 'Erro ao carregar usuários',
+          description: 'Não foi possível buscar a lista de usuários.',
+          variant: 'destructive',
+        });
       }
     } catch (error) {
       console.error('Erro ao buscar usuários:', error);
+      setIsLoading(false);
+      toast({
+        title: 'Erro ao carregar usuários',
+        description: 'Ocorreu um problema ao carregar os usuários.',
+        variant: 'destructive',
+      });
     }
   };
 
@@ -1549,7 +1788,9 @@ const AdminSettings = () => {
           <div className="space-y-4">
             <h3 className="text-lg font-medium">Usuários Existentes</h3>
             
-            {users.length === 0 ? (
+            {isLoading ? (
+              <UsersTableSkeleton />
+            ) : users.length === 0 ? (
               <p className="text-gray-500">Nenhum usuário encontrado além do seu.</p>
             ) : (
               <div className="border rounded-lg overflow-hidden">
@@ -1565,7 +1806,7 @@ const AdminSettings = () => {
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
                     {users.map(user => (
-                      <tr key={user.id} className={user.id === 1 ? "bg-gray-50" : ""}>
+                      <tr key={user.id} className={`${user.id === 1 ? "bg-gray-50" : ""} ${deletingUserId === user.id ? "opacity-50" : ""}`}>
                         <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">{user.id}</td>
                         <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">{user.username}</td>
                         <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{user.name}</td>
@@ -1579,9 +1820,17 @@ const AdminSettings = () => {
                               size="sm"
                               className="text-xs"
                               onClick={() => handleEditUser(user)}
+                              disabled={deletingUserId === user.id || isEditing}
                             >
-                              <Edit className="h-3.5 w-3.5 mr-1" />
-                              Editar
+                              {isEditing && editingUser?.id === user.id ? (
+                                <svg className="animate-spin -ml-1 mr-1 h-3.5 w-3.5 text-[#1a237e]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                              ) : (
+                                <Edit className="h-3.5 w-3.5 mr-1" />
+                              )}
+                              {isEditing && editingUser?.id === user.id ? "Salvando..." : "Editar"}
                             </Button>
                             
                             {user.id !== 1 && (
@@ -1590,7 +1839,7 @@ const AdminSettings = () => {
                                 size="sm"
                                 className="text-xs"
                                 onClick={() => handleDeleteUser(user.id, user.username)}
-                                disabled={deletingUserId === user.id}
+                                disabled={deletingUserId === user.id || (isEditing && editingUser?.id === user.id)}
                               >
                                 {deletingUserId === user.id ? (
                                   <>
