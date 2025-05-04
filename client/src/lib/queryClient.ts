@@ -12,21 +12,39 @@ export async function apiRequest(
   url: string,
   data?: unknown | undefined,
 ): Promise<Response> {
-  console.log(`[apiRequest] Iniciando ${method} para ${url}`, data);
+  // Detectar ambiente de produção para ajustes
+  const isProduction = import.meta.env.PROD;
+  
+  console.log(`[apiRequest] Iniciando ${method} para ${url} (${isProduction ? 'produção' : 'desenvolvimento'})`, data);
   
   try {
+    // Configuração básica da requisição
+    const headers: Record<string, string> = {
+      ...(data ? { "Content-Type": "application/json" } : {}),
+      // Adicionar cabeçalhos que ajudam com CORS e cookies
+      "X-Requested-With": "XMLHttpRequest",
+    };
+
+    // Em produção, podemos precisar de ajustes específicos
+    if (isProduction) {
+      headers["Cache-Control"] = "no-cache";
+    }
+    
     const res = await fetch(url, {
       method,
-      headers: data ? { "Content-Type": "application/json" } : {},
+      headers,
       body: data ? JSON.stringify(data) : undefined,
       credentials: "include",
+      // Garantir que os cookies sejam enviados mesmo cross-domain
+      mode: "cors",
+      cache: "no-store", // Importante para evitar caching incorreto
     });
 
     console.log(`[apiRequest] Resposta recebida`, {
       status: res.status,
       statusText: res.statusText,
-      headers: Object.fromEntries([...res.headers.entries()]),
-      url: res.url
+      url: res.url,
+      isAuthenticated: res.status !== 401,
     });
 
     await throwIfResNotOk(res);
@@ -43,11 +61,38 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
+    // Detectar ambiente de produção
+    const isProduction = import.meta.env.PROD;
+    
+    console.log(`[getQueryFn] Iniciando requisição para ${queryKey[0]} (${isProduction ? 'produção' : 'desenvolvimento'})`);
+    
+    // Configuração básica da requisição
+    const headers: Record<string, string> = {
+      // Adicionar cabeçalhos que ajudam com CORS e cookies
+      "X-Requested-With": "XMLHttpRequest",
+      "Accept": "application/json",
+    };
+
+    // Em produção, podemos precisar de ajustes específicos
+    if (isProduction) {
+      headers["Cache-Control"] = "no-cache";
+    }
+    
     const res = await fetch(queryKey[0] as string, {
       credentials: "include",
+      headers,
+      mode: "cors",
+      cache: "no-store",
+    });
+    
+    console.log(`[getQueryFn] Resposta recebida para ${queryKey[0]}`, {
+      status: res.status,
+      statusText: res.statusText,
+      isAuthenticated: res.status !== 401,
     });
 
     if (unauthorizedBehavior === "returnNull" && res.status === 401) {
+      console.log(`[getQueryFn] Erro 401 tratado conforme configuração (returnNull)`);
       return null;
     }
 
@@ -55,17 +100,22 @@ export const getQueryFn: <T>(options: {
     return await res.json();
   };
 
+// Detecção de ambiente
+const isProduction = import.meta.env.PROD;
+
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       queryFn: getQueryFn({ on401: "throw" }),
-      refetchInterval: false,
-      refetchOnWindowFocus: false,
-      staleTime: Infinity,
-      retry: false,
+      refetchInterval: isProduction ? 60000 : false, // Refetch a cada minuto em produção
+      refetchOnWindowFocus: isProduction, // Refetch ao focar a janela em produção
+      staleTime: isProduction ? 30000 : Infinity, // 30 segundos de stale time em produção, infinito em dev
+      retry: isProduction ? 1 : false, // Uma tentativa adicional em caso de falha em produção
+      retryDelay: 1000, // 1 segundo entre tentativas
     },
     mutations: {
-      retry: false,
+      retry: isProduction ? 1 : false, // Uma tentativa adicional em caso de falha em produção
+      retryDelay: 1000, // 1 segundo entre tentativas
     },
   },
 });

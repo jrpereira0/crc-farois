@@ -33,6 +33,14 @@ export function setupAuth(app: Express) {
     createTableIfMissing: true // Criar a tabela se não existir
   });
 
+  // Determinar se estamos em produção
+  const isProduction = process.env.NODE_ENV === "production";
+  
+  // Configurar trust proxy quando em produção
+  if (isProduction) {
+    app.set('trust proxy', 1); // trust first proxy
+  }
+
   // Configurar middleware de sessão
   app.use(
     session({
@@ -42,7 +50,9 @@ export function setupAuth(app: Express) {
       saveUninitialized: false,
       cookie: {
         maxAge: 1000 * 60 * 60 * 24, // 1 dia
-        secure: process.env.NODE_ENV === "production",
+        secure: isProduction,
+        sameSite: isProduction ? 'none' : 'lax', // importante para cookies em ambientes de cross-site
+        httpOnly: true, // Cookies só acessíveis pelo servidor
       }
     })
   );
