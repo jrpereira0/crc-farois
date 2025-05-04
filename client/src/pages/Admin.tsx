@@ -1977,20 +1977,20 @@ const AdminSettings = () => {
 
   return (
     <div>
-      <h2 className="text-3xl font-bold text-gray-800 mb-6">Configurações</h2>
+      <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4 md:mb-6">Configurações</h2>
       
       {/* Gerenciamento de Usuários Administradores */}
-      <Card className="mb-8">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+      <Card className="mb-6 md:mb-8">
+        <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0 pb-2">
           <div>
-            <CardTitle className="text-2xl">Gerenciar Usuários</CardTitle>
+            <CardTitle className="text-xl md:text-2xl">Gerenciar Usuários</CardTitle>
             <CardDescription>
               Crie e gerencie usuários administradores do sistema
             </CardDescription>
           </div>
           <Button 
             onClick={() => setShowUserForm(!showUserForm)} 
-            className="bg-[#1a237e] hover:bg-[#303f9f]"
+            className="bg-[#283593] hover:bg-[#1a237e] w-full sm:w-auto"
           >
             {showUserForm ? <X className="mr-2 h-4 w-4" /> : <UserPlus className="mr-2 h-4 w-4" />}
             {showUserForm ? "Cancelar" : "Novo Usuário"}
@@ -2049,7 +2049,7 @@ const AdminSettings = () => {
                       )}
                     />
                     
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <FormField
                         control={form.control}
                         name="password"
@@ -2089,14 +2089,26 @@ const AdminSettings = () => {
                       />
                     </div>
                     
-                    <div className="flex justify-end">
+                    <div className="flex justify-end mt-6">
                       <Button 
                         type="submit" 
-                        className="bg-[#1a237e] hover:bg-[#303f9f]"
+                        className="bg-[#283593] hover:bg-[#1a237e] w-full sm:w-auto"
                         disabled={isLoading}
                       >
-                        <ShieldAlert className="mr-2 h-4 w-4" />
-                        {isLoading ? "Criando..." : "Criar Usuário Administrador"}
+                        {isLoading ? (
+                          <>
+                            <svg className="animate-spin mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Criando...
+                          </>
+                        ) : (
+                          <>
+                            <ShieldAlert className="mr-2 h-4 w-4" />
+                            Criar Usuário Administrador
+                          </>
+                        )}
                       </Button>
                     </div>
                   </form>
@@ -2113,66 +2125,65 @@ const AdminSettings = () => {
             ) : users.length === 0 ? (
               <p className="text-gray-500">Nenhum usuário encontrado além do seu.</p>
             ) : (
-              <div className="border rounded-lg overflow-hidden">
+              <div className="border rounded-lg overflow-hidden overflow-x-auto">
                 <table className="w-full">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usuário</th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nome</th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
-                      <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+                      <th className="px-2 md:px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                      <th className="px-2 md:px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usuário</th>
+                      <th className="px-2 md:px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Nome</th>
+                      <th className="px-2 md:px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">Tipo</th>
+                      <th className="px-2 md:px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
                     {users.map(user => (
                       <tr key={user.id} className={`${user.id === 1 ? "bg-gray-50" : ""} ${deletingUserId === user.id ? "opacity-50" : ""}`}>
-                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">{user.id}</td>
-                        <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">{user.username}</td>
-                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{user.name}</td>
-                        <td className="px-4 py-3 whitespace-nowrap text-sm">
-                          <Badge className="bg-[#1a237e]">Administrador</Badge>
+                        <td className="px-2 md:px-4 py-3 text-sm text-gray-900">{user.id}</td>
+                        <td className="px-2 md:px-4 py-3 text-sm font-medium text-gray-900">{user.username}</td>
+                        <td className="px-2 md:px-4 py-3 text-sm text-gray-500 hidden sm:table-cell">{user.name}</td>
+                        <td className="px-2 md:px-4 py-3 text-sm hidden md:table-cell">
+                          <Badge className="bg-[#283593]">Administrador</Badge>
                         </td>
-                        <td className="px-4 py-3 whitespace-nowrap text-sm text-right">
-                          <div className="flex justify-end space-x-2">
+                        <td className="px-2 md:px-4 py-3 text-sm text-right">
+                          <div className="flex justify-end gap-1 md:gap-2">
                             <Button
                               variant="outline"
                               size="sm"
-                              className="text-xs"
+                              className="text-xs p-1 md:p-2"
                               onClick={() => handleEditUser(user)}
                               disabled={deletingUserId === user.id || isEditing}
                             >
                               {isEditing && editingUser?.id === user.id ? (
-                                <svg className="animate-spin -ml-1 mr-1 h-3.5 w-3.5 text-[#1a237e]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <svg className="animate-spin h-3.5 w-3.5 text-[#283593]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                 </svg>
                               ) : (
-                                <Edit className="h-3.5 w-3.5 mr-1" />
+                                <>
+                                  <Edit className="h-3.5 w-3.5 sm:mr-1" />
+                                  <span className="hidden sm:inline">Editar</span>
+                                </>
                               )}
-                              {isEditing && editingUser?.id === user.id ? "Salvando..." : "Editar"}
                             </Button>
                             
                             {user.id !== 1 && (
                               <Button
                                 variant="destructive"
                                 size="sm"
-                                className="text-xs"
+                                className="text-xs p-1 md:p-2"
                                 onClick={() => handleDeleteUser(user.id, user.username)}
                                 disabled={deletingUserId === user.id || (isEditing && editingUser?.id === user.id)}
                               >
                                 {deletingUserId === user.id ? (
-                                  <>
-                                    <svg className="animate-spin -ml-1 mr-2 h-3.5 w-3.5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                    </svg>
-                                    Excluindo...
-                                  </>
+                                  <svg className="animate-spin h-3.5 w-3.5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                  </svg>
                                 ) : (
                                   <>
-                                    <X className="h-3.5 w-3.5 mr-1" />
-                                    Excluir
+                                    <X className="h-3.5 w-3.5 sm:mr-1" />
+                                    <span className="hidden sm:inline">Excluir</span>
                                   </>
                                 )}
                               </Button>
@@ -2190,9 +2201,9 @@ const AdminSettings = () => {
       </Card>
       
       {/* Preferências de Email */}
-      <Card className="mb-8">
+      <Card className="mb-6 md:mb-8">
         <CardHeader>
-          <CardTitle>Preferências de Email</CardTitle>
+          <CardTitle className="text-lg md:text-xl">Preferências de Email</CardTitle>
           <CardDescription>
             Configure como e quando você deseja receber notificações por email sobre novos contatos
           </CardDescription>
@@ -2203,16 +2214,16 @@ const AdminSettings = () => {
       </Card>
       
       {/* Redefinição de Senha */}
-      <Card className="mb-8">
+      <Card className="mb-6 md:mb-8">
         <CardHeader>
-          <CardTitle>Segurança</CardTitle>
+          <CardTitle className="text-lg md:text-xl">Segurança</CardTitle>
           <CardDescription>
             Gerencie as configurações de segurança da sua conta de administrador
           </CardDescription>
         </CardHeader>
         <CardContent>
           <p className="text-gray-500 mb-4">Para redefinir sua senha, utilize o link abaixo:</p>
-          <Button variant="outline">
+          <Button variant="outline" className="w-full sm:w-auto">
             <Key className="mr-2 h-4 w-4" />
             Redefinir Senha
           </Button>
@@ -2221,19 +2232,19 @@ const AdminSettings = () => {
       
       {/* Modal de edição de usuário */}
       {showEditModal && editingUser && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-lg w-full max-w-md mx-4 overflow-hidden">
-            <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-              <h3 className="text-xl font-semibold text-gray-800">Editar Usuário</h3>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-lg w-full max-w-md overflow-hidden">
+            <div className="px-4 sm:px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-[#283593] text-white">
+              <h3 className="text-lg sm:text-xl font-semibold">Editar Usuário</h3>
               <button 
                 onClick={handleCancelEdit}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-white hover:bg-[#1a237e] p-1 rounded-full"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
             
-            <div className="p-6">
+            <div className="p-4 sm:p-6">
               <Form {...editForm}>
                 <form onSubmit={editForm.handleSubmit(onEditSubmit)} className="space-y-4">
                   <div className="mb-4">
@@ -2260,7 +2271,7 @@ const AdminSettings = () => {
                     )}
                   />
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <FormField
                       control={editForm.control}
                       name="password"
@@ -2300,18 +2311,19 @@ const AdminSettings = () => {
                     />
                   </div>
                   
-                  <div className="flex justify-between mt-6">
+                  <div className="flex flex-col sm:flex-row gap-3 sm:justify-between mt-6">
                     <Button 
                       type="button"
                       variant="outline"
                       onClick={handleCancelEdit}
                       disabled={isEditing}
+                      className="w-full sm:w-auto order-2 sm:order-1"
                     >
                       Cancelar
                     </Button>
                     <Button 
                       type="submit" 
-                      className="bg-[#1a237e] hover:bg-[#303f9f]"
+                      className="bg-[#283593] hover:bg-[#1a237e] w-full sm:w-auto order-1 sm:order-2"
                       disabled={isEditing}
                     >
                       {isEditing ? (
