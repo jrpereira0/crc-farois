@@ -1,4 +1,7 @@
 import type { Contact, InsertContact } from "@shared/schema";
+import { contacts } from "@shared/schema";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 
 // Interface de armazenamento com métodos necessários
 export interface IStorage {
@@ -8,36 +11,32 @@ export interface IStorage {
   getAllContacts(): Promise<Contact[]>;
 }
 
-export class MemStorage implements IStorage {
-  private contacts: Map<number, Contact>;
-  private contactCurrentId: number;
-
-  constructor() {
-    this.contacts = new Map();
-    this.contactCurrentId = 1;
-  }
-
+// Armazenamento em banco de dados
+export class DatabaseStorage implements IStorage {
   // Métodos de contato
   async getContact(id: number): Promise<Contact | undefined> {
-    return this.contacts.get(id);
+    const [contact] = await db.select().from(contacts).where(eq(contacts.id, id));
+    return contact;
   }
 
   async createContact(insertContact: InsertContact): Promise<Contact> {
-    const id = this.contactCurrentId++;
-    const now = new Date();
-    const contact: Contact = { 
-      ...insertContact, 
-      id, 
-      createdAt: now 
-    };
-    this.contacts.set(id, contact);
+    const [contact] = await db.insert(contacts)
+      .values({
+        name: insertContact.name,
+        email: insertContact.email,
+        phone: insertContact.phone,
+        message: insertContact.message
+      })
+      .returning();
+      
     console.log(`Novo contato recebido: ${contact.name} (${contact.email})`);
     return contact;
   }
 
   async getAllContacts(): Promise<Contact[]> {
-    return Array.from(this.contacts.values());
+    return await db.select().from(contacts);
   }
 }
 
-export const storage = new MemStorage();
+// Use o armazenamento em banco de dados
+export const storage = new DatabaseStorage();
