@@ -606,30 +606,27 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status, className = "" }) => 
 const AdminContacts = () => {
   const [location, navigate] = useLocation();
   
-  // Determinar a aba ativa com base na URL
-  const getActiveTab = () => {
+  // Função para determinar qual aba deve estar ativa com base na URL
+  const determineFilter = (): "all" | "pending" | "in-progress" | "completed" => {
     if (location.includes("/contacts/pending")) return "pending";
     if (location.includes("/contacts/in-progress")) return "in-progress";
     if (location.includes("/contacts/completed")) return "completed";
     return "all"; // Padrão para qualquer outra URL (incluindo /admin/contacts)
   };
   
-  const activeTab = getActiveTab();
-  
   // Estado para controlar qual lista mostrar
   const [filter, setFilter] = useState<"all" | "pending" | "in-progress" | "completed">(
-    activeTab as "all" | "pending" | "in-progress" | "completed"
+    determineFilter()
   );
   
   // Atualizar o filtro quando a localização mudar
   useEffect(() => {
-    setFilter(getActiveTab() as "all" | "pending" | "in-progress" | "completed");
+    setFilter(determineFilter());
   }, [location]);
   
-  // Manipuladores de clique para as abas
-  const handleTabClick = (tab: string) => (e: React.MouseEvent) => {
-    e.preventDefault();
-    setFilter(tab as "all" | "pending" | "in-progress" | "completed");
+  // Manipulador de clique para as abas
+  const handleTabClick = (tab: "all" | "pending" | "in-progress" | "completed") => {
+    setFilter(tab);
     
     // Atualizar a URL sem recarregar a página
     if (tab === "all") {
@@ -646,9 +643,9 @@ const AdminContacts = () => {
       <div className="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
         <div className="flex flex-wrap border-b">
           <button 
-            onClick={handleTabClick("all")}
+            onClick={() => handleTabClick("all")}
             className={`px-6 py-3 text-sm font-medium transition-colors duration-200 relative ${
-              activeTab === "all" 
+              filter === "all" 
                 ? "bg-white text-[#283593] border-b-2 border-[#283593]" 
                 : "text-gray-600 hover:text-[#283593] hover:bg-gray-50"
             }`}
@@ -656,9 +653,9 @@ const AdminContacts = () => {
             Todos
           </button>
           <button 
-            onClick={handleTabClick("pending")}
+            onClick={() => handleTabClick("pending")}
             className={`px-6 py-3 text-sm font-medium transition-colors duration-200 relative ${
-              activeTab === "pending" 
+              filter === "pending" 
                 ? "bg-white text-amber-600 border-b-2 border-amber-500" 
                 : "text-gray-600 hover:text-amber-600 hover:bg-gray-50"
             }`}
@@ -666,9 +663,9 @@ const AdminContacts = () => {
             Pendentes
           </button>
           <button 
-            onClick={handleTabClick("in-progress")}
+            onClick={() => handleTabClick("in-progress")}
             className={`px-6 py-3 text-sm font-medium transition-colors duration-200 relative ${
-              activeTab === "in-progress" 
+              filter === "in-progress" 
                 ? "bg-white text-blue-600 border-b-2 border-blue-500" 
                 : "text-gray-600 hover:text-blue-600 hover:bg-gray-50"
             }`}
@@ -676,9 +673,9 @@ const AdminContacts = () => {
             Em andamento
           </button>
           <button 
-            onClick={handleTabClick("completed")}
+            onClick={() => handleTabClick("completed")}
             className={`px-6 py-3 text-sm font-medium transition-colors duration-200 relative ${
-              activeTab === "completed" 
+              filter === "completed" 
                 ? "bg-white text-green-600 border-b-2 border-green-500" 
                 : "text-gray-600 hover:text-green-600 hover:bg-gray-50"
             }`}

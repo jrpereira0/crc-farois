@@ -32,8 +32,7 @@ function Router() {
         <Route path="/" component={Home} />
         <Route path="/quem-somos" component={QuemSomos} />
         <Route path="/contato" component={Contato} />
-        <Route path="/admin" component={Admin} />
-        <Route path="/admin/:rest*" component={Admin} />
+        <Route path="/admin/:path*" component={Admin} />
         <Route component={NotFound} />
       </Switch>
       {!isAdminRoute && <Footer />}
