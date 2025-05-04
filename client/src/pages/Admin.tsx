@@ -441,7 +441,8 @@ const RecentContactsList = () => {
     setExpandedContactId(expandedContactId === contactId ? null : contactId);
   };
   
-  const goToContactDetails = (contactId: number) => {
+  const goToContactDetails = (e: React.MouseEvent, contactId: number) => {
+    e.preventDefault();
     navigate(`/admin/contacts`);
   };
   
@@ -471,7 +472,7 @@ const RecentContactsList = () => {
         <div key={contact.id} className="py-4 hover:bg-gray-50 px-4 rounded-md -mx-4 transition-colors duration-150">
           <div className="flex items-start">
             <div className="flex-1">
-              <div className="flex items-center mb-1">
+              <div className="flex items-center flex-wrap mb-1">
                 <h4 className="font-medium text-gray-900">{contact.name}</h4>
                 {!contact.isRead && (
                   <Badge variant="default" className="ml-2 bg-[#283593] hover:bg-[#1a237e]">
@@ -481,27 +482,31 @@ const RecentContactsList = () => {
                 <StatusBadge status={contact.status} className="ml-2" />
               </div>
               <p className="text-sm text-gray-600 mb-1">{contact.email}</p>
-              <div className="relative">
-                <p className={`text-sm text-gray-700 ${expandedContactId === contact.id ? '' : 'line-clamp-1'}`}>
+              <div className="relative bg-white">
+                <p className={`text-sm text-gray-700 ${expandedContactId === contact.id ? '' : 'line-clamp-2'}`}>
                   {contact.message}
                 </p>
-                {contact.message.length > 100 && expandedContactId !== contact.id && (
-                  <div className="absolute bottom-0 right-0 bg-gradient-to-l from-gray-50 via-gray-50 pl-2">
-                    <button 
+                {contact.message.length > 100 && !expandedContactId && (
+                  <div className="absolute bottom-0 right-0 left-1/2 bg-gradient-to-l from-white via-white">
+                    <Button 
+                      variant="ghost"
+                      size="sm"
+                      className="p-0 h-6 text-xs text-[#283593] hover:text-[#1a237e] hover:bg-transparent"
                       onClick={() => toggleExpandMessage(contact.id)}
-                      className="text-xs font-medium text-[#283593] hover:text-[#1a237e]"
                     >
-                      ver mais
-                    </button>
+                      Ver mensagem
+                    </Button>
                   </div>
                 )}
                 {expandedContactId === contact.id && (
-                  <button 
+                  <Button 
+                    variant="ghost"
+                    size="sm"
+                    className="p-0 h-6 text-xs text-[#283593] hover:text-[#1a237e] hover:bg-transparent mt-1"
                     onClick={() => toggleExpandMessage(contact.id)}
-                    className="text-xs font-medium text-[#283593] hover:text-[#1a237e] mt-1"
                   >
-                    ver menos
-                  </button>
+                    Ocultar mensagem
+                  </Button>
                 )}
               </div>
               <p className="text-xs text-gray-500 mt-2">
@@ -516,22 +521,22 @@ const RecentContactsList = () => {
                 variant="ghost" 
                 size="sm" 
                 className="text-[#283593] hover:text-[#1a237e] hover:bg-[#283593]/10"
-                onClick={() => goToContactDetails(contact.id)}
+                onClick={(e) => goToContactDetails(e, contact.id)}
               >
                 <Eye className="h-4 w-4 mr-1" />
                 <span className="hidden sm:inline">Detalhes</span>
               </Button>
-              {!expandedContactId && (
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="text-[#283593] hover:text-[#1a237e] hover:bg-[#283593]/10"
-                  onClick={() => toggleExpandMessage(contact.id)}
-                >
-                  <MessageSquare className="h-4 w-4 mr-1" />
-                  <span className="hidden sm:inline">Mensagem</span>
-                </Button>
-              )}
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-[#283593] hover:text-[#1a237e] hover:bg-[#283593]/10"
+                onClick={() => toggleExpandMessage(contact.id)}
+              >
+                <MessageSquare className="h-4 w-4 mr-1" />
+                <span className="hidden sm:inline">
+                  {expandedContactId === contact.id ? "Ocultar" : "Expandir"}
+                </span>
+              </Button>
             </div>
           </div>
         </div>
@@ -666,6 +671,11 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
   const [expandedContactId, setExpandedContactId] = useState<number | null>(null);
   const { toast } = useToast();
   
+  // Função para expandir ou colapsar a mensagem
+  const toggleExpandMessage = (contactId: number) => {
+    setExpandedContactId(expandedContactId === contactId ? null : contactId);
+  };
+  
   useEffect(() => {
     let url = "/api/admin/contacts";
     if (filter !== "all") {
@@ -781,7 +791,21 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
                     <div className="text-sm text-gray-500">{contact.phone}</div>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="text-sm text-gray-700 max-w-xs truncate">{contact.message}</div>
+                    <div className="relative max-w-xs">
+                      <div className={`text-sm text-gray-700 ${expandedContactId === contact.id ? '' : 'line-clamp-2'}`}>
+                        {contact.message}
+                      </div>
+                      {contact.message.length > 80 && (
+                        <Button 
+                          variant="ghost"
+                          size="sm"
+                          className="mt-1 h-6 p-0 text-xs text-[#283593] hover:text-[#1a237e] hover:bg-transparent"
+                          onClick={() => toggleExpandMessage(contact.id)}
+                        >
+                          {expandedContactId === contact.id ? "Mostrar menos" : "Ver mais"}
+                        </Button>
+                      )}
+                    </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-600">
@@ -866,16 +890,17 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
               <div className="mb-3">
                 <p className="text-gray-500 text-sm">Mensagem:</p>
                 <div className="relative">
-                  <p className="text-gray-800 text-sm">{contact.message}</p>
-                  {/* Adicionar botão de ver mais em mensagens longas se necessário */}
-                  {contact.message.length > 100 && (
+                  <p className={`text-gray-800 text-sm ${expandedContactId === contact.id ? '' : 'line-clamp-2'}`}>
+                    {contact.message}
+                  </p>
+                  {contact.message.length > 80 && (
                     <Button 
                       variant="ghost"
                       size="sm"
                       className="mt-1 h-6 p-0 text-xs text-[#283593] hover:text-[#1a237e] hover:bg-transparent"
                       onClick={() => toggleExpandMessage(contact.id)}
                     >
-                      Visualizar mensagem completa
+                      {expandedContactId === contact.id ? "Mostrar menos" : "Visualizar mensagem completa"}
                     </Button>
                   )}
                 </div>
