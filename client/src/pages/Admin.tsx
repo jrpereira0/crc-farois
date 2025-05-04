@@ -7,6 +7,7 @@ import { Badge } from "../components/ui/badge";
 import { useToast } from "../hooks/use-toast";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import crcLogo from "../assets/crc-logo.png";
 import { 
   Users, 
   Inbox, 
@@ -173,7 +174,7 @@ const AdminSidebar = ({ activeTab, isMobileMenuOpen, toggleMobileMenu }: {
       <div className="px-6 py-4 bg-[#1a237e] border-b border-white/10 shadow-md">
         <div className="flex items-center justify-center mb-4">
           <img 
-            src="/assets/image_1746383427693.png" 
+            src={crcLogo} 
             alt="CRC Faróis" 
             className="h-auto w-full mx-auto" 
           />
