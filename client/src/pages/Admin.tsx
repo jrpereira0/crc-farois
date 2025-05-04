@@ -979,11 +979,11 @@ const ContactDetailModal: React.FC<ContactModalProps> = ({
   
   return (
     <div 
-      className="fixed inset-0 bg-black/50 z-50 flex justify-end overflow-hidden"
+      className="fixed inset-0 bg-black/50 z-50 flex justify-end"
       onClick={handleClose}
     >
       <div 
-        className={`bg-white shadow-lg w-full max-w-[90%] sm:max-w-md transition-transform duration-300 ease-in-out h-full overflow-hidden
+        className={`bg-white shadow-lg w-full max-w-[95%] sm:max-w-md transition-transform duration-300 ease-in-out transform h-full overflow-hidden
           ${isClosing ? 'translate-x-full' : 'translate-x-0'}`}
         onClick={(e) => e.stopPropagation()}
         style={{
@@ -1002,10 +1002,10 @@ const ContactDetailModal: React.FC<ContactModalProps> = ({
           </div>
           
           <div className="overflow-auto flex-1 p-4">
-            <div className="mb-6 max-w-full">
-              <div className="flex flex-wrap justify-between items-center mb-4">
-                <div className="mr-2 break-words max-w-[70%]">
-                  <h3 className="text-lg font-semibold truncate">{contact.name}</h3>
+            <div className="mb-6">
+              <div className="flex justify-between items-center mb-4">
+                <div>
+                  <h3 className="text-lg font-semibold">{contact.name}</h3>
                   <p className="text-gray-500 text-sm">{
                     contact.createdAt ? formatDistanceToNow(new Date(contact.createdAt), { 
                       addSuffix: true,
@@ -1014,7 +1014,7 @@ const ContactDetailModal: React.FC<ContactModalProps> = ({
                   }</p>
                 </div>
                 
-                <div className="mt-1">
+                <div>
                   <StatusBadge status={contact.status} className="ml-2" />
                 </div>
               </div>
