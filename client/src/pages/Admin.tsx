@@ -113,7 +113,7 @@ const Admin = () => {
         <AdminHeader toggleMobileMenu={toggleMobileMenu} />
         
         {/* Conteúdo principal */}
-        <main className="flex-1 overflow-y-auto py-4 px-4 md:px-6 bg-gray-50">
+        <main className="flex-1 overflow-y-auto py-4 px-3 md:px-6 bg-gray-50">
           <div className="container mx-auto max-w-7xl">
             {isDashboardPage && <AdminDashboard />}
             {isContactsPage && <AdminContacts />}
@@ -165,8 +165,7 @@ const AdminHeader = ({ toggleMobileMenu }: { toggleMobileMenu?: () => void }) =>
         
         <h1 className="text-xl md:text-2xl font-bold text-gray-800">Painel Administrativo</h1>
       </div>
-      <div className="flex items-center space-x-2 md:space-x-4">
-        <SearchBar />
+      <div className="flex items-center">
         <Button 
           variant="ghost" 
           className="text-gray-700 hover:bg-gray-100 hidden sm:flex"
@@ -189,21 +188,7 @@ const AdminHeader = ({ toggleMobileMenu }: { toggleMobileMenu?: () => void }) =>
   );
 };
 
-// Componente de barra de pesquisa
-const SearchBar = () => {
-  return (
-    <div className="relative">
-      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-        <Search className="h-5 w-5 text-gray-400" />
-      </div>
-      <input 
-        type="text" 
-        placeholder="Buscar..." 
-        className="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
-      />
-    </div>
-  );
-};
+// SearchBar foi removido conforme solicitado
 
 // Componente de barra lateral do painel administrativo
 const AdminSidebar = ({ activeTab, isMobileMenuOpen, toggleMobileMenu }: { 
@@ -350,7 +335,7 @@ const AdminSidebar = ({ activeTab, isMobileMenuOpen, toggleMobileMenu }: {
       
       {/* Versão mobile - menu lateral */}
       <aside 
-        className={`md:hidden fixed inset-y-0 left-0 w-64 bg-[#283593] text-white flex-col shadow-xl z-50 transform transition-transform duration-300 ease-in-out ${
+        className={`md:hidden fixed inset-y-0 left-0 w-64 bg-[#283593] text-white flex flex-col shadow-xl z-50 transform transition-transform duration-300 ease-in-out ${
           isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -451,10 +436,10 @@ const AdminDashboard = () => {
   
   return (
     <div>
-      <h2 className="text-3xl font-bold text-gray-800 mb-6">Dashboard</h2>
+      <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4 md:mb-6">Dashboard</h2>
       
       {/* Cards de estatísticas */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-8">
         {isLoading ? (
           <>
             <DashboardCardSkeleton />
@@ -998,7 +983,7 @@ const ContactDetailModal: React.FC<ContactModalProps> = ({
       onClick={handleClose}
     >
       <div 
-        className={`bg-white shadow-lg w-full max-w-md transition-transform duration-300 ease-in-out transform h-full overflow-hidden
+        className={`bg-white shadow-lg w-full max-w-[95%] sm:max-w-md transition-transform duration-300 ease-in-out transform h-full overflow-hidden
           ${isClosing ? 'translate-x-full' : 'translate-x-0'}`}
         onClick={(e) => e.stopPropagation()}
         style={{
