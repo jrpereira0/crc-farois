@@ -173,10 +173,11 @@ const AdminSidebar = ({ activeTab, isMobileMenuOpen, toggleMobileMenu }: {
       {/* Logo */}
       <div className="px-6 py-4 bg-[#1a237e] border-b border-white/10 shadow-md">
         <div className="flex items-center justify-center mb-4">
-          <div className="bg-blue-900 py-3 px-4 rounded-md shadow-sm border border-blue-800 w-full text-center">
-            <span className="text-white text-xl font-bold tracking-wider">CRC</span>
-            <span className="text-white text-lg ml-1 font-medium">Faróis</span>
-          </div>
+          <img 
+            src="/assets/LOGO BRANCA_1746383304420.png" 
+            alt="CRC Faróis" 
+            className="h-auto w-full max-w-[160px] mx-auto" 
+          />
         </div>
         <Button 
           variant="secondary" 
