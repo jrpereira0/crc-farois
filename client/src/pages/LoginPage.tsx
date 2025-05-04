@@ -69,6 +69,9 @@ const LoginPage = () => {
   const onSubmit = async (data: LoginFormValues) => {
     setIsLoading(true);
     try {
+      // Limpar quaisquer flags de redirecionamento pendentes
+      localStorage.removeItem('redirecting_from_login');
+      
       console.log("Iniciando tentativa de login com:", data.username);
       
       const success = await login(data.username, data.password);
@@ -85,8 +88,16 @@ const LoginPage = () => {
         console.log("Redirecionando para o dashboard após login bem-sucedido");
         
         // Aguardar um momento antes de navegar para garantir que o estado foi atualizado
+        // Definir flag de redirecionamento antes de navegar para evitar loops
+        localStorage.setItem('redirecting_from_login', 'true');
+        
         setTimeout(() => {
           navigate("/admin/dashboard");
+          
+          // Limpar a flag após o redirecionamento
+          setTimeout(() => {
+            localStorage.removeItem('redirecting_from_login');
+          }, 500);
         }, 300);
       } else {
         console.log("Login falhou, permanecendo na página de login");

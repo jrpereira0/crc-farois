@@ -75,7 +75,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   // Cache de autenticação para evitar requisições desnecessárias
   const lastAuthCheck = useRef<number>(0);
-  const AUTH_CACHE_TIME = 30000; // 30 segundos em ms
+  const AUTH_CACHE_TIME = 10000; // 10 segundos em ms - reduzido para minimizar problemas de cache
   
   // Verificar se o usuário está autenticado
   const checkAuth = async (): Promise<boolean> => {
@@ -87,11 +87,21 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       return !!user; // Retorna o estado atual
     }
     
-    // Se o usuário já está autenticado e a última verificação foi recente, não faz nova verificação
-    if (user && now - lastAuthCheck.current < AUTH_CACHE_TIME) {
-      console.log("Usuário já autenticado e cache válido, pulando verificação");
-      return true;
-    }
+    // Se o usuário já está autenticado e a última verificação foi recente, 
+  // ainda assim faz verificações periódicas quando o tempo excede metade do cache
+  const needsFreshCheck = now - lastAuthCheck.current > AUTH_CACHE_TIME / 2;
+    
+  if (user && !needsFreshCheck) {
+    console.log("Usuário já autenticado e cache válido, pulando verificação");
+    return true;
+  }
+    
+  // Se estamos tentando usar uma sessão que foi invalidada em outro dispositivo,
+  // vamos sempre verificar após login para garantir consistência
+  if (localStorage.getItem('needs_session_refresh') === 'true') {
+    console.log("Forçando verificação de sessão após login em outro dispositivo");
+    localStorage.removeItem('needs_session_refresh');
+  }
     
     isCheckingAuth.current = true;
     let wasLoading = isLoading;
@@ -249,6 +259,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       setIsLoading(true);
       
+      // Limpar cache e flags de redirecionamento
+      lastAuthCheck.current = 0;
+      localStorage.removeItem('redirecting_from_login');
+      
       console.log("Executando logout...");
       await fetch("/api/logout", { 
         method: "POST",
@@ -258,6 +272,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       console.log("Logout realizado com sucesso");
       setUser(null);
       setError(null);
+      
+      // Garantir que não haverá cache ao fazer logout
+      initialCheckComplete.current = false;
+      
       toast({
         title: "Logout realizado",
         description: "Você saiu do sistema com sucesso.",
