@@ -34,7 +34,8 @@ import {
   Check,
   Key,
   ShieldAlert,
-  X
+  X,
+  Edit
 } from "lucide-react";
 
 // Componente principal do painel administrativo
