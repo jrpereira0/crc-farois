@@ -289,7 +289,7 @@ const AdminSidebar = ({ activeTab, isMobileMenuOpen, toggleMobileMenu }: {
               <Users className="h-5 w-5 text-white" />
             </div>
             <div>
-              <p className="font-medium text-white">Administrador</p>
+              <p className="font-medium text-white">{user?.name || "Administrador"}</p>
               <p className="text-sm text-white/90">Logado agora</p>
             </div>
           </div>

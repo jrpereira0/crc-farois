@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Eye, EyeOff, Lock, User } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/use-auth";
 
 const loginSchema = z.object({
   username: z.string().min(1, "Nome de usuário é obrigatório"),
@@ -20,24 +21,17 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 const LoginPage = () => {
   const [, navigate] = useLocation();
   const { toast } = useToast();
+  const { login, user, isLoading: authLoading } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   // Verificar se o usuário já está autenticado
-  const checkAuth = async () => {
-    try {
-      const response = await fetch("/api/me");
-      if (response.ok) {
-        // Se já estiver autenticado, redirecionar para o dashboard
-        navigate("/admin");
-        return true;
-      }
-      return false;
-    } catch (error) {
-      return false;
+  useEffect(() => {
+    if (user) {
+      navigate("/admin");
     }
-  };
-
+  }, [user, navigate]);
+  
   // Hook form
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -50,31 +44,15 @@ const LoginPage = () => {
   const onSubmit = async (data: LoginFormValues) => {
     setIsLoading(true);
     try {
-      const response = await fetch("/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (response.ok) {
+      const success = await login(data.username, data.password);
+      
+      if (success) {
         toast({
           title: "Login bem-sucedido!",
           description: "Redirecionando para o painel administrativo...",
           variant: "default",
         });
-        // Redirecionar para o dashboard
-        setTimeout(() => {
-          navigate("/admin");
-        }, 1000);
-      } else {
-        const errorData = await response.json();
-        toast({
-          title: "Falha no login",
-          description: errorData.message || "Credenciais inválidas. Tente novamente.",
-          variant: "destructive",
-        });
+        // Redirecionar para o dashboard (será feito pelo useEffect acima)
       }
     } catch (error) {
       toast({
@@ -87,14 +65,17 @@ const LoginPage = () => {
     }
   };
 
-  // Verificar autenticação ao carregar a página
-  useEffect(() => {
-    checkAuth();
-  }, []);
-
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
   };
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex justify-center items-center bg-gray-100">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1a237e]"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 py-12">
