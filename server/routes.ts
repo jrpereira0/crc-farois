@@ -130,7 +130,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
+      console.log(`Buscando contatos com status: ${status}`);
       const contacts = await storage.getContactsByStatus(status);
+      console.log(`Encontrados ${contacts.length} contatos com status: ${status}`);
       res.status(200).json(contacts);
     } catch (error: any) {
       console.error('Erro ao buscar contatos por status:', error);

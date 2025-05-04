@@ -761,15 +761,9 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status, className = "" }) => 
 // Página de todos os contatos
 const AdminContacts = () => {
   const [location, navigate] = useLocation();
-  const locationState: any = typeof window !== 'undefined' ? window.history.state?.usr || {} : {};
   
-  // Função para determinar qual aba deve estar ativa com base na URL ou estado de navegação
+  // Função para determinar qual aba deve estar ativa com base na URL
   const determineFilter = (): "all" | "pending" | "in-progress" | "completed" => {
-    // Primeiro verificar o estado da navegação
-    if (locationState && locationState.filter) {
-      return locationState.filter;
-    }
-    
     // Caso não tenha estado, verificar pela URL
     if (location.includes("/contacts/pending")) return "pending";
     if (location.includes("/contacts/in-progress")) return "in-progress";
@@ -782,7 +776,7 @@ const AdminContacts = () => {
     determineFilter()
   );
   
-  // Atualizar o filtro quando a localização ou estado mudar
+  // Atualizar o filtro quando a localização mudar
   useEffect(() => {
     setFilter(determineFilter());
   }, [location]);
@@ -793,9 +787,9 @@ const AdminContacts = () => {
     
     // Atualizar a URL sem recarregar a página
     if (tab === "all") {
-      navigate("/admin/contacts");
+      navigate("/admin/contacts", { replace: true });
     } else {
-      navigate(`/admin/contacts/${tab}`);
+      navigate(`/admin/contacts/${tab}`, { replace: true });
     }
   };
 
@@ -938,10 +932,174 @@ interface AdminContactsListProps {
   filter: "all" | "pending" | "in-progress" | "completed";
 }
 
+// Componente de Modal de Contato
+interface ContactModalProps {
+  contact: any;
+  isOpen: boolean;
+  onClose: () => void;
+  onStatusChange: (id: number, status: string) => void;
+  onReadStatusChange: (id: number, isRead: boolean) => void;
+}
+
+const ContactDetailModal: React.FC<ContactModalProps> = ({ 
+  contact, 
+  isOpen, 
+  onClose, 
+  onStatusChange, 
+  onReadStatusChange 
+}) => {
+  const [isClosing, setIsClosing] = useState(false);
+  const [animationComplete, setAnimationComplete] = useState(!isOpen);
+  
+  useEffect(() => {
+    if (isOpen) {
+      setAnimationComplete(false);
+      document.body.style.overflow = 'hidden';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+  
+  const handleClose = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      setIsClosing(false);
+      setAnimationComplete(true);
+      onClose();
+    }, 300);
+  };
+  
+  if (!isOpen && animationComplete) return null;
+  
+  return (
+    <div 
+      className="fixed inset-0 bg-black/50 z-50 flex justify-end"
+      onClick={handleClose}
+    >
+      <div 
+        className={`bg-white shadow-lg w-full max-w-md transition-transform duration-300 ease-in-out transform h-full
+          ${isClosing ? 'translate-x-full' : 'translate-x-0'}`}
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          transform: isOpen && !isClosing ? 'translateX(0)' : 'translateX(100%)'
+        }}
+      >
+        <div className="flex flex-col h-full overflow-hidden">
+          <div className="border-b p-4 flex justify-between items-center bg-[#283593] text-white">
+            <h2 className="text-xl font-semibold">Detalhes do Contato</h2>
+            <button 
+              onClick={handleClose}
+              className="text-white hover:bg-[#1a237e] p-1 rounded-full"
+            >
+              <X className="h-6 w-6" />
+            </button>
+          </div>
+          
+          <div className="overflow-auto flex-1 p-4">
+            <div className="mb-6">
+              <div className="flex justify-between items-center mb-4">
+                <div>
+                  <h3 className="text-lg font-semibold">{contact.name}</h3>
+                  <p className="text-gray-500 text-sm">{
+                    contact.createdAt ? formatDistanceToNow(new Date(contact.createdAt), { 
+                      addSuffix: true,
+                      locale: ptBR 
+                    }) : "Data desconhecida"
+                  }</p>
+                </div>
+                
+                <div>
+                  <StatusBadge status={contact.status} className="ml-2" />
+                </div>
+              </div>
+              
+              <div className="border-t border-b py-3 mb-4">
+                <div className="flex items-center mb-2">
+                  <Mail className="h-4 w-4 text-gray-500 mr-2" />
+                  <span className="text-gray-700">{contact.email}</span>
+                </div>
+                
+                {contact.phone && (
+                  <div className="flex items-center">
+                    <Phone className="h-4 w-4 text-gray-500 mr-2" />
+                    <span className="text-gray-700">{contact.phone}</span>
+                    <button
+                      onClick={() => openWhatsApp(contact.phone)}
+                      className="ml-2 text-green-600 hover:text-green-700"
+                      title="Abrir WhatsApp"
+                    >
+                      <FaWhatsapp size={16} />
+                    </button>
+                  </div>
+                )}
+              </div>
+              
+              <div className="mb-6">
+                <h4 className="text-sm font-medium text-gray-500 mb-2">Mensagem</h4>
+                <div className="p-4 bg-gray-50 rounded-md whitespace-pre-line">
+                  {contact.message}
+                </div>
+              </div>
+            </div>
+            
+            <div className="border-t pt-4">
+              <h4 className="text-sm font-medium text-gray-500 mb-3">Status do Contato</h4>
+              <div className="flex space-x-2 mb-6">
+                <Button 
+                  variant={contact.status === "pending" ? "default" : "outline"} 
+                  size="sm" 
+                  className={contact.status === "pending" ? "bg-amber-500 hover:bg-amber-600" : "text-amber-500 border-amber-500 hover:bg-amber-50"}
+                  onClick={() => onStatusChange(contact.id, "pending")}
+                >
+                  <Clock className="h-4 w-4 mr-2" />
+                  Pendente
+                </Button>
+                <Button 
+                  variant={contact.status === "in-progress" ? "default" : "outline"} 
+                  size="sm" 
+                  className={contact.status === "in-progress" ? "bg-blue-500 hover:bg-blue-600" : "text-blue-500 border-blue-500 hover:bg-blue-50"}
+                  onClick={() => onStatusChange(contact.id, "in-progress")}
+                >
+                  <RefreshCcw className="h-4 w-4 mr-2" />
+                  Em andamento
+                </Button>
+                <Button 
+                  variant={contact.status === "completed" ? "default" : "outline"} 
+                  size="sm" 
+                  className={contact.status === "completed" ? "bg-green-500 hover:bg-green-600" : "text-green-500 border-green-500 hover:bg-green-50"}
+                  onClick={() => onStatusChange(contact.id, "completed")}
+                >
+                  <CheckCircle className="h-4 w-4 mr-2" />
+                  Concluído
+                </Button>
+              </div>
+              
+              <h4 className="text-sm font-medium text-gray-500 mb-3">Ações</h4>
+              <div className="flex space-x-2">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => onReadStatusChange(contact.id, contact.isRead)}
+                >
+                  <Eye className="h-4 w-4 mr-2" />
+                  Marcar como {contact.isRead ? "não lido" : "lido"}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
   const [contacts, setContacts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedContactId, setExpandedContactId] = useState<number | null>(null);
+  const [selectedContact, setSelectedContact] = useState<any | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { toast } = useToast();
   
   // Função para expandir ou colapsar a mensagem
