@@ -311,7 +311,7 @@ const AdminDashboard = () => {
       <h2 className="text-3xl font-bold text-gray-800 mb-6">Dashboard</h2>
       
       {/* Cards de estatísticas */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <DashboardCard 
           title="Total de Contatos"
           value={counts.total}
@@ -420,10 +420,10 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
       <CardFooter className="pt-2">
         <button
           onClick={handleCardLinkClick}
-          className={`inline-flex items-center text-sm font-medium ${getColorClass()} bg-transparent border-none cursor-pointer p-0`}
+          className={`inline-flex items-center text-sm font-medium ${getColorClass()} bg-transparent border-none cursor-pointer p-0 break-words`}
         >
           {linkText}
-          <ChevronRight className="h-4 w-4 ml-1" />
+          <ChevronRight className="h-4 w-4 ml-1 flex-shrink-0" />
         </button>
       </CardFooter>
     </Card>
@@ -530,24 +530,24 @@ const RecentContactsList = () => {
                 }) : "Data desconhecida"}
               </p>
             </div>
-            <div className="ml-4 flex flex-col space-y-2">
+            <div className="ml-2 flex flex-row sm:flex-col sm:ml-4 space-x-2 sm:space-x-0 sm:space-y-2">
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="text-[#283593] hover:text-[#1a237e] hover:bg-[#283593]/10"
+                className="text-[#283593] hover:text-[#1a237e] hover:bg-[#283593]/10 p-1 sm:p-2"
                 onClick={(e) => goToContactDetails(e, contact.id)}
               >
-                <Eye className="h-4 w-4 mr-1" />
-                <span className="hidden sm:inline">Detalhes</span>
+                <Eye className="h-4 w-4" />
+                <span className="hidden sm:inline sm:ml-1">Detalhes</span>
               </Button>
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="text-[#283593] hover:text-[#1a237e] hover:bg-[#283593]/10"
+                className="text-[#283593] hover:text-[#1a237e] hover:bg-[#283593]/10 p-1 sm:p-2"
                 onClick={() => toggleExpandMessage(contact.id)}
               >
-                <MessageSquare className="h-4 w-4 mr-1" />
-                <span className="hidden sm:inline">
+                <MessageSquare className="h-4 w-4" />
+                <span className="hidden sm:inline sm:ml-1">
                   {expandedContactId === contact.id ? "Ocultar" : "Expandir"}
                 </span>
               </Button>
@@ -632,10 +632,10 @@ const AdminContacts = () => {
       <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4 md:mb-6">Contatos</h2>
       
       <div className="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
-        <div className="flex flex-wrap border-b">
+        <div className="flex overflow-x-auto scrollbar-hide border-b">
           <button 
             onClick={() => handleTabClick("all")}
-            className={`px-6 py-3 text-sm font-medium transition-colors duration-200 relative ${
+            className={`px-4 sm:px-6 py-3 text-sm font-medium transition-colors duration-200 relative whitespace-nowrap ${
               filter === "all" 
                 ? "bg-white text-[#283593] border-b-2 border-[#283593]" 
                 : "text-gray-600 hover:text-[#283593] hover:bg-gray-50"
@@ -645,7 +645,7 @@ const AdminContacts = () => {
           </button>
           <button 
             onClick={() => handleTabClick("pending")}
-            className={`px-6 py-3 text-sm font-medium transition-colors duration-200 relative ${
+            className={`px-4 sm:px-6 py-3 text-sm font-medium transition-colors duration-200 relative whitespace-nowrap ${
               filter === "pending" 
                 ? "bg-white text-amber-600 border-b-2 border-amber-500" 
                 : "text-gray-600 hover:text-amber-600 hover:bg-gray-50"
@@ -655,7 +655,7 @@ const AdminContacts = () => {
           </button>
           <button 
             onClick={() => handleTabClick("in-progress")}
-            className={`px-6 py-3 text-sm font-medium transition-colors duration-200 relative ${
+            className={`px-4 sm:px-6 py-3 text-sm font-medium transition-colors duration-200 relative whitespace-nowrap ${
               filter === "in-progress" 
                 ? "bg-white text-blue-600 border-b-2 border-blue-500" 
                 : "text-gray-600 hover:text-blue-600 hover:bg-gray-50"
@@ -665,7 +665,7 @@ const AdminContacts = () => {
           </button>
           <button 
             onClick={() => handleTabClick("completed")}
-            className={`px-6 py-3 text-sm font-medium transition-colors duration-200 relative ${
+            className={`px-4 sm:px-6 py-3 text-sm font-medium transition-colors duration-200 relative whitespace-nowrap ${
               filter === "completed" 
                 ? "bg-white text-green-600 border-b-2 border-green-500" 
                 : "text-gray-600 hover:text-green-600 hover:bg-gray-50"
