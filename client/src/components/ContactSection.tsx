@@ -68,10 +68,20 @@ const ContactSection = () => {
 
   const contactMutation = useMutation({
     mutationFn: async (data: ContactFormValues) => {
-      const response = await apiRequest("POST", "/api/contact", data);
-      return response.json();
+      console.log('Enviando formulário para o servidor:', data);
+      try {
+        const response = await apiRequest("POST", "/api/contact", data);
+        console.log('Resposta do servidor:', response);
+        const result = await response.json();
+        console.log('Dados da resposta:', result);
+        return result;
+      } catch (error) {
+        console.error('Erro ao fazer requisição:', error);
+        throw error;
+      }
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log('Formulário enviado com sucesso:', data);
       toast({
         title: "Mensagem enviada com sucesso!",
         description: "Entraremos em contato em breve.",
@@ -80,6 +90,7 @@ const ContactSection = () => {
       setFormSubmitted(true);
     },
     onError: (error) => {
+      console.error('Erro ao enviar formulário:', error);
       toast({
         title: "Erro ao enviar mensagem",
         description: error.message || "Tente novamente mais tarde",
@@ -89,6 +100,7 @@ const ContactSection = () => {
   });
 
   function onSubmit(data: ContactFormValues) {
+    console.log('Formulário submetido:', data);
     contactMutation.mutate(data);
   }
 

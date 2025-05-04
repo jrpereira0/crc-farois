@@ -20,17 +20,23 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createContact(insertContact: InsertContact): Promise<Contact> {
-    const [contact] = await db.insert(contacts)
-      .values({
-        name: insertContact.name,
-        email: insertContact.email,
-        phone: insertContact.phone,
-        message: insertContact.message
-      })
-      .returning();
-      
-    console.log(`Novo contato recebido: ${contact.name} (${contact.email})`);
-    return contact;
+    console.log('DatabaseStorage: recebendo dados para criar contato:', insertContact);
+    try {
+      const [contact] = await db.insert(contacts)
+        .values({
+          name: insertContact.name,
+          email: insertContact.email,
+          phone: insertContact.phone,
+          message: insertContact.message
+        })
+        .returning();
+        
+      console.log('DatabaseStorage: contato criado com sucesso:', contact);
+      return contact;
+    } catch (error) {
+      console.error('DatabaseStorage: erro ao criar contato:', error);
+      throw error;
+    }
   }
 
   async getAllContacts(): Promise<Contact[]> {
