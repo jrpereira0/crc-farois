@@ -15,6 +15,16 @@ export const contacts = pgTable("contacts", {
   createdAt: timestamp("created_at").defaultNow()
 });
 
+// Definir schema de usuários usando Drizzle ORM
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
+  username: text("username").notNull().unique(),
+  password: text("password").notNull(),
+  name: text("name").notNull(),
+  isAdmin: boolean("is_admin").default(true).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // Schema para inserção usando Zod (simplificado)
 export const insertContactSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório"),
@@ -29,6 +39,22 @@ export const updateContactStatusSchema = z.object({
   isRead: z.boolean().optional()
 });
 
+// Schema para autenticação
+export const loginSchema = z.object({
+  username: z.string().min(1, "Nome de usuário é obrigatório"),
+  password: z.string().min(1, "Senha é obrigatória"),
+});
+
+// Schema para registro de usuários
+export const registerUserSchema = z.object({
+  username: z.string().min(3, "Nome de usuário deve ter pelo menos 3 caracteres"),
+  password: z.string().min(6, "Senha deve ter pelo menos 6 caracteres"),
+  name: z.string().min(1, "Nome é obrigatório"),
+});
+
 export type InsertContact = z.infer<typeof insertContactSchema>;
 export type UpdateContactStatus = z.infer<typeof updateContactStatusSchema>;
 export type Contact = typeof contacts.$inferSelect;
+export type User = typeof users.$inferSelect;
+export type LoginCredentials = z.infer<typeof loginSchema>;
+export type RegisterUser = z.infer<typeof registerUserSchema>;
