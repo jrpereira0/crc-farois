@@ -9,7 +9,7 @@ Este é o código-fonte do site institucional da CRC Faróis, uma empresa especi
 O projeto contém duas versões do site:
 
 1. **Versão React/TypeScript** - Localizada na pasta raiz, esta versão foi desenvolvida com React, TypeScript e TailwindCSS. É ideal para hospedagem em plataformas modernas que suportam Node.js.
-
+teste aqui
 ## Características da Versão HTML/CSS
 
 - Design responsivo para todos os dispositivos
