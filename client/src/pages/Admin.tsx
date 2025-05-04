@@ -57,6 +57,8 @@ const openWhatsApp = (phone: string) => {
 // Componente principal do painel administrativo
 const Admin = () => {
   const [location, navigate] = useLocation();
+  const { user, checkAuth } = useAuth();
+  const { toast } = useToast();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Verificar qual página mostrar com base no URL
@@ -65,8 +67,21 @@ const Admin = () => {
   const isDashboardPage = location === '/admin' || location === '/admin/dashboard' || 
                           (!isContactsPage && !isSettingsPage);
 
-  // Garantir que os estados sejam corretamente definidos ao carregar a página
+  // Verificar autenticação ao entrar na página
   useEffect(() => {
+    const verifyAuth = async () => {
+      const isAuthenticated = await checkAuth();
+      if (!isAuthenticated) {
+        toast({
+          title: "Sessão expirada",
+          description: "Sua sessão expirou. Por favor, faça login novamente.",
+          variant: "destructive"
+        });
+        navigate("/login");
+      }
+    };
+    
+    verifyAuth();
     console.log("URL atual:", location);
   }, [location]);
 
@@ -392,7 +407,7 @@ const RecentContactsListSkeleton = () => {
 // Dashboard - Página inicial do painel administrativo
 const AdminDashboard = () => {
   const [, navigate] = useLocation();
-  const { user } = useAuth(); // Obter o usuário autenticado
+  const { user, checkAuth } = useAuth(); // Obter o usuário autenticado e a função para verificar autenticação
   const { toast } = useToast();
   const [counts, setCounts] = useState({
     total: 0,
@@ -402,35 +417,49 @@ const AdminDashboard = () => {
     unread: 0
   });
   const [isLoading, setIsLoading] = useState(true);
+  const [errorLoading, setErrorLoading] = useState(false);
   
   useEffect(() => {
-    if (!user) {
-      console.log("Usuário não autenticado, redirecionando para login");
-      navigate("/login");
-      return;
-    }
-    
-    setIsLoading(true);
-    // Em um cenário real, faríamos uma chamada para a API para obter esses dados
-    fetch("/api/admin/contacts", {
-      credentials: 'include' // Importante: enviar cookies para autenticação
-    })
-      .then(res => {
-        if (!res.ok) {
-          if (res.status === 401) {
-            // Erro de autenticação
+    const loadDashboardData = async () => {
+      // Verificar autenticação primeiro
+      const isAuthenticated = await checkAuth();
+      if (!isAuthenticated) {
+        toast({
+          title: "Sessão expirada",
+          description: "Sua sessão expirou ou você não está autenticado. Por favor, faça login novamente.",
+          variant: "destructive"
+        });
+        navigate("/login");
+        return;
+      }
+      
+      setIsLoading(true);
+      setErrorLoading(false);
+      
+      try {
+        // Fazer a requisição com tratamento de erros adequado
+        const response = await fetch("/api/admin/contacts", {
+          credentials: 'include', // Importante: enviar cookies para autenticação
+          headers: {
+            'Accept': 'application/json'
+          }
+        });
+        
+        if (!response.ok) {
+          if (response.status === 401) {
             toast({
               title: "Sessão expirada",
               description: "Sua sessão expirou. Por favor, faça login novamente.",
               variant: "destructive"
             });
-            throw new Error("Não autenticado");
+            navigate("/login");
+            return;
           }
-          throw new Error("Erro ao buscar dados");
+          throw new Error(`Erro ${response.status}: ${response.statusText}`);
         }
-        return res.json();
-      })
-      .then(data => {
+        
+        const data = await response.json();
+        
         const pending = data.filter((c: any) => c.status === "pending").length;
         const inProgress = data.filter((c: any) => c.status === "in-progress").length;
         const completed = data.filter((c: any) => c.status === "completed").length;
@@ -448,15 +477,20 @@ const AdminDashboard = () => {
         setTimeout(() => {
           setIsLoading(false);
         }, 300);
-      })
-      .catch(err => {
+      } catch (err) {
         console.error("Erro ao buscar estatísticas:", err);
         setIsLoading(false);
+        setErrorLoading(true);
         
-        if (err.message === "Não autenticado") {
-          navigate("/login");
-        }
-      });
+        toast({
+          title: "Erro ao carregar dados",
+          description: "Não foi possível carregar os dados do dashboard. Tente novamente mais tarde.",
+          variant: "destructive"
+        });
+      }
+    };
+    
+    loadDashboardData();
   }, []);
   
   return (
@@ -632,39 +666,58 @@ const RecentContactsList = () => {
   const [expandedContactId, setExpandedContactId] = useState<number | null>(null);
   const [, navigate] = useLocation();
   const { toast } = useToast();
+  const { checkAuth } = useAuth();
   
   useEffect(() => {
-    fetch("/api/admin/contacts", {
-      credentials: 'include' // Importante: enviar cookies para autenticação
-    })
-      .then(res => {
-        if (!res.ok) {
-          if (res.status === 401) {
-            // Erro de autenticação
+    const loadRecentContacts = async () => {
+      try {
+        // Verificar autenticação primeiro
+        const isAuthenticated = await checkAuth();
+        if (!isAuthenticated) {
+          navigate("/login");
+          return;
+        }
+        
+        setLoading(true);
+        
+        const response = await fetch("/api/admin/contacts", {
+          credentials: 'include', // Importante: enviar cookies para autenticação
+          headers: {
+            'Accept': 'application/json'
+          }
+        });
+        
+        if (!response.ok) {
+          if (response.status === 401) {
             toast({
               title: "Sessão expirada",
               description: "Sua sessão expirou. Por favor, faça login novamente.",
               variant: "destructive"
             });
-            throw new Error("Não autenticado");
+            navigate("/login");
+            return;
           }
-          throw new Error("Erro ao buscar dados");
+          throw new Error(`Erro ${response.status}: ${response.statusText}`);
         }
-        return res.json();
-      })
-      .then(data => {
+        
+        const data = await response.json();
+        
         // Exibir apenas os 5 contatos mais recentes
         setContacts(data.slice(0, 5));
         setLoading(false);
-      })
-      .catch(err => {
+      } catch (err) {
         console.error("Erro ao buscar contatos recentes:", err);
         setLoading(false);
         
-        if (err.message === "Não autenticado") {
-          navigate("/login");
-        }
-      });
+        toast({
+          title: "Erro ao carregar contatos",
+          description: "Não foi possível carregar os contatos recentes. Tente novamente mais tarde.",
+          variant: "destructive"
+        });
+      }
+    };
+    
+    loadRecentContacts();
   }, []);
   
   const toggleExpandMessage = (contactId: number) => {
