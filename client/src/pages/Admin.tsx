@@ -32,6 +32,7 @@ const Admin = () => {
   const [matchesContactsInProgress] = useRoute("/admin/contacts/in-progress");
   const [matchesContactsCompleted] = useRoute("/admin/contacts/completed");
   const [matchesSettings] = useRoute("/admin/settings");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Determinar a guia ativa com base na URL
   const getActiveTab = () => {
@@ -42,25 +43,49 @@ const Admin = () => {
     return "dashboard";
   };
 
+  // Alternar menu mobile
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  // Evitar rolagem do body quando o menu mobile estiver aberto
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMobileMenuOpen]);
+
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar */}
-      <AdminSidebar activeTab={getActiveTab()} />
+      <AdminSidebar 
+        activeTab={getActiveTab()} 
+        isMobileMenuOpen={isMobileMenuOpen}
+        toggleMobileMenu={toggleMobileMenu}
+      />
       
       {/* Conteúdo principal */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col w-full overflow-hidden">
         {/* Barra superior */}
-        <AdminHeader />
+        <AdminHeader toggleMobileMenu={toggleMobileMenu} />
         
         {/* Conteúdo principal */}
-        <main className="flex-1 overflow-y-auto py-4 px-6 bg-gray-100">
-          {matchesDashboard && <AdminDashboard />}
-          {matchesContacts && <AdminContacts />}
-          {matchesContactsAll && <AdminContactsList filter="all" />}
-          {matchesContactsPending && <AdminContactsList filter="pending" />}
-          {matchesContactsInProgress && <AdminContactsList filter="in-progress" />}
-          {matchesContactsCompleted && <AdminContactsList filter="completed" />}
-          {matchesSettings && <AdminSettings />}
+        <main className="flex-1 overflow-y-auto py-4 px-4 md:px-6 bg-gray-50">
+          <div className="container mx-auto max-w-7xl">
+            {matchesDashboard && <AdminDashboard />}
+            {matchesContacts && <AdminContacts />}
+            {matchesContactsAll && <AdminContactsList filter="all" />}
+            {matchesContactsPending && <AdminContactsList filter="pending" />}
+            {matchesContactsInProgress && <AdminContactsList filter="in-progress" />}
+            {matchesContactsCompleted && <AdminContactsList filter="completed" />}
+            {matchesSettings && <AdminSettings />}
+          </div>
         </main>
       </div>
     </div>
@@ -68,17 +93,40 @@ const Admin = () => {
 };
 
 // Componente de cabeçalho do painel administrativo
-const AdminHeader = () => {
+const AdminHeader = ({ toggleMobileMenu }: { toggleMobileMenu?: () => void }) => {
   return (
-    <header className="bg-white border-b border-gray-200 py-4 px-6 flex items-center justify-between">
+    <header className="bg-white border-b border-gray-200 py-4 px-4 md:px-6 flex items-center justify-between shadow-sm sticky top-0 z-20">
       <div className="flex items-center">
-        <h1 className="text-2xl font-bold text-gray-800">Painel Administrativo</h1>
+        {/* Botão de menu para mobile */}
+        <Button 
+          variant="ghost" 
+          className="md:hidden mr-2 text-gray-700 hover:bg-gray-100"
+          onClick={toggleMobileMenu}
+          size="sm"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </Button>
+        
+        <h1 className="text-xl md:text-2xl font-bold text-gray-800">Painel Administrativo</h1>
       </div>
-      <div className="flex items-center space-x-4">
+      <div className="flex items-center space-x-2 md:space-x-4">
         <SearchBar />
-        <Button variant="ghost" className="text-darkgray hover:bg-gray-100">
+        <Button 
+          variant="ghost" 
+          className="text-gray-700 hover:bg-gray-100 hidden sm:flex"
+          size="sm"
+        >
           <LogOut className="h-5 w-5 mr-2" />
-          Sair
+          <span>Sair</span>
+        </Button>
+        <Button 
+          variant="ghost" 
+          className="text-gray-700 hover:bg-gray-100 sm:hidden"
+          size="sm"
+        >
+          <LogOut className="h-5 w-5" />
         </Button>
       </div>
     </header>
@@ -102,25 +150,37 @@ const SearchBar = () => {
 };
 
 // Componente de barra lateral do painel administrativo
-const AdminSidebar = ({ activeTab }: { activeTab: string }) => {
+const AdminSidebar = ({ activeTab, isMobileMenuOpen, toggleMobileMenu }: { 
+  activeTab: string;
+  isMobileMenuOpen?: boolean;
+  toggleMobileMenu?: () => void;
+}) => {
   const [, navigate] = useLocation();
   
-  return (
-    <aside className="w-64 bg-darkblue text-white flex flex-col">
+  const handleNavigation = (path: string) => (e: React.MouseEvent) => {
+    e.preventDefault();
+    navigate(path);
+    if (toggleMobileMenu && isMobileMenuOpen) {
+      toggleMobileMenu();
+    }
+  };
+  
+  const sidebarContent = (
+    <>
       {/* Logo */}
-      <div className="px-6 py-4 bg-secondary">
+      <div className="px-6 py-4 bg-[#1a237e] border-b border-white/10 shadow-md">
         <div className="flex items-center mb-4">
           <img 
             src="/favicon.ico" 
             alt="CRC Faróis" 
             className="w-8 h-8 mr-2" 
           />
-          <h2 className="text-xl font-bold">CRC Faróis</h2>
+          <h2 className="text-xl font-bold text-white">CRC Faróis</h2>
         </div>
         <Button 
           variant="outline" 
-          className="w-full text-white border-white hover:bg-white/10"
-          onClick={() => navigate("/")}
+          className="w-full text-white border-white hover:bg-white/20 focus:ring-white focus:ring-offset-[#1a237e]"
+          onClick={() => window.location.href = "/"}
         >
           <HomeIcon className="h-4 w-4 mr-2" />
           Voltar ao site
@@ -133,7 +193,10 @@ const AdminSidebar = ({ activeTab }: { activeTab: string }) => {
           <li>
             <a 
               href="/admin" 
-              className={`flex items-center px-4 py-3 rounded-md hover:bg-white/10 ${activeTab === "dashboard" ? "bg-white/10 font-semibold" : ""}`}
+              onClick={handleNavigation("/admin")}
+              className={`flex items-center px-4 py-3 rounded-md transition-colors duration-200 ${activeTab === "dashboard" 
+                ? "bg-white text-[#1a237e] font-semibold shadow-md" 
+                : "text-white hover:bg-white/20"}`}
             >
               <ClipboardList className="h-5 w-5 mr-3" />
               Dashboard
@@ -142,7 +205,10 @@ const AdminSidebar = ({ activeTab }: { activeTab: string }) => {
           <li>
             <a 
               href="/admin/contacts" 
-              className={`flex items-center px-4 py-3 rounded-md hover:bg-white/10 ${activeTab === "contacts" ? "bg-white/10 font-semibold" : ""}`}
+              onClick={handleNavigation("/admin/contacts")}
+              className={`flex items-center px-4 py-3 rounded-md transition-colors duration-200 ${activeTab === "contacts" 
+                ? "bg-white text-[#1a237e] font-semibold shadow-md" 
+                : "text-white hover:bg-white/20"}`}
             >
               <Inbox className="h-5 w-5 mr-3" />
               Contatos
@@ -150,8 +216,11 @@ const AdminSidebar = ({ activeTab }: { activeTab: string }) => {
           </li>
           <li>
             <a 
-              href="/admin/settings" 
-              className={`flex items-center px-4 py-3 rounded-md hover:bg-white/10 ${activeTab === "settings" ? "bg-white/10 font-semibold" : ""}`}
+              href="/admin/settings"
+              onClick={handleNavigation("/admin/settings")} 
+              className={`flex items-center px-4 py-3 rounded-md transition-colors duration-200 ${activeTab === "settings" 
+                ? "bg-white text-[#1a237e] font-semibold shadow-md" 
+                : "text-white hover:bg-white/20"}`}
             >
               <Settings className="h-5 w-5 mr-3" />
               Configurações
@@ -161,18 +230,45 @@ const AdminSidebar = ({ activeTab }: { activeTab: string }) => {
       </nav>
       
       {/* Informações do usuário */}
-      <div className="px-6 py-4 border-t border-white/10 bg-secondary/50">
+      <div className="px-6 py-4 border-t border-white/10 bg-[#303f9f] shadow-inner">
         <div className="flex items-center">
-          <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center mr-3">
-            <Users className="h-5 w-5" />
+          <div className="w-10 h-10 rounded-full bg-white/30 flex items-center justify-center mr-3 shadow-md">
+            <Users className="h-5 w-5 text-white" />
           </div>
           <div>
-            <p className="font-medium">Administrador</p>
-            <p className="text-sm text-white/70">Logado agora</p>
+            <p className="font-medium text-white">Administrador</p>
+            <p className="text-sm text-white/90">Logado agora</p>
           </div>
         </div>
       </div>
-    </aside>
+    </>
+  );
+  
+  // Versão para desktop
+  return (
+    <>
+      {/* Versão desktop */}
+      <aside className="hidden md:flex w-64 bg-[#283593] text-white flex-col shadow-xl z-10">
+        {sidebarContent}
+      </aside>
+      
+      {/* Versão mobile - overlay quando menu aberto */}
+      {isMobileMenuOpen && (
+        <div 
+          className="md:hidden fixed inset-0 bg-black/50 z-40 transition-opacity"
+          onClick={toggleMobileMenu}
+        ></div>
+      )}
+      
+      {/* Versão mobile - menu lateral */}
+      <aside 
+        className={`md:hidden fixed inset-y-0 left-0 w-64 bg-[#283593] text-white flex-col shadow-xl z-50 transform transition-transform duration-300 ease-in-out ${
+          isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
+        {sidebarContent}
+      </aside>
+    </>
   );
 };
 
@@ -430,18 +526,27 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status, className = "" }) => 
 // Página de todos os contatos
 const AdminContacts = () => {
   const [, navigate] = useLocation();
+  const [activeTab, setActiveTab] = useState("all");
   
+  // Para navegação sem refresh, apenas atualizando o estado local
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    navigate(`/admin/contacts/${value}`, { replace: true });
+  };
+
   return (
     <div>
-      <h2 className="text-3xl font-bold text-gray-800 mb-6">Contatos</h2>
+      <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4 md:mb-6">Contatos</h2>
       
-      <Tabs defaultValue="all" className="w-full" onValueChange={(value) => navigate(`/admin/contacts/${value}`)}>
-        <TabsList className="mb-6">
-          <TabsTrigger value="all">Todos</TabsTrigger>
-          <TabsTrigger value="pending">Pendentes</TabsTrigger>
-          <TabsTrigger value="in-progress">Em andamento</TabsTrigger>
-          <TabsTrigger value="completed">Concluídos</TabsTrigger>
-        </TabsList>
+      <Tabs defaultValue="all" value={activeTab} className="w-full" onValueChange={handleTabChange}>
+        <div className="overflow-x-auto -mx-4 px-4">
+          <TabsList className="mb-6 w-auto inline-flex">
+            <TabsTrigger value="all">Todos</TabsTrigger>
+            <TabsTrigger value="pending">Pendentes</TabsTrigger>
+            <TabsTrigger value="in-progress">Em andamento</TabsTrigger>
+            <TabsTrigger value="completed">Concluídos</TabsTrigger>
+          </TabsList>
+        </div>
         
         <TabsContent value="all">
           <AdminContactsList filter="all" />
@@ -550,89 +655,168 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
   }
   
   return (
-    <div className="bg-white rounded-lg shadow">
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nome</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contato</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mensagem</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {contacts.map((contact) => (
-              <tr key={contact.id} className={`hover:bg-gray-50 ${!contact.isRead ? 'bg-blue-50' : ''}`}>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center">
-                    <div>
-                      <div className="text-sm font-medium text-gray-900">{contact.name}</div>
-                      {!contact.isRead && (
-                        <Badge variant="default" className="mt-1 text-xs bg-primary">
-                          Não lido
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="text-sm text-gray-900">{contact.email}</div>
-                  <div className="text-sm text-gray-500">{contact.phone}</div>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="text-sm text-gray-500 max-w-xs truncate">{contact.message}</div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-500">
-                    {contact.createdAt ? formatDistanceToNow(new Date(contact.createdAt), { 
-                      addSuffix: true,
-                      locale: ptBR 
-                    }) : "Data desconhecida"}
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <StatusBadge status={contact.status} />
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <div className="flex space-x-2">
-                    <Button 
-                      variant={contact.status === "pending" ? "default" : "outline"} 
-                      size="sm" 
-                      className={contact.status === "pending" ? "bg-amber-500 hover:bg-amber-600" : "text-amber-500 border-amber-500 hover:bg-amber-50"}
-                      onClick={() => updateContactStatus(contact.id, "pending")}
-                    >
-                      <Clock className="h-4 w-4 mr-1" />
-                      Pendente
-                    </Button>
-                    <Button 
-                      variant={contact.status === "in-progress" ? "default" : "outline"} 
-                      size="sm" 
-                      className={contact.status === "in-progress" ? "bg-blue-500 hover:bg-blue-600" : "text-blue-500 border-blue-500 hover:bg-blue-50"}
-                      onClick={() => updateContactStatus(contact.id, "in-progress")}
-                    >
-                      <RefreshCcw className="h-4 w-4 mr-1" />
-                      Andamento
-                    </Button>
-                    <Button 
-                      variant={contact.status === "completed" ? "default" : "outline"} 
-                      size="sm" 
-                      className={contact.status === "completed" ? "bg-green-500 hover:bg-green-600" : "text-green-500 border-green-500 hover:bg-green-50"}
-                      onClick={() => updateContactStatus(contact.id, "completed")}
-                    >
-                      <CheckCircle className="h-4 w-4 mr-1" />
-                      Concluído
-                    </Button>
-                  </div>
-                </td>
+    <>
+      {/* Versão para desktop */}
+      <div className="hidden md:block bg-white rounded-lg shadow">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Nome</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Contato</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Mensagem</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Data</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Status</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Ações</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {contacts.map((contact) => (
+                <tr key={contact.id} className={`hover:bg-gray-50 ${!contact.isRead ? 'bg-blue-50' : ''}`}>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center">
+                      <div>
+                        <div className="text-sm font-medium text-gray-900">{contact.name}</div>
+                        {!contact.isRead && (
+                          <Badge variant="default" className="mt-1 text-xs bg-[#283593] hover:bg-[#1a237e]">
+                            Não lido
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="text-sm text-gray-900">{contact.email}</div>
+                    <div className="text-sm text-gray-500">{contact.phone}</div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="text-sm text-gray-700 max-w-xs truncate">{contact.message}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-600">
+                      {contact.createdAt ? formatDistanceToNow(new Date(contact.createdAt), { 
+                        addSuffix: true,
+                        locale: ptBR 
+                      }) : "Data desconhecida"}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <StatusBadge status={contact.status} />
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <div className="flex space-x-2">
+                      <Button 
+                        variant={contact.status === "pending" ? "default" : "outline"} 
+                        size="sm" 
+                        className={contact.status === "pending" ? "bg-amber-500 hover:bg-amber-600" : "text-amber-500 border-amber-500 hover:bg-amber-50"}
+                        onClick={() => updateContactStatus(contact.id, "pending")}
+                      >
+                        <Clock className="h-4 w-4 mr-1" />
+                        Pendente
+                      </Button>
+                      <Button 
+                        variant={contact.status === "in-progress" ? "default" : "outline"} 
+                        size="sm" 
+                        className={contact.status === "in-progress" ? "bg-blue-500 hover:bg-blue-600" : "text-blue-500 border-blue-500 hover:bg-blue-50"}
+                        onClick={() => updateContactStatus(contact.id, "in-progress")}
+                      >
+                        <RefreshCcw className="h-4 w-4 mr-1" />
+                        Andamento
+                      </Button>
+                      <Button 
+                        variant={contact.status === "completed" ? "default" : "outline"} 
+                        size="sm" 
+                        className={contact.status === "completed" ? "bg-green-500 hover:bg-green-600" : "text-green-500 border-green-500 hover:bg-green-50"}
+                        onClick={() => updateContactStatus(contact.id, "completed")}
+                      >
+                        <CheckCircle className="h-4 w-4 mr-1" />
+                        Concluído
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
+      
+      {/* Versão mobile */}
+      <div className="md:hidden space-y-4">
+        {contacts.map((contact) => (
+          <Card 
+            key={contact.id} 
+            className={`overflow-hidden ${!contact.isRead ? 'border-l-4 border-l-[#283593]' : ''}`}
+          >
+            <CardContent className="p-4">
+              <div className="flex justify-between items-start mb-2">
+                <div>
+                  <h3 className="font-medium text-gray-900">{contact.name}</h3>
+                  {!contact.isRead && (
+                    <Badge variant="default" className="mt-1 text-xs bg-[#283593] hover:bg-[#1a237e]">
+                      Não lido
+                    </Badge>
+                  )}
+                </div>
+                <StatusBadge status={contact.status} />
+              </div>
+              
+              <div className="grid grid-cols-2 gap-2 mb-3 text-sm">
+                <div>
+                  <p className="text-gray-500">Email:</p>
+                  <p className="text-gray-800 break-all">{contact.email}</p>
+                </div>
+                <div>
+                  <p className="text-gray-500">Telefone:</p>
+                  <p className="text-gray-800">{contact.phone}</p>
+                </div>
+              </div>
+              
+              <div className="mb-3">
+                <p className="text-gray-500 text-sm">Mensagem:</p>
+                <p className="text-gray-800 text-sm">{contact.message}</p>
+              </div>
+              
+              <div className="flex justify-between items-center">
+                <div className="text-xs text-gray-500">
+                  {contact.createdAt ? formatDistanceToNow(new Date(contact.createdAt), { 
+                    addSuffix: true,
+                    locale: ptBR 
+                  }) : "Data desconhecida"}
+                </div>
+                
+                <div className="flex space-x-1">
+                  <Button 
+                    variant={contact.status === "pending" ? "default" : "outline"} 
+                    size="sm" 
+                    className={contact.status === "pending" ? "bg-amber-500 hover:bg-amber-600 px-2" : "text-amber-500 border-amber-500 hover:bg-amber-50 px-2"} 
+                    onClick={() => updateContactStatus(contact.id, "pending")}
+                  >
+                    <Clock className="h-4 w-4" />
+                  </Button>
+                  <Button 
+                    variant={contact.status === "in-progress" ? "default" : "outline"} 
+                    size="sm" 
+                    className={contact.status === "in-progress" ? "bg-blue-500 hover:bg-blue-600 px-2" : "text-blue-500 border-blue-500 hover:bg-blue-50 px-2"}
+                    onClick={() => updateContactStatus(contact.id, "in-progress")}
+                  >
+                    <RefreshCcw className="h-4 w-4" />
+                  </Button>
+                  <Button 
+                    variant={contact.status === "completed" ? "default" : "outline"} 
+                    size="sm" 
+                    className={contact.status === "completed" ? "bg-green-500 hover:bg-green-600 px-2" : "text-green-500 border-green-500 hover:bg-green-50 px-2"}
+                    onClick={() => updateContactStatus(contact.id, "completed")}
+                  >
+                    <CheckCircle className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </>
   );
 };
 
