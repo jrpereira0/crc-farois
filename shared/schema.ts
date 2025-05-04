@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, timestamp, boolean } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 
 // Definir schema de contato usando Drizzle ORM
@@ -10,6 +10,8 @@ export const contacts = pgTable("contacts", {
   phone: text("phone").notNull(),
   message: text("message").notNull(),
   emailSent: text("email_sent").default("pending"),
+  status: text("status").default("pending").notNull(), // pending, in-progress, completed
+  isRead: boolean("is_read").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow()
 });
 
@@ -21,5 +23,12 @@ export const insertContactSchema = z.object({
   message: z.string().min(1, "Mensagem é obrigatória")
 });
 
+// Schema para atualização de status
+export const updateContactStatusSchema = z.object({
+  status: z.enum(["pending", "in-progress", "completed"]),
+  isRead: z.boolean().optional()
+});
+
 export type InsertContact = z.infer<typeof insertContactSchema>;
+export type UpdateContactStatus = z.infer<typeof updateContactStatusSchema>;
 export type Contact = typeof contacts.$inferSelect;

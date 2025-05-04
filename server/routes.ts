@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertContactSchema } from "@shared/schema";
+import { insertContactSchema, updateContactStatusSchema } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Rota para processar o envio do formulário de contato
@@ -28,6 +28,105 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error('Erro ao processar formulário:', error);
       res.status(400).json({
         message: "Erro ao processar o formulário",
+        error: error.message
+      });
+    }
+  });
+
+  // Rotas para o painel administrativo
+
+  // Listar todos os contatos
+  app.get("/api/admin/contacts", async (req, res) => {
+    try {
+      const contacts = await storage.getAllContacts();
+      res.status(200).json(contacts);
+    } catch (error: any) {
+      console.error('Erro ao buscar contatos:', error);
+      res.status(500).json({
+        message: "Erro ao buscar contatos",
+        error: error.message
+      });
+    }
+  });
+
+  // Buscar contato por ID
+  app.get("/api/admin/contacts/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({
+          message: "ID inválido"
+        });
+      }
+
+      const contact = await storage.getContact(id);
+      if (!contact) {
+        return res.status(404).json({
+          message: "Contato não encontrado"
+        });
+      }
+
+      // Marcar como lido se ainda não foi lido
+      if (!contact.isRead) {
+        await storage.markContactAsRead(id);
+      }
+
+      res.status(200).json(contact);
+    } catch (error: any) {
+      console.error('Erro ao buscar contato:', error);
+      res.status(500).json({
+        message: "Erro ao buscar contato",
+        error: error.message
+      });
+    }
+  });
+
+  // Atualizar status do contato
+  app.patch("/api/admin/contacts/:id/status", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({
+          message: "ID inválido"
+        });
+      }
+
+      // Validar dados de atualização
+      const validatedData = updateContactStatusSchema.parse(req.body);
+      
+      const updatedContact = await storage.updateContactStatus(id, validatedData);
+      if (!updatedContact) {
+        return res.status(404).json({
+          message: "Contato não encontrado"
+        });
+      }
+
+      res.status(200).json(updatedContact);
+    } catch (error: any) {
+      console.error('Erro ao atualizar status do contato:', error);
+      res.status(500).json({
+        message: "Erro ao atualizar status do contato",
+        error: error.message
+      });
+    }
+  });
+
+  // Buscar contatos por status
+  app.get("/api/admin/contacts/status/:status", async (req, res) => {
+    try {
+      const status = req.params.status;
+      if (!["pending", "in-progress", "completed"].includes(status)) {
+        return res.status(400).json({
+          message: "Status inválido"
+        });
+      }
+
+      const contacts = await storage.getContactsByStatus(status);
+      res.status(200).json(contacts);
+    } catch (error: any) {
+      console.error('Erro ao buscar contatos por status:', error);
+      res.status(500).json({
+        message: "Erro ao buscar contatos por status",
         error: error.message
       });
     }
