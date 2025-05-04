@@ -27,16 +27,35 @@ const LoginPage = () => {
 
   // Verificar se o usuário já está autenticado
   useEffect(() => {
+    // Guardar último estado da tela para evitar ciclos
+    const redirectionInProgress = localStorage.getItem('redirecting_from_login');
+    
     // Teste de conexão para debug
-    console.log("Verificando estado de autenticação na página de login");
+    console.log("Verificando estado de autenticação na página de login", { user, authLoading, redirectionInProgress });
+
+    // Se já estiver redirecionando, não faz nada para evitar ciclos
+    if (redirectionInProgress === 'true') {
+      return;
+    }
 
     if (user) {
       console.log("Usuário já autenticado, redirecionando para o dashboard");
+      
+      // Definir flag para evitar ciclos de redirecionamento
+      localStorage.setItem('redirecting_from_login', 'true');
+      
+      // Redirecionar e limpar flag depois
       navigate("/admin/dashboard");
-    } else {
+      
+      // Limpar a flag após o redirecionamento
+      setTimeout(() => {
+        localStorage.removeItem('redirecting_from_login');
+      }, 1000);
+    } else if (!authLoading) {
+      // Só loga quando sabemos que não está carregando
       console.log("Usuário não autenticado, permanecendo na página de login");
     }
-  }, [user, navigate]);
+  }, [user, navigate, authLoading]);
   
   // Hook form
   const form = useForm<LoginFormValues>({

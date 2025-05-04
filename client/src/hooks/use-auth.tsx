@@ -34,11 +34,27 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const isCheckingAuth = useRef(false);
   const initialCheckComplete = useRef(false);
 
-  // Verificar autenticação quando o componente é montado
+  // Verificar autenticação quando o componente é montado com debounce
   useEffect(() => {
+    // Tempo mínimo entre verificações de autenticação (em ms)
+    const AUTH_DEBOUNCE_TIME = 2000; 
+    let lastCheck = 0;
+    
     const initAuth = async () => {
+      const now = Date.now();
+      
+      // Verifica se já passou tempo suficiente desde a última verificação
+      if (now - lastCheck < AUTH_DEBOUNCE_TIME) {
+        console.log("Verificação de autenticação ignorada (debounce)");
+        return;
+      }
+      
+      // Se não está verificando e não completou a verificação inicial
       if (!initialCheckComplete.current && !isCheckingAuth.current) {
+        lastCheck = now;
         isCheckingAuth.current = true;
+        console.log("Executando verificação inicial de autenticação");
+        
         try {
           await checkAuth();
         } finally {
@@ -46,61 +62,115 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           isCheckingAuth.current = false;
           setIsLoading(false);
         }
+      } else {
+        // Se já completou a verificação inicial, não precisa setLoading para false novamente
+        if (initialCheckComplete.current && isLoading) {
+          setIsLoading(false);
+        }
       }
     };
+    
     initAuth();
   }, []);
 
+  // Cache de autenticação para evitar requisições desnecessárias
+  const lastAuthCheck = useRef<number>(0);
+  const AUTH_CACHE_TIME = 30000; // 30 segundos em ms
+  
   // Verificar se o usuário está autenticado
   const checkAuth = async (): Promise<boolean> => {
+    const now = Date.now();
+    
     // Se já estiver verificando, não faça nada
     if (isCheckingAuth.current) {
+      console.log("Verificação em andamento, retornando estado atual");
       return !!user; // Retorna o estado atual
     }
     
+    // Se o usuário já está autenticado e a última verificação foi recente, não faz nova verificação
+    if (user && now - lastAuthCheck.current < AUTH_CACHE_TIME) {
+      console.log("Usuário já autenticado e cache válido, pulando verificação");
+      return true;
+    }
+    
     isCheckingAuth.current = true;
+    let wasLoading = isLoading;
     
     try {
-      setIsLoading(true);
+      // Só altera estado de loading se já não estiver carregando
+      if (!wasLoading) {
+        setIsLoading(true);
+      }
+      
       console.log("Verificando autenticação...");
       
-      const response = await fetch("/api/me", {
-        credentials: "include", // Importante: enviar cookies para autenticação
-        headers: {
-          'Accept': 'application/json'
-        }
-      });
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // Timeout de 10s
       
-      if (response.ok) {
-        const userData = await response.json();
-        console.log("Autenticação verificada com sucesso:", userData);
-        setUser(userData);
-        setError(null);
-        return true;
-      } else {
-        // Se tivemos um usuário antes e agora não temos, a sessão provavelmente expirou
-        if (user) {
-          console.log("Sessão expirada ou inválida");
-          setError("Sua sessão expirou. Por favor, faça login novamente.");
-          toast({
-            title: "Sessão expirada",
-            description: "Sua sessão expirou ou foi invalidada. Por favor, faça login novamente.",
-            variant: "destructive",
-          });
-        } else {
-          console.log("Usuário não autenticado");
-        }
+      try {
+        const response = await fetch("/api/me", {
+          credentials: "include", // Importante: enviar cookies para autenticação
+          headers: {
+            'Accept': 'application/json'
+          },
+          signal: controller.signal
+        });
         
-        setUser(null);
-        return false;
+        clearTimeout(timeoutId);
+        
+        if (response.ok) {
+          const userData = await response.json();
+          console.log("Autenticação verificada com sucesso:", userData);
+          
+          // Atualizar o timestamp da última verificação bem-sucedida
+          lastAuthCheck.current = now;
+          
+          // Só atualiza o estado se mudou
+          if (!user || user.id !== userData.id) {
+            setUser(userData);
+          }
+          
+          if (error) setError(null);
+          
+          return true;
+        } else {
+          // Se tivemos um usuário antes e agora não temos, a sessão provavelmente expirou
+          if (user) {
+            console.log("Sessão expirada ou inválida");
+            setError("Sua sessão expirou. Por favor, faça login novamente.");
+            toast({
+              title: "Sessão expirada",
+              description: "Sua sessão expirou ou foi invalidada. Por favor, faça login novamente.",
+              variant: "destructive",
+            });
+          } else {
+            console.log("Usuário não autenticado");
+          }
+          
+          if (user) setUser(null);
+          return false;
+        }
+      } catch (fetchError) {
+        // Limpar o timeout se houver erro
+        clearTimeout(timeoutId);
+        throw fetchError;
       }
     } catch (err) {
-      console.error("Erro ao verificar autenticação:", err);
-      setUser(null);
+      if ((err as Error)?.name === 'AbortError') {
+        console.warn("Verificação de autenticação abortada por timeout");
+      } else {
+        console.error("Erro ao verificar autenticação:", err);
+      }
+      
+      // Não alteramos o estado do usuário em caso de erro de rede
+      // apenas reportamos o erro
       setError("Erro ao verificar autenticação");
-      return false;
+      return !!user; // Mantém o estado atual em caso de erro
     } finally {
-      setIsLoading(false);
+      // Só altera estado de loading se ele foi alterado por esta verificação
+      if (!wasLoading) {
+        setIsLoading(false);
+      }
       isCheckingAuth.current = false;
     }
   };
@@ -232,15 +302,35 @@ interface ProtectedRouteProps {
 }
 
 export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, checkAuth } = useAuth();
   const [, navigate] = useLocation();
   const hasRedirected = useRef(false);
+  const authChecked = useRef(false);
 
   useEffect(() => {
-    // Se não estiver carregando, não tiver usuário e ainda não redirecionou
+    // Para evitar múltiplas verificações desnecessárias
+    const verifyAuth = async () => {
+      if (!authChecked.current && !isLoading) {
+        authChecked.current = true;
+        // Verificar autenticação apenas uma vez por montagem do componente
+        const isAuthenticated = await checkAuth();
+        
+        if (!isAuthenticated && !hasRedirected.current) {
+          console.log("ProtectedRoute: Redirecionando para tela de login após verificação");
+          hasRedirected.current = true;
+          navigate("/login");
+        }
+      }
+    };
+    
+    verifyAuth();
+  }, []);
+
+  // Se não estiver carregando, não tiver usuário e ainda não redirecionou (via verificação manual)
+  useEffect(() => {
     if (!isLoading && !user && !hasRedirected.current) {
-      console.log("ProtectedRoute: Redirecionando para tela de login...");
-      hasRedirected.current = true; // Marca que já redirecionou para evitar loops
+      console.log("ProtectedRoute: Redirecionando para tela de login (verificação de estado)");
+      hasRedirected.current = true;
       navigate("/login");
     }
   }, [user, isLoading, navigate]);
