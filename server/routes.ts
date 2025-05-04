@@ -2,14 +2,45 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertContactSchema, updateContactStatusSchema } from "@shared/schema";
-import { setupAuth, createDefaultAdminIfNeeded } from "./auth";
+import { setupAuth, resetAdminPassword } from "./auth";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Configurar autenticação
   setupAuth(app);
   
-  // Criar usuário admin padrão se necessário
-  await createDefaultAdminIfNeeded();
+  // Criar ou resetar senha do admin (padrão: admin123)
+  await resetAdminPassword('admin123');
+  
+  // Rota para redefinir a senha do administrador (protegida, apenas admins podem acessar)
+  app.post("/api/admin/reset-password", async (req, res) => {
+    try {
+      const { password } = req.body;
+      
+      if (!password || typeof password !== 'string' || password.length < 6) {
+        return res.status(400).json({
+          message: "Senha inválida. A senha deve ter pelo menos 6 caracteres."
+        });
+      }
+      
+      const success = await resetAdminPassword(password);
+      
+      if (success) {
+        return res.status(200).json({
+          message: "Senha do administrador redefinida com sucesso."
+        });
+      } else {
+        return res.status(500).json({
+          message: "Erro ao redefinir a senha do administrador."
+        });
+      }
+    } catch (error: any) {
+      console.error('Erro ao redefinir senha do administrador:', error);
+      res.status(500).json({
+        message: "Erro ao redefinir senha",
+        error: error.message
+      });
+    }
+  });
   // Rota para processar o envio do formulário de contato
   app.post("/api/contact", async (req, res) => {
     try {

@@ -29,7 +29,8 @@ export function setupAuth(app: Express) {
   const PostgresStore = connectPg(session);
   const sessionStore = new PostgresStore({
     pool,
-    tableName: 'session'
+    tableName: 'session',
+    createTableIfMissing: true // Criar a tabela se não existir
   });
 
   // Configurar middleware de sessão
@@ -194,17 +195,26 @@ export function setupAuth(app: Express) {
   });
 }
 
-// Criar um usuário admin padrão se não existir nenhum usuário no sistema
-export async function createDefaultAdminIfNeeded() {
+// Função para redefinir a senha do administrador ou criar um novo se não existir
+export async function resetAdminPassword(newPassword: string = 'admin123') {
   try {
-    // Verificar se já existe algum usuário
-    const existingUsers = await db.select().from(users);
+    // Verificar se existe um usuário admin
+    const [adminUser] = await db.select().from(users).where(eq(users.username, 'admin'));
     
-    if (existingUsers.length === 0) {
-      const defaultPassword = 'admin123'; // Senha padrão para o primeiro acesso
-      const hashedPassword = await bcrypt.hash(defaultPassword, 10);
+    // Hash da nova senha
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    
+    if (adminUser) {
+      // Atualizar a senha do admin existente
+      await db.update(users)
+        .set({ password: hashedPassword })
+        .where(eq(users.id, adminUser.id));
       
-      // Criar usuário admin padrão
+      console.log('Senha do administrador redefinida com sucesso!');
+      console.log('Username: admin');
+      console.log(`Senha: ${newPassword}`);
+    } else {
+      // Criar um novo usuário admin
       await db.insert(users).values({
         username: 'admin',
         password: hashedPassword,
@@ -212,12 +222,14 @@ export async function createDefaultAdminIfNeeded() {
         isAdmin: true
       });
       
-      console.log('Usuário admin padrão criado com sucesso!');
+      console.log('Usuário administrador criado com sucesso!');
       console.log('Username: admin');
-      console.log('Senha: admin123');
-      console.log('Altere esta senha após o primeiro login por questões de segurança.');
+      console.log(`Senha: ${newPassword}`);
     }
+    
+    return true;
   } catch (error) {
-    console.error('Erro ao criar usuário admin padrão:', error);
+    console.error('Erro ao redefinir/criar senha do administrador:', error);
+    return false;
   }
 }
