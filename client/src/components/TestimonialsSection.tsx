@@ -9,7 +9,7 @@ const TestimonialsSection = () => {
       text: "Trabalhamos com a CRC Faróis há mais de 5 anos. Os produtos são de excelente qualidade e o atendimento é sempre impecável. Nossa oficina só utiliza faróis deles. A durabilidade dos produtos faz toda a diferença para nossos clientes finais.",
       name: "Roberto Mendes",
       position: "Proprietário",
-      company: "Auto Peças São Paulo",
+      company: "Auto Peças True",
       location: "São Paulo - SP",
       stars: 5,
       image: "https://randomuser.me/api/portraits/men/32.jpg" // Imagem placeholder que pode ser substituída

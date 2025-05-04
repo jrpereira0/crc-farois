@@ -10,8 +10,6 @@ O projeto contém duas versões do site:
 
 1. **Versão React/TypeScript** - Localizada na pasta raiz, esta versão foi desenvolvida com React, TypeScript e TailwindCSS. É ideal para hospedagem em plataformas modernas que suportam Node.js.
 
-2. **Versão HTML/CSS Pura** - Localizada na pasta `html-site/`, esta versão foi desenvolvida apenas com HTML, CSS e JavaScript vanilla, sem dependências externas. É ideal para hospedagem em servidores compartilhados como Hostinger, que podem não oferecer suporte a Node.js.
-
 ## Características da Versão HTML/CSS
 
 - Design responsivo para todos os dispositivos
