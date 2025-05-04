@@ -29,14 +29,15 @@ import {
   ChevronLeft,
   LogOut,
   Eye,
-  MessageSquare,
+  MessagesSquare,
   UserPlus,
   Check,
   Key,
   ShieldAlert,
   X,
   Edit,
-  Phone
+  Phone,
+  Mail
 } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
 
@@ -711,7 +712,7 @@ const RecentContactsList = () => {
                 className="text-[#283593] hover:text-[#1a237e] hover:bg-[#283593]/10 p-1 sm:p-2"
                 onClick={() => toggleExpandMessage(contact.id)}
               >
-                <MessageSquare className="h-4 w-4" />
+                <MessagesSquare className="h-4 w-4" />
                 <span className="hidden sm:inline sm:ml-1">
                   {expandedContactId === contact.id ? "Ocultar" : "Expandir"}
                 </span>
@@ -1107,6 +1108,12 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
     setExpandedContactId(expandedContactId === contactId ? null : contactId);
   };
   
+  // Função para abrir o modal com os detalhes do contato
+  const openContactModal = (contact: any) => {
+    setSelectedContact(contact);
+    setIsModalOpen(true);
+  };
+  
   useEffect(() => {
     let url = "/api/admin/contacts";
     if (filter !== "all") {
@@ -1260,7 +1267,11 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {contacts.map((contact) => (
-                <tr key={contact.id} className={`hover:bg-gray-50 ${!contact.isRead ? 'bg-blue-50' : ''}`}>
+                <tr 
+                  key={contact.id} 
+                  className={`hover:bg-gray-50 ${!contact.isRead ? 'bg-blue-50' : ''} cursor-pointer`}
+                  onClick={() => openContactModal(contact)}
+                >
                   <td className="px-4 py-4">
                     <div className="flex items-center">
                       <div className="text-sm font-medium text-gray-900">{contact.name}</div>
