@@ -8,6 +8,7 @@ import { useToast } from "../hooks/use-toast";
 import { useAuth } from "../hooks/use-auth";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import crcLogo from "../assets/crc-logo.png";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -1239,105 +1240,141 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
     setIsModalOpen(true);
   };
   
+  // Usar React Query para melhor controle de cache e reduzir requisições duplicadas
+  const fetchContactsUrl = filter === "all" 
+    ? "/api/admin/contacts" 
+    : `/api/admin/contacts/status/${filter}`;
+
+  const { data: contactsData, isLoading: queryLoading, isError, error } = useQuery({
+    queryKey: ["contacts", filter],
+    queryFn: async () => {
+      console.log(`Buscando contatos com filtro: ${filter}`);
+      const res = await fetch(fetchContactsUrl);
+      if (!res.ok) {
+        throw new Error("Falha ao buscar contatos");
+      }
+      return res.json();
+    },
+    staleTime: 30000, // 30 segundos antes de considerar os dados desatualizados
+    refetchOnWindowFocus: false, // Não buscar novamente quando a janela receber foco
+  });
+
+  // Atualizar o estado local quando os dados forem carregados
   useEffect(() => {
-    let url = "/api/admin/contacts";
-    if (filter !== "all") {
-      url = `/api/admin/contacts/status/${filter}`;
+    if (contactsData) {
+      setContacts(contactsData);
     }
     
-    setLoading(true);
-    fetch(url)
-      .then(res => res.json())
-      .then(data => {
-        // Adicionar um pequeno delay para tornar a transição mais suave
-        setTimeout(() => {
-          setContacts(data);
-          setLoading(false);
-        }, 300);
-      })
-      .catch(err => {
-        console.error(`Erro ao buscar contatos com filtro ${filter}:`, err);
-        toast({
-          title: "Erro ao carregar contatos",
-          description: "Ocorreu um erro ao buscar os contatos. Tente novamente mais tarde.",
-          variant: "destructive"
-        });
-        setLoading(false);
+    // Desativar o estado de carregamento usando o estado do React Query
+    setLoading(queryLoading);
+    
+    // Mostrar uma mensagem de erro se a busca falhar
+    if (isError && error instanceof Error) {
+      console.error(`Erro ao buscar contatos com filtro ${filter}:`, error);
+      toast({
+        title: "Erro ao carregar contatos",
+        description: "Ocorreu um erro ao buscar os contatos. Tente novamente mais tarde.",
+        variant: "destructive"
       });
-  }, [filter, toast]);
+    }
+  }, [contactsData, queryLoading, isError, error, filter, toast]);
   
-  const updateContactStatus = (id: number, status: string) => {
-    // Exibir um indicador de carregamento para ações específicas
-    const contactToUpdate = contacts.find(c => c.id === id);
-    if (contactToUpdate) {
-      setContacts(prev => 
-        prev.map(c => c.id === id ? { ...c, isStatusUpdating: true } : c)
+  // Usar useMutation para gerenciar atualizações
+  const queryClient = useQueryClient();
+  
+  const updateStatusMutation = useMutation({
+    mutationFn: async ({ id, status }: { id: number, status: string }) => {
+      const res = await fetch(`/api/admin/contacts/${id}/status`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status }),
+      });
+      
+      if (!res.ok) throw new Error("Falha ao atualizar status");
+      return res.json();
+    },
+    onMutate: ({ id, status }) => {
+      // Atualizar otimisticamente
+      const contactToUpdate = contacts.find(c => c.id === id);
+      if (contactToUpdate) {
+        // Atualizar localmente o status
+        setContacts(prev => 
+          prev.map(c => c.id === id ? { ...c, status, isStatusUpdating: true } : c)
+        );
+        
+        // Atualizar também o contato selecionado se estiver aberto no modal
+        if (selectedContact && selectedContact.id === id) {
+          setSelectedContact({
+            ...selectedContact,
+            status,
+            isStatusUpdating: true
+          });
+        }
+      }
+    },
+    onSuccess: (updatedContact) => {
+      // Quando bem-sucedido, atualizar a lista de contatos e o cache
+      setContacts(prevContacts => 
+        prevContacts.map(contact => 
+          contact.id === updatedContact.id ? 
+            { ...contact, status: updatedContact.status, isStatusUpdating: false } 
+            : contact
+        )
       );
       
-      // Atualizar também o contato selecionado se estiver aberto no modal
-      if (selectedContact && selectedContact.id === id) {
+      // Atualizar o contato selecionado se estiver aberto no modal
+      if (selectedContact && selectedContact.id === updatedContact.id) {
         setSelectedContact({
           ...selectedContact,
-          status,
-          isStatusUpdating: true
+          status: updatedContact.status,
+          isStatusUpdating: false
         });
       }
-    }
-    
-    fetch(`/api/admin/contacts/${id}/status`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ status }),
-    })
-      .then(res => {
-        if (!res.ok) throw new Error("Falha ao atualizar status");
-        return res.json();
-      })
-      .then(updatedContact => {
-        // Atualizar a lista de contatos
-        setContacts(prevContacts => 
-          prevContacts.map(contact => 
-            contact.id === id ? { ...contact, status: updatedContact.status, isStatusUpdating: false } : contact
-          )
-        );
-        
-        // Atualizar o contato selecionado se estiver aberto no modal
-        if (selectedContact && selectedContact.id === id) {
-          setSelectedContact({
-            ...selectedContact,
-            status: updatedContact.status,
-            isStatusUpdating: false
-          });
-        }
-        
-        toast({
-          title: "Status atualizado",
-          description: `Contato marcado como "${status === "pending" ? "Pendente" : status === "in-progress" ? "Em andamento" : "Concluído"}"`,
-          variant: "default",
-        });
-      })
-      .catch(error => {
-        console.error("Erro ao atualizar status:", error);
-        setContacts(prev => 
-          prev.map(c => c.id === id ? { ...c, isStatusUpdating: false } : c)
-        );
-        
-        // Restaurar o estado original do contato selecionado em caso de erro
-        if (selectedContact && selectedContact.id === id) {
-          setSelectedContact({
-            ...selectedContact,
-            isStatusUpdating: false
-          });
-        }
-        
-        toast({
-          title: "Erro ao atualizar status",
-          description: "Não foi possível atualizar o status do contato. Tente novamente.",
-          variant: "destructive",
-        });
+      
+      // Invalidar a consulta para atualizar dados
+      queryClient.invalidateQueries({ queryKey: ["contacts", filter] });
+      
+      // Mostrar notificação
+      const statusLabel = updatedContact.status === "pending" 
+        ? "Pendente" 
+        : updatedContact.status === "in-progress" 
+          ? "Em andamento" 
+          : "Concluído";
+          
+      toast({
+        title: "Status atualizado",
+        description: `Contato marcado como "${statusLabel}"`,
+        variant: "default",
       });
+    },
+    onError: (error, variables) => {
+      console.error("Erro ao atualizar status:", error);
+      
+      // Reverter mudanças otimistas
+      setContacts(prev => 
+        prev.map(c => c.id === variables.id ? { ...c, isStatusUpdating: false } : c)
+      );
+      
+      // Restaurar o estado original do contato selecionado em caso de erro
+      if (selectedContact && selectedContact.id === variables.id) {
+        setSelectedContact({
+          ...selectedContact,
+          isStatusUpdating: false
+        });
+      }
+      
+      toast({
+        title: "Erro ao atualizar status",
+        description: "Não foi possível atualizar o status do contato. Tente novamente.",
+        variant: "destructive",
+      });
+    }
+  });
+  
+  const updateContactStatus = (id: number, status: string) => {
+    updateStatusMutation.mutate({ id, status });
   };
   
   // Função para alternar entre lido/não lido
