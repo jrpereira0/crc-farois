@@ -19,7 +19,9 @@ import {
   AlertCircle,
   RefreshCcw,
   ChevronRight,
-  LogOut
+  LogOut,
+  Eye,
+  MessageSquare
 } from "lucide-react";
 
 // Componente principal do painel administrativo
@@ -418,6 +420,8 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
 const RecentContactsList = () => {
   const [contacts, setContacts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [expandedContactId, setExpandedContactId] = useState<number | null>(null);
+  const [, navigate] = useLocation();
   
   useEffect(() => {
     fetch("/api/admin/contacts")
@@ -433,11 +437,19 @@ const RecentContactsList = () => {
       });
   }, []);
   
+  const toggleExpandMessage = (contactId: number) => {
+    setExpandedContactId(expandedContactId === contactId ? null : contactId);
+  };
+  
+  const goToContactDetails = (contactId: number) => {
+    navigate(`/admin/contacts`);
+  };
+  
   if (loading) {
     return (
       <div className="py-20 text-center">
         <div className="flex justify-center mb-4">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#283593]"></div>
         </div>
         <p className="text-gray-500">Carregando contatos recentes...</p>
       </div>
@@ -456,32 +468,71 @@ const RecentContactsList = () => {
   return (
     <div className="divide-y divide-gray-200">
       {contacts.map((contact) => (
-        <div key={contact.id} className="py-4 flex items-start hover:bg-gray-50 px-4 rounded-md -mx-4">
-          <div className="flex-1">
-            <div className="flex items-center mb-1">
-              <h4 className="font-medium text-gray-900">{contact.name}</h4>
-              {!contact.isRead && (
-                <Badge variant="default" className="ml-2 bg-primary">
-                  Não lido
-                </Badge>
-              )}
-              <StatusBadge status={contact.status} className="ml-2" />
+        <div key={contact.id} className="py-4 hover:bg-gray-50 px-4 rounded-md -mx-4 transition-colors duration-150">
+          <div className="flex items-start">
+            <div className="flex-1">
+              <div className="flex items-center mb-1">
+                <h4 className="font-medium text-gray-900">{contact.name}</h4>
+                {!contact.isRead && (
+                  <Badge variant="default" className="ml-2 bg-[#283593] hover:bg-[#1a237e]">
+                    Não lido
+                  </Badge>
+                )}
+                <StatusBadge status={contact.status} className="ml-2" />
+              </div>
+              <p className="text-sm text-gray-600 mb-1">{contact.email}</p>
+              <div className="relative">
+                <p className={`text-sm text-gray-700 ${expandedContactId === contact.id ? '' : 'line-clamp-1'}`}>
+                  {contact.message}
+                </p>
+                {contact.message.length > 100 && expandedContactId !== contact.id && (
+                  <div className="absolute bottom-0 right-0 bg-gradient-to-l from-gray-50 via-gray-50 pl-2">
+                    <button 
+                      onClick={() => toggleExpandMessage(contact.id)}
+                      className="text-xs font-medium text-[#283593] hover:text-[#1a237e]"
+                    >
+                      ver mais
+                    </button>
+                  </div>
+                )}
+                {expandedContactId === contact.id && (
+                  <button 
+                    onClick={() => toggleExpandMessage(contact.id)}
+                    className="text-xs font-medium text-[#283593] hover:text-[#1a237e] mt-1"
+                  >
+                    ver menos
+                  </button>
+                )}
+              </div>
+              <p className="text-xs text-gray-500 mt-2">
+                {contact.createdAt ? formatDistanceToNow(new Date(contact.createdAt), { 
+                  addSuffix: true,
+                  locale: ptBR 
+                }) : "Data desconhecida"}
+              </p>
             </div>
-            <p className="text-sm text-gray-600 truncate mb-1">{contact.email}</p>
-            <p className="text-sm text-gray-500 line-clamp-1">{contact.message}</p>
-            <p className="text-xs text-gray-400 mt-1">
-              {contact.createdAt ? formatDistanceToNow(new Date(contact.createdAt), { 
-                addSuffix: true,
-                locale: ptBR 
-              }) : "Data desconhecida"}
-            </p>
-          </div>
-          <div>
-            <Link href={`/admin/contacts/detail/${contact.id}`}>
-              <Button variant="ghost" size="sm" className="text-primary hover:text-primary hover:bg-primary/10">
-                <ChevronRight className="h-5 w-5" />
+            <div className="ml-4 flex flex-col space-y-2">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-[#283593] hover:text-[#1a237e] hover:bg-[#283593]/10"
+                onClick={() => goToContactDetails(contact.id)}
+              >
+                <Eye className="h-4 w-4 mr-1" />
+                <span className="hidden sm:inline">Detalhes</span>
               </Button>
-            </Link>
+              {!expandedContactId && (
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-[#283593] hover:text-[#1a237e] hover:bg-[#283593]/10"
+                  onClick={() => toggleExpandMessage(contact.id)}
+                >
+                  <MessageSquare className="h-4 w-4 mr-1" />
+                  <span className="hidden sm:inline">Mensagem</span>
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       ))}
@@ -526,41 +577,80 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status, className = "" }) => 
 // Página de todos os contatos
 const AdminContacts = () => {
   const [, navigate] = useLocation();
-  const [activeTab, setActiveTab] = useState("all");
+  const [matchesAll] = useRoute("/admin/contacts/all");
+  const [matchesPending] = useRoute("/admin/contacts/pending");
+  const [matchesInProgress] = useRoute("/admin/contacts/in-progress");
+  const [matchesCompleted] = useRoute("/admin/contacts/completed");
+  const [matchesRoot] = useRoute("/admin/contacts");
   
-  // Para navegação sem refresh, apenas atualizando o estado local
-  const handleTabChange = (value: string) => {
-    setActiveTab(value);
-    navigate(`/admin/contacts/${value}`, { replace: true });
+  const getActiveTab = () => {
+    if (matchesAll) return "all";
+    if (matchesPending) return "pending";
+    if (matchesInProgress) return "in-progress";
+    if (matchesCompleted) return "completed";
+    return "all"; // Default 
+  };
+  
+  const activeTab = getActiveTab();
+  
+  const handleTabClick = (tab: string) => (e: React.MouseEvent) => {
+    e.preventDefault();
+    navigate(`/admin/contacts/${tab}`);
   };
 
   return (
     <div>
       <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4 md:mb-6">Contatos</h2>
       
-      <Tabs defaultValue="all" value={activeTab} className="w-full" onValueChange={handleTabChange}>
-        <div className="overflow-x-auto -mx-4 px-4">
-          <TabsList className="mb-6 w-auto inline-flex">
-            <TabsTrigger value="all">Todos</TabsTrigger>
-            <TabsTrigger value="pending">Pendentes</TabsTrigger>
-            <TabsTrigger value="in-progress">Em andamento</TabsTrigger>
-            <TabsTrigger value="completed">Concluídos</TabsTrigger>
-          </TabsList>
+      <div className="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
+        <div className="flex flex-wrap border-b">
+          <button 
+            onClick={handleTabClick("all")}
+            className={`px-6 py-3 text-sm font-medium transition-colors duration-200 relative ${
+              activeTab === "all" 
+                ? "bg-white text-[#283593] border-b-2 border-[#283593]" 
+                : "text-gray-600 hover:text-[#283593] hover:bg-gray-50"
+            }`}
+          >
+            Todos
+          </button>
+          <button 
+            onClick={handleTabClick("pending")}
+            className={`px-6 py-3 text-sm font-medium transition-colors duration-200 relative ${
+              activeTab === "pending" 
+                ? "bg-white text-amber-600 border-b-2 border-amber-500" 
+                : "text-gray-600 hover:text-amber-600 hover:bg-gray-50"
+            }`}
+          >
+            Pendentes
+          </button>
+          <button 
+            onClick={handleTabClick("in-progress")}
+            className={`px-6 py-3 text-sm font-medium transition-colors duration-200 relative ${
+              activeTab === "in-progress" 
+                ? "bg-white text-blue-600 border-b-2 border-blue-500" 
+                : "text-gray-600 hover:text-blue-600 hover:bg-gray-50"
+            }`}
+          >
+            Em andamento
+          </button>
+          <button 
+            onClick={handleTabClick("completed")}
+            className={`px-6 py-3 text-sm font-medium transition-colors duration-200 relative ${
+              activeTab === "completed" 
+                ? "bg-white text-green-600 border-b-2 border-green-500" 
+                : "text-gray-600 hover:text-green-600 hover:bg-gray-50"
+            }`}
+          >
+            Concluídos
+          </button>
         </div>
-        
-        <TabsContent value="all">
-          <AdminContactsList filter="all" />
-        </TabsContent>
-        <TabsContent value="pending">
-          <AdminContactsList filter="pending" />
-        </TabsContent>
-        <TabsContent value="in-progress">
-          <AdminContactsList filter="in-progress" />
-        </TabsContent>
-        <TabsContent value="completed">
-          <AdminContactsList filter="completed" />
-        </TabsContent>
-      </Tabs>
+      </div>
+      
+      {(matchesRoot || matchesAll) && <AdminContactsList filter="all" />}
+      {matchesPending && <AdminContactsList filter="pending" />}
+      {matchesInProgress && <AdminContactsList filter="in-progress" />}
+      {matchesCompleted && <AdminContactsList filter="completed" />}
     </div>
   );
 };
@@ -573,6 +663,7 @@ interface AdminContactsListProps {
 const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
   const [contacts, setContacts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [expandedContactId, setExpandedContactId] = useState<number | null>(null);
   const { toast } = useToast();
   
   useEffect(() => {
@@ -774,7 +865,20 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
               
               <div className="mb-3">
                 <p className="text-gray-500 text-sm">Mensagem:</p>
-                <p className="text-gray-800 text-sm">{contact.message}</p>
+                <div className="relative">
+                  <p className="text-gray-800 text-sm">{contact.message}</p>
+                  {/* Adicionar botão de ver mais em mensagens longas se necessário */}
+                  {contact.message.length > 100 && (
+                    <Button 
+                      variant="ghost"
+                      size="sm"
+                      className="mt-1 h-6 p-0 text-xs text-[#283593] hover:text-[#1a237e] hover:bg-transparent"
+                      onClick={() => toggleExpandMessage(contact.id)}
+                    >
+                      Visualizar mensagem completa
+                    </Button>
+                  )}
+                </div>
               </div>
               
               <div className="flex justify-between items-center">
