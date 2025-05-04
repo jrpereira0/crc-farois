@@ -65,13 +65,10 @@ const Admin = () => {
   const isDashboardPage = location === '/admin' || location === '/admin/dashboard' || 
                           (!isContactsPage && !isSettingsPage);
 
-  // Não precisamos mais redirecionar, pois o dashboard é exibido diretamente na raiz
-  // useEffect(() => {
-  //   if (location === "/admin") {
-  //     console.log("Redirecionando da raiz do admin para o dashboard");
-  //     navigate("/admin");
-  //   }
-  // }, [location, navigate]);
+  // Garantir que os estados sejam corretamente definidos ao carregar a página
+  useEffect(() => {
+    console.log("URL atual:", location);
+  }, [location]);
 
   // Alternar menu mobile
   const toggleMobileMenu = () => {
@@ -395,6 +392,8 @@ const RecentContactsListSkeleton = () => {
 // Dashboard - Página inicial do painel administrativo
 const AdminDashboard = () => {
   const [, navigate] = useLocation();
+  const { user } = useAuth(); // Obter o usuário autenticado
+  const { toast } = useToast();
   const [counts, setCounts] = useState({
     total: 0,
     pending: 0,
@@ -405,10 +404,32 @@ const AdminDashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
   
   useEffect(() => {
+    if (!user) {
+      console.log("Usuário não autenticado, redirecionando para login");
+      navigate("/login");
+      return;
+    }
+    
     setIsLoading(true);
     // Em um cenário real, faríamos uma chamada para a API para obter esses dados
-    fetch("/api/admin/contacts")
-      .then(res => res.json())
+    fetch("/api/admin/contacts", {
+      credentials: 'include' // Importante: enviar cookies para autenticação
+    })
+      .then(res => {
+        if (!res.ok) {
+          if (res.status === 401) {
+            // Erro de autenticação
+            toast({
+              title: "Sessão expirada",
+              description: "Sua sessão expirou. Por favor, faça login novamente.",
+              variant: "destructive"
+            });
+            throw new Error("Não autenticado");
+          }
+          throw new Error("Erro ao buscar dados");
+        }
+        return res.json();
+      })
       .then(data => {
         const pending = data.filter((c: any) => c.status === "pending").length;
         const inProgress = data.filter((c: any) => c.status === "in-progress").length;
@@ -431,6 +452,10 @@ const AdminDashboard = () => {
       .catch(err => {
         console.error("Erro ao buscar estatísticas:", err);
         setIsLoading(false);
+        
+        if (err.message === "Não autenticado") {
+          navigate("/login");
+        }
       });
   }, []);
   
@@ -606,10 +631,27 @@ const RecentContactsList = () => {
   const [loading, setLoading] = useState(true);
   const [expandedContactId, setExpandedContactId] = useState<number | null>(null);
   const [, navigate] = useLocation();
+  const { toast } = useToast();
   
   useEffect(() => {
-    fetch("/api/admin/contacts")
-      .then(res => res.json())
+    fetch("/api/admin/contacts", {
+      credentials: 'include' // Importante: enviar cookies para autenticação
+    })
+      .then(res => {
+        if (!res.ok) {
+          if (res.status === 401) {
+            // Erro de autenticação
+            toast({
+              title: "Sessão expirada",
+              description: "Sua sessão expirou. Por favor, faça login novamente.",
+              variant: "destructive"
+            });
+            throw new Error("Não autenticado");
+          }
+          throw new Error("Erro ao buscar dados");
+        }
+        return res.json();
+      })
       .then(data => {
         // Exibir apenas os 5 contatos mais recentes
         setContacts(data.slice(0, 5));
@@ -618,6 +660,10 @@ const RecentContactsList = () => {
       .catch(err => {
         console.error("Erro ao buscar contatos recentes:", err);
         setLoading(false);
+        
+        if (err.message === "Não autenticado") {
+          navigate("/login");
+        }
       });
   }, []);
   
