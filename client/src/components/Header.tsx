@@ -29,8 +29,8 @@ const Header = () => {
   return (
     <header className={`sticky top-0 z-50 bg-dark-blue ${isScrolled ? 'shadow-custom' : ''} transition-all duration-300`}>
       <div className="container mx-auto px-4 py-3">
-        <div className="row items-center">
-          <div className="col-6 col-md-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
             {/* Logo */}
             <Link href="/" className="flex items-center">
               <img 
@@ -42,7 +42,7 @@ const Header = () => {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:block col-md-9">
+          <div className="hidden md:block">
             <nav className="flex justify-end items-center space-x-8">
               <Link 
                 href="/" 
@@ -72,7 +72,7 @@ const Header = () => {
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="col-6 md:hidden flex justify-end">
+          <div className="flex md:hidden">
             <button
               type="button"
               onClick={toggleMobileMenu}
