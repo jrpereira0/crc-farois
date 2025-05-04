@@ -1,5 +1,5 @@
-import type { Contact, InsertContact, UpdateContactStatus } from "@shared/schema";
-import { contacts } from "@shared/schema";
+import type { Contact, InsertContact, UpdateContactStatus, User, RegisterUser } from "@shared/schema";
+import { contacts, users } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc } from "drizzle-orm";
 
@@ -12,6 +12,12 @@ export interface IStorage {
   updateContactStatus(id: number, statusData: UpdateContactStatus): Promise<Contact | undefined>;
   markContactAsRead(id: number): Promise<Contact | undefined>;
   getContactsByStatus(status: string): Promise<Contact[]>;
+  
+  // Métodos para usuários
+  getUser(id: number): Promise<User | undefined>;
+  getUserByUsername(username: string): Promise<User | undefined>;
+  createUser(userData: RegisterUser): Promise<User>;
+  getAllUsers(): Promise<User[]>;
 }
 
 // Armazenamento em banco de dados
@@ -88,6 +94,42 @@ export class DatabaseStorage implements IStorage {
       .from(contacts)
       .where(eq(contacts.status, status))
       .orderBy(desc(contacts.createdAt));
+  }
+
+  // Métodos de usuário
+  async getUser(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user;
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user;
+  }
+
+  async createUser(userData: RegisterUser): Promise<User> {
+    try {
+      const [user] = await db.insert(users)
+        .values({
+          username: userData.username,
+          password: userData.password, // Deve ser hash antes de chegar aqui
+          name: userData.name,
+          isAdmin: true, // Todos os usuários criados são administradores
+        })
+        .returning();
+      
+      return user;
+    } catch (error) {
+      console.error('DatabaseStorage: erro ao criar usuário:', error);
+      throw error;
+    }
+  }
+
+  async getAllUsers(): Promise<User[]> {
+    return await db
+      .select()
+      .from(users)
+      .orderBy(desc(users.createdAt));
   }
 }
 
