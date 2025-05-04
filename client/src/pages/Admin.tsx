@@ -608,21 +608,21 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status, className = "" }) => 
   switch (status) {
     case "pending":
       return (
-        <Badge variant="outline" className={`bg-amber-50 text-amber-700 border-amber-200 ${className}`}>
+        <Badge variant="outline" className={`rounded-full px-3 py-1 bg-amber-50 text-amber-700 border-amber-200 ${className}`}>
           <Clock className="h-3 w-3 mr-1" />
           Pendente
         </Badge>
       );
     case "in-progress":
       return (
-        <Badge variant="outline" className={`bg-blue-50 text-blue-700 border-blue-200 ${className}`}>
+        <Badge variant="outline" className={`rounded-full px-3 py-1 bg-blue-50 text-blue-700 border-blue-200 ${className}`}>
           <RefreshCcw className="h-3 w-3 mr-1" />
-          Em andamento
+          Andamento
         </Badge>
       );
     case "completed":
       return (
-        <Badge variant="outline" className={`bg-green-50 text-green-700 border-green-200 ${className}`}>
+        <Badge variant="outline" className={`rounded-full px-3 py-1 bg-green-50 text-green-700 border-green-200 ${className}`}>
           <CheckCircle className="h-3 w-3 mr-1" />
           Concluído
         </Badge>
@@ -860,51 +860,37 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Nome</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Contato</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Mensagem</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Data</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Ações</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Nome</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Contato</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Mensagem</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Data</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Status</th>
+                <th className="px-4 py-3 text-right text-xs font-medium text-gray-600 uppercase tracking-wider">Ações</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {contacts.map((contact) => (
                 <tr key={contact.id} className={`hover:bg-gray-50 ${!contact.isRead ? 'bg-blue-50' : ''}`}>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-4 py-4">
                     <div className="flex items-center">
-                      <div>
-                        <div className="text-sm font-medium text-gray-900">{contact.name}</div>
-                        {!contact.isRead && (
-                          <Badge variant="default" className="mt-1 text-xs bg-[#283593] hover:bg-[#1a237e]">
-                            Não lido
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="text-sm text-gray-900">{contact.email}</div>
-                    <div className="text-sm text-gray-500">{contact.phone}</div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="relative max-w-xs">
-                      <div className={`text-sm text-gray-700 ${expandedContactId === contact.id ? '' : 'line-clamp-2'}`}>
-                        {contact.message}
-                      </div>
-                      {contact.message.length > 80 && (
-                        <Button 
-                          variant="ghost"
-                          size="sm"
-                          className="mt-1 h-6 p-0 text-xs text-[#283593] hover:text-[#1a237e] hover:bg-transparent"
-                          onClick={() => toggleExpandMessage(contact.id)}
-                        >
-                          {expandedContactId === contact.id ? "Mostrar menos" : "Ver mais"}
-                        </Button>
+                      <div className="text-sm font-medium text-gray-900">{contact.name}</div>
+                      {!contact.isRead && (
+                        <div className="ml-2 w-2 h-2 rounded-full bg-blue-500"></div>
                       )}
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-4 py-4">
+                    <div className="text-sm text-gray-900">{contact.email}</div>
+                    <div className="text-sm text-gray-500">{contact.phone}</div>
+                  </td>
+                  <td className="px-4 py-4">
+                    <div className="relative max-w-xs">
+                      <div className="text-sm text-gray-700 line-clamp-2">
+                        {contact.message}
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-4 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-600">
                       {contact.createdAt ? formatDistanceToNow(new Date(contact.createdAt), { 
                         addSuffix: true,
@@ -912,57 +898,51 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
                       }) : "Data desconhecida"}
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-4 py-4 whitespace-nowrap">
                     <StatusBadge status={contact.status} />
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <div className="flex flex-col space-y-2">
-                      <div className="flex flex-wrap gap-2">
-                        <Button 
-                          variant={contact.status === "pending" ? "default" : "outline"} 
-                          size="sm" 
-                          className={contact.status === "pending" ? "bg-amber-500 hover:bg-amber-600" : "text-amber-500 border-amber-500 hover:bg-amber-50"}
-                          onClick={() => updateContactStatus(contact.id, "pending")}
-                        >
-                          <Clock className="h-4 w-4 mr-1" />
-                          Pendente
-                        </Button>
-                        <Button 
-                          variant={contact.status === "in-progress" ? "default" : "outline"} 
-                          size="sm" 
-                          className={contact.status === "in-progress" ? "bg-blue-500 hover:bg-blue-600" : "text-blue-500 border-blue-500 hover:bg-blue-50"}
-                          onClick={() => updateContactStatus(contact.id, "in-progress")}
-                        >
-                          <RefreshCcw className="h-4 w-4 mr-1" />
-                          Andamento
-                        </Button>
-                        <Button 
-                          variant={contact.status === "completed" ? "default" : "outline"} 
-                          size="sm" 
-                          className={contact.status === "completed" ? "bg-green-500 hover:bg-green-600" : "text-green-500 border-green-500 hover:bg-green-50"}
-                          onClick={() => updateContactStatus(contact.id, "completed")}
-                        >
-                          <CheckCircle className="h-4 w-4 mr-1" />
-                          Concluído
-                        </Button>
-                      </div>
+                  <td className="px-4 py-4 whitespace-nowrap text-right">
+                    <div className="flex flex-row justify-end space-x-2">
+                      <Button 
+                        variant={contact.status === "pending" ? "default" : "outline"} 
+                        size="sm" 
+                        className={contact.status === "pending" ? "bg-amber-500 hover:bg-amber-600 rounded-full" : "text-amber-500 border-amber-500 hover:bg-amber-50 rounded-full"}
+                        onClick={() => updateContactStatus(contact.id, "pending")}
+                        title="Marcar como pendente"
+                      >
+                        <Clock className="h-4 w-4 mr-1" />
+                        <span className="hidden lg:inline">Pendente</span>
+                      </Button>
+                      <Button 
+                        variant={contact.status === "in-progress" ? "default" : "outline"} 
+                        size="sm" 
+                        className={contact.status === "in-progress" ? "bg-blue-500 hover:bg-blue-600 rounded-full" : "text-blue-500 border-blue-500 hover:bg-blue-50 rounded-full"}
+                        onClick={() => updateContactStatus(contact.id, "in-progress")}
+                        title="Marcar como em andamento"
+                      >
+                        <RefreshCcw className="h-4 w-4 mr-1" />
+                        <span className="hidden lg:inline">Andamento</span>
+                      </Button>
+                      <Button 
+                        variant={contact.status === "completed" ? "default" : "outline"} 
+                        size="sm" 
+                        className={contact.status === "completed" ? "bg-green-500 hover:bg-green-600 rounded-full" : "text-green-500 border-green-500 hover:bg-green-50 rounded-full"}
+                        onClick={() => updateContactStatus(contact.id, "completed")}
+                        title="Marcar como concluído"
+                      >
+                        <CheckCircle className="h-4 w-4 mr-1" />
+                        <span className="hidden lg:inline">Concluído</span>
+                      </Button>
+                    </div>
+                    <div className="mt-2">
                       <Button 
                         variant="outline" 
                         size="sm" 
-                        className="text-primary border-primary hover:bg-primary/10"
+                        className="text-primary border-primary hover:bg-primary/10 w-full rounded-full"
                         onClick={() => toggleReadStatus(contact.id, contact.isRead)}
                       >
-                        {contact.isRead ? (
-                          <>
-                            <Eye className="h-4 w-4 mr-1" />
-                            Marcar como não lido
-                          </>
-                        ) : (
-                          <>
-                            <CheckCircle className="h-4 w-4 mr-1" />
-                            Marcar como lido
-                          </>
-                        )}
+                        <Eye className="h-4 w-4 mr-1" />
+                        Marcar como {contact.isRead ? "não lido" : "lido"}
                       </Button>
                     </div>
                   </td>
@@ -978,36 +958,27 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
         {contacts.map((contact) => (
           <Card 
             key={contact.id} 
-            className={`overflow-hidden ${!contact.isRead ? 'border-l-4 border-l-[#283593]' : ''}`}
+            className={`overflow-hidden ${!contact.isRead ? 'border-l-4 border-l-blue-500' : ''}`}
           >
-            <CardContent className="p-4">
-              <div className="flex justify-between items-start mb-2">
-                <div>
-                  <h3 className="font-medium text-gray-900">{contact.name}</h3>
+            <CardContent className="p-0">
+              <div className="px-4 py-3 flex items-center justify-between border-b">
+                <div className="flex items-center">
+                  <div className="font-medium text-gray-900">{contact.name}</div>
                   {!contact.isRead && (
-                    <Badge variant="default" className="mt-1 text-xs bg-[#283593] hover:bg-[#1a237e]">
-                      Não lido
-                    </Badge>
+                    <div className="ml-2 w-2 h-2 rounded-full bg-blue-500"></div>
                   )}
                 </div>
                 <StatusBadge status={contact.status} />
               </div>
               
-              <div className="grid grid-cols-2 gap-2 mb-3 text-sm">
-                <div>
-                  <p className="text-gray-500">Email:</p>
-                  <p className="text-gray-800 break-all">{contact.email}</p>
-                </div>
-                <div>
-                  <p className="text-gray-500">Telefone:</p>
-                  <p className="text-gray-800">{contact.phone}</p>
-                </div>
+              <div className="px-4 py-2 border-b">
+                <div className="text-sm">{contact.email}</div>
+                <div className="text-sm text-gray-500">{contact.phone}</div>
               </div>
               
-              <div className="mb-3">
-                <p className="text-gray-500 text-sm">Mensagem:</p>
+              <div className="px-4 py-3 border-b bg-gray-50">
                 <div className="relative">
-                  <p className={`text-gray-800 text-sm ${expandedContactId === contact.id ? '' : 'line-clamp-2'}`}>
+                  <p className={`text-sm ${expandedContactId === contact.id ? '' : 'line-clamp-2'}`}>
                     {contact.message}
                   </p>
                   {contact.message.length > 80 && (
@@ -1023,63 +994,52 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
                 </div>
               </div>
               
-              <div className="flex flex-col space-y-3">
-                <div className="flex justify-between items-center">
-                  <div className="text-xs text-gray-500">
-                    {contact.createdAt ? formatDistanceToNow(new Date(contact.createdAt), { 
-                      addSuffix: true,
-                      locale: ptBR 
-                    }) : "Data desconhecida"}
-                  </div>
-                  
-                  <div className="flex flex-wrap gap-1">
-                    <Button 
-                      variant={contact.status === "pending" ? "default" : "outline"} 
-                      size="sm" 
-                      className={contact.status === "pending" ? "bg-amber-500 hover:bg-amber-600 px-2" : "text-amber-500 border-amber-500 hover:bg-amber-50 px-2"} 
-                      onClick={() => updateContactStatus(contact.id, "pending")}
-                      title="Marcar como pendente"
-                    >
-                      <Clock className="h-4 w-4" />
-                    </Button>
-                    <Button 
-                      variant={contact.status === "in-progress" ? "default" : "outline"} 
-                      size="sm" 
-                      className={contact.status === "in-progress" ? "bg-blue-500 hover:bg-blue-600 px-2" : "text-blue-500 border-blue-500 hover:bg-blue-50 px-2"}
-                      onClick={() => updateContactStatus(contact.id, "in-progress")}
-                      title="Marcar como em andamento"
-                    >
-                      <RefreshCcw className="h-4 w-4" />
-                    </Button>
-                    <Button 
-                      variant={contact.status === "completed" ? "default" : "outline"} 
-                      size="sm" 
-                      className={contact.status === "completed" ? "bg-green-500 hover:bg-green-600 px-2" : "text-green-500 border-green-500 hover:bg-green-50 px-2"}
-                      onClick={() => updateContactStatus(contact.id, "completed")}
-                      title="Marcar como concluído"
-                    >
-                      <CheckCircle className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-                
+              <div className="px-4 py-2 border-b text-xs text-gray-500">
+                {contact.createdAt ? formatDistanceToNow(new Date(contact.createdAt), { 
+                  addSuffix: true,
+                  locale: ptBR 
+                }) : "Data desconhecida"}
+              </div>
+              
+              <div className="p-3 flex flex-wrap justify-between gap-2 bg-gray-50">
+                <Button 
+                  variant={contact.status === "pending" ? "default" : "outline"} 
+                  size="sm" 
+                  className={contact.status === "pending" ? "bg-amber-500 hover:bg-amber-600 rounded-full flex-1" : "text-amber-500 border-amber-500 hover:bg-amber-50 rounded-full flex-1"}
+                  onClick={() => updateContactStatus(contact.id, "pending")}
+                >
+                  <Clock className="h-4 w-4 mr-1" />
+                  Pendente
+                </Button>
+                <Button 
+                  variant={contact.status === "in-progress" ? "default" : "outline"} 
+                  size="sm" 
+                  className={contact.status === "in-progress" ? "bg-blue-500 hover:bg-blue-600 rounded-full flex-1" : "text-blue-500 border-blue-500 hover:bg-blue-50 rounded-full flex-1"}
+                  onClick={() => updateContactStatus(contact.id, "in-progress")}
+                >
+                  <RefreshCcw className="h-4 w-4 mr-1" />
+                  Andamento
+                </Button>
+                <Button 
+                  variant={contact.status === "completed" ? "default" : "outline"} 
+                  size="sm" 
+                  className={contact.status === "completed" ? "bg-green-500 hover:bg-green-600 rounded-full flex-1" : "text-green-500 border-green-500 hover:bg-green-50 rounded-full flex-1"}
+                  onClick={() => updateContactStatus(contact.id, "completed")}
+                >
+                  <CheckCircle className="h-4 w-4 mr-1" />
+                  Concluído
+                </Button>
+              </div>
+              
+              <div className="p-3 bg-white border-t">
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  className="text-primary border-primary hover:bg-primary/10 py-1"
+                  className="text-primary border-primary hover:bg-primary/10 w-full rounded-full"
                   onClick={() => toggleReadStatus(contact.id, contact.isRead)}
                 >
-                  {contact.isRead ? (
-                    <>
-                      <Eye className="h-4 w-4 mr-1" />
-                      Marcar como não lido
-                    </>
-                  ) : (
-                    <>
-                      <CheckCircle className="h-4 w-4 mr-1" />
-                      Marcar como lido
-                    </>
-                  )}
+                  <Eye className="h-4 w-4 mr-1" />
+                  Marcar como {contact.isRead ? "não lido" : "lido"}
                 </Button>
               </div>
             </CardContent>
