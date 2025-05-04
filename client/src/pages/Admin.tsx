@@ -5,6 +5,7 @@ import { Button } from "../components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import { useToast } from "../hooks/use-toast";
+import { useAuth } from "../hooks/use-auth";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import crcLogo from "../assets/crc-logo.png";
@@ -98,6 +99,27 @@ const Admin = () => {
 
 // Componente de cabeçalho do painel administrativo
 const AdminHeader = ({ toggleMobileMenu }: { toggleMobileMenu?: () => void }) => {
+  const { logout, user } = useAuth();
+  const { toast } = useToast();
+  const [, navigate] = useLocation();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      toast({
+        title: "Logout realizado",
+        description: "Você saiu do sistema com sucesso.",
+      });
+      navigate("/login");
+    } catch (error) {
+      toast({
+        title: "Erro no logout",
+        description: "Ocorreu um erro ao tentar sair do sistema.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <header className="bg-white border-b border-gray-200 py-4 px-4 md:px-6 flex items-center justify-between shadow-sm sticky top-0 z-20">
       <div className="flex items-center">
@@ -121,6 +143,7 @@ const AdminHeader = ({ toggleMobileMenu }: { toggleMobileMenu?: () => void }) =>
           variant="ghost" 
           className="text-gray-700 hover:bg-gray-100 hidden sm:flex"
           size="sm"
+          onClick={handleLogout}
         >
           <LogOut className="h-5 w-5 mr-2" />
           <span>Sair</span>
@@ -129,6 +152,7 @@ const AdminHeader = ({ toggleMobileMenu }: { toggleMobileMenu?: () => void }) =>
           variant="ghost" 
           className="text-gray-700 hover:bg-gray-100 sm:hidden"
           size="sm"
+          onClick={handleLogout}
         >
           <LogOut className="h-5 w-5" />
         </Button>
@@ -161,6 +185,7 @@ const AdminSidebar = ({ activeTab, isMobileMenuOpen, toggleMobileMenu }: {
 }) => {
   const [, navigate] = useLocation();
   const [collapsed, setCollapsed] = useState(false);
+  const { user } = useAuth();
   
   const handleNavigation = (path: string) => (e: React.MouseEvent) => {
     e.preventDefault();
