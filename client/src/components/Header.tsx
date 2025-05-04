@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import logoWhite from "@/assets/images/logo-white.png";
+import TransitionLink from "./TransitionLink";
+import { motion } from "framer-motion";
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -32,42 +34,56 @@ const Header = () => {
         <div className="row items-center">
           <div className="col-6 col-md-3">
             {/* Logo */}
-            <Link href="/" className="flex items-center">
-              <img 
-                src={logoWhite} 
-                alt="CRC Faróis" 
-                className="h-8 md:h-10 transition-transform hover:scale-105 duration-300" 
-              />
-            </Link>
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 400, damping: 10 }}
+            >
+              <TransitionLink href="/" className="flex items-center">
+                <img 
+                  src={logoWhite} 
+                  alt="CRC Faróis" 
+                  className="h-8 md:h-10" 
+                />
+              </TransitionLink>
+            </motion.div>
           </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:block col-md-9">
             <nav className="flex justify-end items-center space-x-8">
-              <Link 
+              <TransitionLink 
                 href="/" 
                 className={`${location === '/' ? 'text-white font-bold' : 'text-white text-opacity-90'} hover:text-white font-medium transition-colors duration-300`}
               >
                 Home
-              </Link>
-              <Link 
+              </TransitionLink>
+              <TransitionLink 
                 href="/quem-somos" 
                 className={`${location === '/quem-somos' ? 'text-white font-bold' : 'text-white text-opacity-90'} hover:text-white font-medium transition-colors duration-300`}
               >
                 Quem Somos
-              </Link>
-              <Link 
+              </TransitionLink>
+              <TransitionLink 
                 href="/contato" 
                 className={`${location === '/contato' ? 'text-white font-bold' : 'text-white text-opacity-90'} hover:text-white font-medium transition-colors duration-300`}
               >
                 Contato
-              </Link>
-              <Link 
-                href="/contato" 
-                className="bg-white hover:bg-light-gray text-dark-blue font-medium py-2.5 px-5 rounded-md transition-all duration-300 shadow-custom hover:shadow-custom-hover transform hover:-translate-y-0.5"
+              </TransitionLink>
+              <motion.div
+                whileHover={{ 
+                  scale: 1.05,
+                  y: -2,
+                  boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)"
+                }}
+                transition={{ type: "spring", stiffness: 400, damping: 10 }}
               >
-                Solicitar Orçamento
-              </Link>
+                <TransitionLink 
+                  href="/contato" 
+                  className="bg-white hover:bg-light-gray text-dark-blue font-medium py-2.5 px-5 rounded-md shadow-custom"
+                >
+                  Solicitar Orçamento
+                </TransitionLink>
+              </motion.div>
             </nav>
           </div>
 

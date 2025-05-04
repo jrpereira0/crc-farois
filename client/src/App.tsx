@@ -13,6 +13,7 @@ import Footer from "./components/Footer";
 import BackToTop from "./components/BackToTop";
 import LoginPage from "./pages/LoginPage";
 import { AuthProvider, ProtectedRoute } from "./hooks/use-auth";
+import PageTransition from "./components/PageTransition";
 
 // Componente que envolve as rotas administrativas com o ProtectedRoute
 const ProtectedAdminRoute = () => {
@@ -40,19 +41,37 @@ function Router() {
   return (
     <>
       {!isAdminRoute && !isLoginRoute && <Header />}
-      <Switch>
-        <Route path="/login" component={LoginPage} />
+      
+      <PageTransition location={location}>
+        <Switch>
+          <Route path="/login">
+            {(params) => <LoginPage />}
+          </Route>
 
-        {/* Todas as rotas admin são protegidas */}
-        <Route path="/admin" component={ProtectedAdminRoute} />
-        <Route path="/admin/:rest*" component={ProtectedAdminRoute} />
-        
-        {/* Rotas públicas */}
-        <Route path="/quem-somos" component={QuemSomos} />
-        <Route path="/contato" component={Contato} />
-        <Route path="/" component={Home} />
-        <Route component={NotFound} />
-      </Switch>
+          {/* Todas as rotas admin são protegidas */}
+          <Route path="/admin">
+            {(params) => <ProtectedAdminRoute />}
+          </Route>
+          <Route path="/admin/:rest*">
+            {(params) => <ProtectedAdminRoute />}
+          </Route>
+          
+          {/* Rotas públicas */}
+          <Route path="/quem-somos">
+            {(params) => <QuemSomos />}
+          </Route>
+          <Route path="/contato">
+            {(params) => <Contato />}
+          </Route>
+          <Route path="/">
+            {(params) => <Home />}
+          </Route>
+          <Route>
+            {(params) => <NotFound />}
+          </Route>
+        </Switch>
+      </PageTransition>
+      
       {!isAdminRoute && !isLoginRoute && <Footer />}
       {!isAdminRoute && !isLoginRoute && <BackToTop />}
     </>
