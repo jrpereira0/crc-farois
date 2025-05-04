@@ -37,7 +37,8 @@ import {
   X,
   Edit,
   Phone,
-  Mail
+  Mail,
+  EyeOff
 } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
 
@@ -1079,12 +1080,22 @@ const ContactDetailModal: React.FC<ContactModalProps> = ({
               <h4 className="text-sm font-medium text-gray-500 mb-3">Ações</h4>
               <div className="flex space-x-2">
                 <Button 
-                  variant="outline" 
+                  variant={contact.isRead ? "outline" : "default"} 
                   size="sm"
+                  className={!contact.isRead ? "bg-blue-500 hover:bg-blue-600" : "text-blue-500 border-blue-500 hover:bg-blue-50"}
                   onClick={() => onReadStatusChange(contact.id, contact.isRead)}
                 >
-                  <Eye className="h-4 w-4 mr-2" />
-                  Marcar como {contact.isRead ? "não lido" : "lido"}
+                  {contact.isRead ? (
+                    <>
+                      <EyeOff className="h-4 w-4 mr-2" />
+                      Marcar como não lido
+                    </>
+                  ) : (
+                    <>
+                      <Eye className="h-4 w-4 mr-2" />
+                      Marcar como lido
+                    </>
+                  )}
                 </Button>
               </div>
             </div>
