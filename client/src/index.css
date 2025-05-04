@@ -78,8 +78,31 @@
 }
 
 /* Estilos adicionais para o projeto */
-html {
+html, body {
   scroll-behavior: smooth;
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Prevenir overflow horizontal em todos os elementos */
+* {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Garantir que SVGs não causem overflow */
+svg {
+  max-width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+/* Evitar que containers extrapolem a largura da tela */
+.container {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 /* Classes para animações de campos de formulário */

@@ -128,8 +128,8 @@ const HeroSection = () => {
               
               {/* Imagem 1 - Maior e central */}
               <div 
-                className="absolute top-[15%] md:top-[10%] left-1/2 transform -translate-x-1/2 w-[60%] md:w-[55%] h-[50%] z-20 rounded-lg shadow-xl border border-white/30 animate-[bounce_12s_ease-in-out_infinite_alternate] glow-effect overflow-hidden"
-                style={{ animationDelay: "0.5s" }}
+                className="absolute top-[15%] md:top-[10%] left-1/2 transform -translate-x-1/2 w-[60%] md:w-[55%] h-[50%] z-20 rounded-lg shadow-xl border border-white/30 overflow-hidden"
+                style={{ animation: "bounce 12s ease-in-out infinite alternate", animationDelay: "0.5s" }}
               >
                 <img 
                   src={image1} 
@@ -141,8 +141,8 @@ const HeroSection = () => {
               
               {/* Imagem 2 - Esquerda e ligeiramente menor */}
               <div 
-                className="absolute top-[30%] md:top-[25%] left-[8%] md:left-[12%] w-[40%] md:w-[38%] h-[40%] z-10 rounded-lg shadow-lg border border-white/20 animate-[bounce_10s_ease-in-out_infinite_reverse] rotate-[-6deg] overflow-hidden"
-                style={{ animationDelay: "1.5s" }}
+                className="absolute top-[30%] md:top-[25%] left-[8%] md:left-[12%] w-[40%] md:w-[38%] h-[40%] z-10 rounded-lg shadow-lg border border-white/20 rotate-[-6deg] overflow-hidden"
+                style={{ animation: "bounce 10s ease-in-out infinite reverse", animationDelay: "1.5s" }}
               >
                 <img 
                   src={image2} 
@@ -154,8 +154,8 @@ const HeroSection = () => {
               
               {/* Imagem 3 - Direita */}
               <div 
-                className="absolute top-[50%] md:top-[45%] right-[8%] md:right-[12%] w-[40%] md:w-[38%] h-[40%] z-10 rounded-lg shadow-lg border border-white/20 animate-[bounce_11s_ease-in-out_infinite_alternate] rotate-[8deg] overflow-hidden"
-                style={{ animationDelay: "2.5s" }}
+                className="absolute top-[50%] md:top-[45%] right-[8%] md:right-[12%] w-[40%] md:w-[38%] h-[40%] z-10 rounded-lg shadow-lg border border-white/20 rotate-[8deg] overflow-hidden"
+                style={{ animation: "bounce 11s ease-in-out infinite alternate", animationDelay: "2.5s" }}
               >
                 <img 
                   src={image3} 
