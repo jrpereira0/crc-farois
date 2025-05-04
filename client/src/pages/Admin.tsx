@@ -178,13 +178,15 @@ const AdminSidebar = ({ activeTab, isMobileMenuOpen, toggleMobileMenu }: {
     <>
       {/* Logo */}
       <div className="px-6 py-4 bg-[#1a237e] border-b border-white/10 shadow-md relative">
-        <div className="flex items-center justify-center mb-4">
-          <img 
-            src="/assets/LOGO BRANCA_1746383304420.png" 
-            alt="CRC Faróis" 
-            className={`h-auto w-full mx-auto ${collapsed ? "max-w-[40px]" : "max-w-[160px]"}`} 
-          />
-        </div>
+        {!collapsed && (
+          <div className="flex items-center justify-center mb-4">
+            <img 
+              src="/assets/LOGO BRANCA_1746383304420.png" 
+              alt="CRC Faróis" 
+              className="h-auto w-full mx-auto max-w-[160px]" 
+            />
+          </div>
+        )}
         {!collapsed && (
           <Button 
             variant="secondary" 
@@ -202,16 +204,16 @@ const AdminSidebar = ({ activeTab, isMobileMenuOpen, toggleMobileMenu }: {
             onClick={() => window.location.href = "/"}
             title="Voltar ao site"
           >
-            <HomeIcon className="h-4 w-4" />
+            <HomeIcon className="h-5 w-5" />
           </Button>
         )}
         
         {/* Botão de colapsar */}
         <button 
           onClick={toggleCollapse}
-          className="absolute -right-3 top-1/2 transform -translate-y-1/2 w-6 h-6 bg-white rounded-full shadow-md flex items-center justify-center text-[#1a237e] hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#1a237e] focus:ring-offset-2 z-10"
+          className="absolute -right-3 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center text-[#1a237e] hover:bg-gray-100 focus:outline-none border-2 border-blue-500 z-10"
         >
-          {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+          {collapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
         </button>
       </div>
       
