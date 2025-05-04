@@ -979,7 +979,7 @@ const ContactDetailModal: React.FC<ContactModalProps> = ({
       onClick={handleClose}
     >
       <div 
-        className={`bg-white shadow-lg w-full max-w-md transition-transform duration-300 ease-in-out transform h-full
+        className={`bg-white shadow-lg w-full max-w-md transition-transform duration-300 ease-in-out transform h-full overflow-hidden
           ${isClosing ? 'translate-x-full' : 'translate-x-0'}`}
         onClick={(e) => e.stopPropagation()}
         style={{
@@ -1017,17 +1017,17 @@ const ContactDetailModal: React.FC<ContactModalProps> = ({
               
               <div className="border-t border-b py-3 mb-4">
                 <div className="flex items-center mb-2">
-                  <Mail className="h-4 w-4 text-gray-500 mr-2" />
-                  <span className="text-gray-700">{contact.email}</span>
+                  <Mail className="h-4 w-4 text-gray-500 mr-2 flex-shrink-0" />
+                  <span className="text-gray-700 break-all">{contact.email}</span>
                 </div>
                 
                 {contact.phone && (
                   <div className="flex items-center">
-                    <Phone className="h-4 w-4 text-gray-500 mr-2" />
+                    <Phone className="h-4 w-4 text-gray-500 mr-2 flex-shrink-0" />
                     <span className="text-gray-700">{contact.phone}</span>
                     <button
                       onClick={() => openWhatsApp(contact.phone)}
-                      className="ml-2 text-green-600 hover:text-green-700"
+                      className="ml-2 text-green-600 hover:text-green-700 flex-shrink-0"
                       title="Abrir WhatsApp"
                     >
                       <FaWhatsapp size={16} />
@@ -1038,7 +1038,7 @@ const ContactDetailModal: React.FC<ContactModalProps> = ({
               
               <div className="mb-6">
                 <h4 className="text-sm font-medium text-gray-500 mb-2">Mensagem</h4>
-                <div className="p-4 bg-gray-50 rounded-md whitespace-pre-line">
+                <div className="p-4 bg-gray-50 rounded-md whitespace-pre-line break-words">
                   {contact.message}
                 </div>
               </div>
@@ -1046,7 +1046,7 @@ const ContactDetailModal: React.FC<ContactModalProps> = ({
             
             <div className="border-t pt-4">
               <h4 className="text-sm font-medium text-gray-500 mb-3">Status do Contato</h4>
-              <div className="flex space-x-2 mb-6">
+              <div className="flex flex-col space-y-2 mb-6">
                 <Button 
                   variant={contact.status === "pending" ? "default" : "outline"} 
                   size="sm" 
