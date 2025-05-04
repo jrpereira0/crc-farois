@@ -10,11 +10,23 @@ import Admin from "./pages/Admin";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import BackToTop from "./components/BackToTop";
+import LoginPage from "./pages/LoginPage";
 import { useEffect } from "react";
+import { AuthProvider, ProtectedRoute } from "./hooks/use-auth";
+
+// Componente que envolve as rotas administrativas com o ProtectedRoute
+const ProtectedAdminRoute = () => {
+  return (
+    <ProtectedRoute>
+      <Admin />
+    </ProtectedRoute>
+  );
+};
 
 function Router() {
   const [location] = useLocation();
   const isAdminRoute = location.startsWith('/admin');
+  const isLoginRoute = location === '/login';
   
   // Inicializar AOS após renderização dos componentes
   useEffect(() => {
@@ -27,23 +39,28 @@ function Router() {
 
   return (
     <>
-      {!isAdminRoute && <Header />}
+      {!isAdminRoute && !isLoginRoute && <Header />}
       <Switch>
-        <Route path="/admin" component={Admin} />
-        <Route path="/admin/dashboard" component={Admin} />
-        <Route path="/admin/contacts" component={Admin} />
-        <Route path="/admin/contacts/all" component={Admin} />
-        <Route path="/admin/contacts/pending" component={Admin} />
-        <Route path="/admin/contacts/in-progress" component={Admin} />
-        <Route path="/admin/contacts/completed" component={Admin} />
-        <Route path="/admin/settings" component={Admin} />
+        <Route path="/login" component={LoginPage} />
+
+        {/* Rotas protegidas do admin */}
+        <Route path="/admin" component={ProtectedAdminRoute} />
+        <Route path="/admin/dashboard" component={ProtectedAdminRoute} />
+        <Route path="/admin/contacts" component={ProtectedAdminRoute} />
+        <Route path="/admin/contacts/all" component={ProtectedAdminRoute} />
+        <Route path="/admin/contacts/pending" component={ProtectedAdminRoute} />
+        <Route path="/admin/contacts/in-progress" component={ProtectedAdminRoute} />
+        <Route path="/admin/contacts/completed" component={ProtectedAdminRoute} />
+        <Route path="/admin/settings" component={ProtectedAdminRoute} />
+        
+        {/* Rotas públicas */}
         <Route path="/quem-somos" component={QuemSomos} />
         <Route path="/contato" component={Contato} />
         <Route path="/" component={Home} />
         <Route component={NotFound} />
       </Switch>
-      {!isAdminRoute && <Footer />}
-      {!isAdminRoute && <BackToTop />}
+      {!isAdminRoute && !isLoginRoute && <Footer />}
+      {!isAdminRoute && !isLoginRoute && <BackToTop />}
     </>
   );
 }
@@ -51,8 +68,10 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Toaster />
-      <Router />
+      <AuthProvider>
+        <Toaster />
+        <Router />
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

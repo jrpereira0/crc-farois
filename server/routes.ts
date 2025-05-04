@@ -2,8 +2,14 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertContactSchema, updateContactStatusSchema } from "@shared/schema";
+import { setupAuth, createDefaultAdminIfNeeded } from "./auth";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Configurar autenticação
+  setupAuth(app);
+  
+  // Criar usuário admin padrão se necessário
+  await createDefaultAdminIfNeeded();
   // Rota para processar o envio do formulário de contato
   app.post("/api/contact", async (req, res) => {
     try {
