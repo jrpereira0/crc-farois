@@ -52,7 +52,8 @@ const LoginPage = () => {
           description: "Redirecionando para o painel administrativo...",
           variant: "default",
         });
-        // Redirecionar para o dashboard (será feito pelo useEffect acima)
+        // Forçar redirecionamento para o admin
+        navigate("/admin");
       }
     } catch (error) {
       toast({

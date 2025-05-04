@@ -43,15 +43,8 @@ function Router() {
       <Switch>
         <Route path="/login" component={LoginPage} />
 
-        {/* Rotas protegidas do admin */}
-        <Route path="/admin" component={ProtectedAdminRoute} />
-        <Route path="/admin/dashboard" component={ProtectedAdminRoute} />
-        <Route path="/admin/contacts" component={ProtectedAdminRoute} />
-        <Route path="/admin/contacts/all" component={ProtectedAdminRoute} />
-        <Route path="/admin/contacts/pending" component={ProtectedAdminRoute} />
-        <Route path="/admin/contacts/in-progress" component={ProtectedAdminRoute} />
-        <Route path="/admin/contacts/completed" component={ProtectedAdminRoute} />
-        <Route path="/admin/settings" component={ProtectedAdminRoute} />
+        {/* Todas as rotas admin são protegidas */}
+        <Route path="/admin/:rest*" component={ProtectedAdminRoute} />
         
         {/* Rotas públicas */}
         <Route path="/quem-somos" component={QuemSomos} />

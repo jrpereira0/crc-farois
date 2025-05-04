@@ -1,4 +1,4 @@
-import { createContext, useState, useContext, useEffect, ReactNode, useMemo } from "react";
+import { createContext, useState, useContext, useEffect, ReactNode } from "react";
 import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 
@@ -144,14 +144,7 @@ export const useAuth = (): AuthContextType => {
   if (context === undefined) {
     throw new Error("useAuth deve ser usado dentro de um AuthProvider");
   }
-  
-  // Memorizamos o contexto para evitar re-renderizações desnecessárias
-  // que podem causar chamadas repetidas ao servidor
-  const memoizedContext = useMemo(() => {
-    return context;
-  }, [context.user?.id, context.isLoading]); // Só recalcula quando o ID do usuário ou o estado de loading muda
-  
-  return memoizedContext;
+  return context;
 };
 
 // Componente para proteger rotas que exigem autenticação
@@ -162,22 +155,17 @@ interface ProtectedRouteProps {
 export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { user, isLoading } = useAuth();
   const [, navigate] = useLocation();
-  const [hasChecked, setHasChecked] = useState(false);
 
+  // Solução mais direta sem estados adicionais
   useEffect(() => {
-    // Apenas verificamos uma vez se o usuário não está carregando mais
-    if (!isLoading && !hasChecked) {
-      setHasChecked(true);
-      
-      if (!user) {
-        // Redireciona apenas se não tiver usuário após o carregamento
-        navigate("/login");
-      }
+    // Se não estiver carregando e não houver usuário, redirecionar para login
+    if (!isLoading && !user) {
+      navigate("/login");
     }
-  }, [user, isLoading, hasChecked, navigate]);
+  }, [user, isLoading, navigate]);
 
-  // Mostra o spinner enquanto verifica a autenticação
-  if (isLoading || !hasChecked) {
+  // Mostra o spinner enquanto carrega
+  if (isLoading) {
     return (
       <div className="min-h-screen flex justify-center items-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1a237e]"></div>
@@ -185,12 +173,11 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     );
   }
 
-  // Se já verificamos e não tem usuário, retorna null (o redirecionamento 
-  // já foi feito no useEffect)
+  // Se não tiver usuário, não renderiza nada (o redirecionamento acontecerá pelo useEffect)
   if (!user) {
     return null;
   }
 
-  // Renderiza os filhos se houver um usuário autenticado
+  // Só renderiza os filhos se houver um usuário autenticado
   return <>{children}</>;
 };
