@@ -147,6 +147,18 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           // Se tivemos um usuário antes e agora não temos, a sessão provavelmente expirou
           if (user) {
             console.log("Sessão expirada ou inválida");
+            
+            // Limpar completamente cache e estado de autenticação
+            lastAuthCheck.current = 0;
+            localStorage.removeItem('redirecting_from_login');
+            initialCheckComplete.current = false;
+            
+            // Guardar um flag para forçar verificação quando voltar
+            localStorage.setItem('needs_session_refresh', 'true');
+            
+            // Limpar estado
+            setUser(null);
+            
             setError("Sua sessão expirou. Por favor, faça login novamente.");
             toast({
               title: "Sessão expirada",
@@ -156,8 +168,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           } else {
             console.log("Usuário não autenticado");
           }
-          
-          if (user) setUser(null);
           return false;
         }
       } catch (fetchError) {
@@ -362,11 +372,32 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     );
   }
 
-  // Se não estiver carregando e não tiver usuário, não renderiza nada
-  // (o redirecionamento acontecerá pelo useEffect)
+  // Se não estiver carregando e não tiver usuário, mostrar mensagem de sessão expirada
+  // e o redirecionamento acontecerá pelo useEffect
   if (!user) {
     console.log("ProtectedRoute: Usuário não está autenticado");
-    return null;
+    
+    // Componente de sessão expirada para feedback visual antes do redirecionamento
+    return (
+      <div className="min-h-screen flex flex-col justify-center items-center bg-gray-100">
+        <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-lg">
+          <div className="bg-red-500 text-white p-4 rounded-md mb-4">
+            <h2 className="text-xl font-bold">Sessão expirada</h2>
+            <p className="mt-1">
+              Sua sessão expirou ou você não está autenticado. Por favor, faça login novamente.
+            </p>
+          </div>
+          <div className="flex justify-center mt-4">
+            <button 
+              onClick={() => navigate("/login")}
+              className="bg-[#1a237e] text-white px-6 py-2 rounded-md hover:bg-[#283593] transition-colors"
+            >
+              Ir para o login
+            </button>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   // Resetar o flag de redirecionamento se o usuário estiver autenticado

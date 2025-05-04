@@ -38,6 +38,13 @@ const LoginPage = () => {
       return;
     }
 
+    // Limpar qualquer toast ao entrar na tela de login para evitar confusão quando
+    // aparece mensagem de sessão expirada do redirecionamento
+    if (!authLoading && !user && !redirectionInProgress) {
+      // Limpar também os flags de controle de sessão quando for uma entrada "limpa" na tela de login
+      localStorage.removeItem('needs_session_refresh');
+    }
+
     if (user) {
       console.log("Usuário já autenticado, redirecionando para o dashboard");
       
