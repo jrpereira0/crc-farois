@@ -35,8 +35,22 @@ import {
   Key,
   ShieldAlert,
   X,
-  Edit
+  Edit,
+  Phone
 } from "lucide-react";
+import { FaWhatsapp } from "react-icons/fa";
+
+// Função para abrir o WhatsApp Web com o número de telefone
+const openWhatsApp = (phone: string) => {
+  // Limpar o número de telefone (remover formatação)
+  const cleanPhone = phone.replace(/\D/g, '');
+  
+  // Adicionar o código do país se não estiver presente
+  const fullPhone = cleanPhone.startsWith('55') ? cleanPhone : `55${cleanPhone}`;
+  
+  // Abrir o WhatsApp Web
+  window.open(`https://wa.me/${fullPhone}`, '_blank');
+};
 
 // Componente principal do painel administrativo
 const Admin = () => {
@@ -914,7 +928,21 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
                   </td>
                   <td className="px-4 py-4">
                     <div className="text-sm text-gray-900">{contact.email}</div>
-                    <div className="text-sm text-gray-500">{contact.phone}</div>
+                    <div className="text-sm text-gray-500 flex items-center">
+                      {contact.phone}
+                      {contact.phone && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openWhatsApp(contact.phone);
+                          }}
+                          className="ml-2 text-green-600 hover:text-green-700"
+                          title="Abrir WhatsApp"
+                        >
+                          <FaWhatsapp size={16} />
+                        </button>
+                      )}
+                    </div>
                   </td>
                   <td className="px-4 py-4">
                     <div className="relative max-w-xs">
@@ -1006,7 +1034,21 @@ const AdminContactsList: React.FC<AdminContactsListProps> = ({ filter }) => {
               
               <div className="px-4 py-2 border-b">
                 <div className="text-sm">{contact.email}</div>
-                <div className="text-sm text-gray-500">{contact.phone}</div>
+                <div className="text-sm text-gray-500 flex items-center">
+                  {contact.phone}
+                  {contact.phone && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openWhatsApp(contact.phone);
+                      }}
+                      className="ml-2 text-green-600 hover:text-green-700 flex items-center"
+                      title="Abrir WhatsApp"
+                    >
+                      <FaWhatsapp size={16} />
+                    </button>
+                  )}
+                </div>
               </div>
               
               <div className="px-4 py-3 border-b bg-gray-50">
