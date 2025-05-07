@@ -455,8 +455,7 @@ const ContactSection = () => {
                   <div>
                     <h4 className="font-bold mb-1">E-mail</h4>
                     <p className="text-white/90">
-                      assistencia@crcfarois.com.br<br />
-                      vendas@crcfarois.com.br
+                      contato@crc.ind.br
                     </p>
                   </div>
                 </div>

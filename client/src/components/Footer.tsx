@@ -106,7 +106,7 @@ const Footer = () => {
               </li>
               <li className="flex items-start">
                 <i className="fas fa-envelope mt-1 mr-3"></i>
-                <span className="text-gray-300">assistencia@crcfarois.com.br</span>
+                <span className="text-gray-300">contato@crc.ind.br</span>
               </li>
             </ul>
           </div>
