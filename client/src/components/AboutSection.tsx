@@ -4,12 +4,12 @@ import { CheckCircle, Target, Award, AlertTriangle, Truck, Users } from "lucide-
 
 const AboutSection = () => {
   const timelineItems = [
-    { year: "2022", event: "Fundação da CRC Faróis" },
-    { year: "2022", event: "Primeiros modelos fabricados" },
-    { year: "2023", event: "Expansão para região sudeste" },
-    { year: "2023", event: "Implementação de tecnologia LED" },
-    { year: "2024", event: "Modernização da linha de produção" },
-    { year: "2025", event: "Lançamento de linha premium com design exclusivo" }
+    { year: "2020", event: "Desenvolvimento de Moldes" },
+    { year: "2021", event: "Primeiros testes e ajustes de projeto" },
+    { year: "2022", event: "Inicio das operações e desenvolvimento fabril" },
+    { year: "2023", event: "Primeiros lotes de peças e contato com mercado" },
+    { year: "2024", event: "Desenvolvimento de novos faróis e robotização de processos" },
+    { year: "2025", event: "Projetos em andamento..." }
   ];
 
   return (
