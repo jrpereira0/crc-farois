@@ -4,12 +4,12 @@ import { CheckCircle, Target, Award, AlertTriangle, Truck, Users } from "lucide-
 
 const AboutSection = () => {
   const timelineItems = [
-    { year: "1994", event: "Fundação da CRC Faróis" },
-    { year: "2000", event: "Expansão para todo território nacional" },
-    { year: "2007", event: "Implementação de tecnologia LED" },
-    { year: "2012", event: "Certificação ISO 9001" },
-    { year: "2018", event: "Modernização da linha de produção" },
-    { year: "2023", event: "Lançamento de linha premium com design exclusivo" }
+    { year: "2022", event: "Fundação da CRC Faróis" },
+    { year: "2022", event: "Primeiros modelos fabricados" },
+    { year: "2023", event: "Expansão para região sudeste" },
+    { year: "2023", event: "Implementação de tecnologia LED" },
+    { year: "2024", event: "Modernização da linha de produção" },
+    { year: "2025", event: "Lançamento de linha premium com design exclusivo" }
   ];
 
   return (
@@ -49,7 +49,7 @@ const AboutSection = () => {
                     <p className="text-xl">Excelência em iluminação automotiva</p>
                     <div className="mt-4 flex items-center justify-center">
                       <span className="inline-block w-3 h-3 bg-white rounded-full animate-pulse mr-2"></span>
-                      <span className="text-sm">Desde 1994</span>
+                      <span className="text-sm">Desde 2022</span>
                     </div>
                   </div>
                 </div>
@@ -64,7 +64,7 @@ const AboutSection = () => {
             <div className="mt-16 bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-gray-100" data-aos="fade-up" data-aos-delay="200">
               <h3 className="text-xl font-bold font-montserrat mb-6 text-darkgray inline-flex items-center">
                 <span className="w-8 h-8 bg-primary/10 flex items-center justify-center rounded-full mr-2">
-                  <span className="text-primary text-sm">15+</span>
+                  <span className="text-primary text-sm">3+</span>
                 </span>
                 Nossa História
               </h3>
@@ -98,10 +98,10 @@ const AboutSection = () => {
               </h2>
               <div className="space-y-4 text-gray-700">
                 <p className="leading-relaxed">
-                  A <strong className="text-primary">CRC Faróis</strong> é uma empresa especializada na fabricação e fornecimento de faróis automotivos de alta qualidade, atendendo lojas, oficinas e distribuidores em todo o Brasil há quase 30 anos.
+                  A <strong className="text-primary">CRC Faróis</strong> é uma empresa especializada na fabricação e fornecimento de faróis automotivos de alta qualidade, atendendo lojas, oficinas e distribuidores em todo o Brasil há mais de 3 anos.
                 </p>
                 <p className="leading-relaxed">
-                  Iniciamos nossas atividades em 1994, com o objetivo de oferecer produtos com excelência técnica e preços competitivos para o mercado de reposição automotiva. Ao longo dos anos, consolidamos nossa posição como um dos principais fabricantes de faróis do país.
+                  Iniciamos nossas atividades em 2022, com o objetivo de oferecer produtos com excelência técnica e preços competitivos para o mercado de reposição automotiva. Ao longo desse período, consolidamos nossa posição como um dos principais fabricantes de faróis dos modelos fabricados.
                 </p>
                 <p className="leading-relaxed">
                   Contamos com uma equipe altamente capacitada e uma estrutura de produção moderna, o que nos permite desenvolver produtos que atendem às mais rigorosas normas de segurança e qualidade.
