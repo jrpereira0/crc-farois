@@ -141,9 +141,9 @@ const LoginPage = () => {
         <div className="w-full lg:w-1/2 bg-white p-6 sm:p-8 flex flex-col">
           <div className="mb-8 text-center">
             <img 
-              src="/assets/LOGO BRANCA_1746383304420.png" 
+              src="/assets/logo-nova.png" 
               alt="CRC Faróis" 
-              className="h-16 mx-auto mb-6 bg-[#1a237e] p-3 rounded-md"
+              className="h-20 mx-auto mb-6 bg-[#1a237e] p-3 rounded-md"
             />
             <h1 className="text-2xl font-bold text-gray-800">Acesso Administrativo</h1>
             <p className="text-gray-600 mt-2">Entre com suas credenciais para acessar o painel</p>

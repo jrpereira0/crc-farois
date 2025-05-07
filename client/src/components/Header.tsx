@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import logoWhite from "@/assets/images/logo-white.png";
+import logoWhite from "@/assets/images/logo-nova.png";
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -36,7 +36,7 @@ const Header = () => {
               <img 
                 src={logoWhite} 
                 alt="CRC Faróis" 
-                className="h-8 md:h-10 transition-transform hover:scale-105 duration-300" 
+                className="h-10 md:h-12 transition-transform hover:scale-105 duration-300" 
               />
             </Link>
           </div>

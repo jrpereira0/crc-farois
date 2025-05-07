@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import logoWhite from "@/assets/images/logo-white.png";
+import logoWhite from "@/assets/images/logo-nova.png";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -13,7 +13,7 @@ const Footer = () => {
               <img 
                 src={logoWhite} 
                 alt="CRC Faróis" 
-                className="h-12 mb-4"
+                className="h-16 mb-4"
               />
             </div>
             <p className="text-white mb-6">
