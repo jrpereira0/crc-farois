@@ -28,8 +28,8 @@ const ProductsSection = () => {
   ];
 
   return (
-    <section className="py-20 bg-gradient-to-b from-white to-lightgray">
-      <div className="container mx-auto px-4">
+    <section className="py-20 bg-gradient-to-b from-white to-lightgray overflow-hidden">
+      <div className="container mx-auto px-4 max-w-full">
         <div className="text-center mb-16" data-aos="fade-up" data-aos-duration="800">
           <span className="text-primary font-semibold bg-blue-100 px-4 py-1 rounded-full text-sm mb-4 inline-block">PRODUTOS DE QUALIDADE</span>
           <h2 className="text-3xl md:text-4xl font-bold font-montserrat mb-4 text-darkgray">
@@ -52,7 +52,7 @@ const ProductsSection = () => {
                 <img 
                   src={product.image}
                   alt={product.title}
-                  className="w-full h-64 object-contain p-2 transition-transform duration-500 group-hover:scale-105"
+                  className="w-auto max-w-full h-64 object-contain mx-auto p-2 transition-transform duration-500 group-hover:scale-105"
                 />
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-primary/90 to-primary/0 text-white p-3 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex justify-center items-center">
                   <Link 
@@ -103,7 +103,7 @@ const ProductsSection = () => {
               <img 
                 src={faroisGol} 
                 alt="Faróis para Volkswagen Gol" 
-                className="rounded-lg w-full h-auto object-cover shadow-md"
+                className="rounded-lg w-auto max-w-full h-auto object-contain mx-auto shadow-md"
               />
             </div>
             <div className="md:w-1/2">

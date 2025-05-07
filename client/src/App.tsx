@@ -63,8 +63,10 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <Toaster />
-        <Router />
+        <div className="overflow-x-hidden relative w-full">
+          <Toaster />
+          <Router />
+        </div>
       </AuthProvider>
     </QueryClientProvider>
   );
