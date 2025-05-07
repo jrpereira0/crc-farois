@@ -421,8 +421,8 @@ const ContactSection = () => {
                   <div>
                     <h4 className="font-bold mb-1">Endereço</h4>
                     <p className="text-white/90">
-                      Av. Industrial, 1500 - Distrito Industrial<br />
-                      São Paulo - SP, 04000-000
+                      Rua Senador Flaquer 916 - Centro<br />
+                      Santo André - SP (Administrativo)
                     </p>
                   </div>
                 </div>
@@ -433,9 +433,17 @@ const ContactSection = () => {
                   </div>
                   <div>
                     <h4 className="font-bold mb-1">Telefone</h4>
-                    <p className="text-white/90">
-                      (11) 5555-0000<br />
-                      (11) 98765-4321
+                    <p className="text-white/90 flex items-center">
+                      (11) 4992-7378
+                      <a href="https://wa.me/5511949113002" target="_blank" rel="noopener noreferrer" className="ml-2 bg-[#25D366] hover:bg-[#20BD5C] text-white p-1.5 rounded-full inline-flex items-center justify-center transition-all duration-300 shadow-md hover:shadow-lg">
+                        <i className="fab fa-whatsapp text-sm"></i>
+                      </a>
+                    </p>
+                    <p className="text-white/90 flex items-center mt-1">
+                      (11) 94911-3002
+                      <a href="https://wa.me/5511949113002" target="_blank" rel="noopener noreferrer" className="ml-2 bg-[#25D366] hover:bg-[#20BD5C] text-white p-1.5 rounded-full inline-flex items-center justify-center transition-all duration-300 shadow-md hover:shadow-lg">
+                        <i className="fab fa-whatsapp text-sm"></i>
+                      </a>
                     </p>
                   </div>
                 </div>
@@ -447,7 +455,7 @@ const ContactSection = () => {
                   <div>
                     <h4 className="font-bold mb-1">E-mail</h4>
                     <p className="text-white/90">
-                      contato@crcfarois.com.br<br />
+                      assistencia@crcfarois.com.br<br />
                       vendas@crcfarois.com.br
                     </p>
                   </div>
@@ -460,8 +468,8 @@ const ContactSection = () => {
                   <div>
                     <h4 className="font-bold mb-1">Horário de atendimento</h4>
                     <p className="text-white/90">
-                      Segunda a Sexta: 08:00 - 18:00<br />
-                      Sábado: 08:00 - 12:00
+                      Seg a Quin: 08:00 às 17:00<br />
+                      Sex: 08:00 às 16:00
                     </p>
                   </div>
                 </div>

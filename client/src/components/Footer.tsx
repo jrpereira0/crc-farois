@@ -83,17 +83,30 @@ const Footer = () => {
               <li className="flex items-start">
                 <i className="fas fa-map-marker-alt mt-1 mr-3"></i>
                 <span className="text-gray-300">
-                  Av. Industrial, 1500 - Distrito Industrial<br />
-                  São Paulo - SP, 04000-000
+                  Rua Senador Flaquer 916 - Centro<br />
+                  Santo André - SP (Administrativo)
                 </span>
               </li>
               <li className="flex items-start">
                 <i className="fas fa-phone-alt mt-1 mr-3"></i>
-                <span className="text-gray-300">(11) 5555-0000</span>
+                <div>
+                  <div className="flex items-center">
+                    <span className="text-gray-300">(11) 4992-7378</span>
+                    <a href="https://wa.me/5511949113002" target="_blank" rel="noopener noreferrer" className="ml-2 bg-[#25D366] hover:bg-[#20BD5C] text-white p-1 rounded-full inline-flex items-center justify-center transition-all duration-300">
+                      <i className="fab fa-whatsapp text-xs"></i>
+                    </a>
+                  </div>
+                  <div className="flex items-center mt-1">
+                    <span className="text-gray-300">(11) 94911-3002</span>
+                    <a href="https://wa.me/5511949113002" target="_blank" rel="noopener noreferrer" className="ml-2 bg-[#25D366] hover:bg-[#20BD5C] text-white p-1 rounded-full inline-flex items-center justify-center transition-all duration-300">
+                      <i className="fab fa-whatsapp text-xs"></i>
+                    </a>
+                  </div>
+                </div>
               </li>
               <li className="flex items-start">
                 <i className="fas fa-envelope mt-1 mr-3"></i>
-                <span className="text-gray-300">contato@crcfarois.com.br</span>
+                <span className="text-gray-300">assistencia@crcfarois.com.br</span>
               </li>
             </ul>
           </div>

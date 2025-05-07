@@ -4,11 +4,11 @@ import { CheckCircle, Target, Award, AlertTriangle, Truck, Users } from "lucide-
 
 const AboutSection = () => {
   const timelineItems = [
-    { year: "2008", event: "Fundação da CRC Faróis" },
-    { year: "2010", event: "Expansão para todo território nacional" },
-    { year: "2013", event: "Implementação de tecnologia LED" },
-    { year: "2016", event: "Certificação ISO 9001" },
-    { year: "2020", event: "Modernização da linha de produção" },
+    { year: "1994", event: "Fundação da CRC Faróis" },
+    { year: "2000", event: "Expansão para todo território nacional" },
+    { year: "2007", event: "Implementação de tecnologia LED" },
+    { year: "2012", event: "Certificação ISO 9001" },
+    { year: "2018", event: "Modernização da linha de produção" },
     { year: "2023", event: "Lançamento de linha premium com design exclusivo" }
   ];
 
@@ -49,7 +49,7 @@ const AboutSection = () => {
                     <p className="text-xl">Excelência em iluminação automotiva</p>
                     <div className="mt-4 flex items-center justify-center">
                       <span className="inline-block w-3 h-3 bg-white rounded-full animate-pulse mr-2"></span>
-                      <span className="text-sm">Desde 2008</span>
+                      <span className="text-sm">Desde 1994</span>
                     </div>
                   </div>
                 </div>
@@ -98,10 +98,10 @@ const AboutSection = () => {
               </h2>
               <div className="space-y-4 text-gray-700">
                 <p className="leading-relaxed">
-                  A <strong className="text-primary">CRC Faróis</strong> é uma empresa especializada na fabricação e fornecimento de faróis automotivos de alta qualidade, atendendo lojas, oficinas e distribuidores em todo o Brasil há mais de 15 anos.
+                  A <strong className="text-primary">CRC Faróis</strong> é uma empresa especializada na fabricação e fornecimento de faróis automotivos de alta qualidade, atendendo lojas, oficinas e distribuidores em todo o Brasil há quase 30 anos.
                 </p>
                 <p className="leading-relaxed">
-                  Iniciamos nossas atividades em 2008, com o objetivo de oferecer produtos com excelência técnica e preços competitivos para o mercado de reposição automotiva. Ao longo dos anos, consolidamos nossa posição como um dos principais fabricantes de faróis do país.
+                  Iniciamos nossas atividades em 1994, com o objetivo de oferecer produtos com excelência técnica e preços competitivos para o mercado de reposição automotiva. Ao longo dos anos, consolidamos nossa posição como um dos principais fabricantes de faróis do país.
                 </p>
                 <p className="leading-relaxed">
                   Contamos com uma equipe altamente capacitada e uma estrutura de produção moderna, o que nos permite desenvolver produtos que atendem às mais rigorosas normas de segurança e qualidade.
