@@ -91,14 +91,8 @@ const Footer = () => {
                 <i className="fas fa-phone-alt mt-1 mr-3"></i>
                 <div>
                   <div className="flex items-center">
-                    <span className="text-gray-300">(11) 2020-2020</span>
-                    <a href="https://wa.me/5511910101010" target="_blank" rel="noopener noreferrer" className="ml-2 bg-[#25D366] hover:bg-[#20BD5C] text-white p-1 rounded-full inline-flex items-center justify-center transition-all duration-300">
-                      <i className="fab fa-whatsapp text-xs"></i>
-                    </a>
-                  </div>
-                  <div className="flex items-center mt-1">
-                    <span className="text-gray-300">(11) 91010-1010</span>
-                    <a href="https://wa.me/5511910101010" target="_blank" rel="noopener noreferrer" className="ml-2 bg-[#25D366] hover:bg-[#20BD5C] text-white p-1 rounded-full inline-flex items-center justify-center transition-all duration-300">
+                    <span className="text-gray-300">(11) 99226-8645</span>
+                    <a href="https://wa.me/5511992268645" target="_blank" rel="noopener noreferrer" className="ml-2 bg-[#25D366] hover:bg-[#20BD5C] text-white p-1 rounded-full inline-flex items-center justify-center transition-all duration-300">
                       <i className="fab fa-whatsapp text-xs"></i>
                     </a>
                   </div>
