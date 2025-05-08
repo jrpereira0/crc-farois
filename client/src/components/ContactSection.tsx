@@ -433,15 +433,9 @@ const ContactSection = () => {
                   </div>
                   <div>
                     <h4 className="font-bold mb-1">Telefone</h4>
-                    <p className="text-white/90 flex items-center">
-                      (11) 4992-7378
-                      <a href="https://wa.me/5511910101010" target="_blank" rel="noopener noreferrer" className="ml-2 bg-[#25D366] hover:bg-[#20BD5C] text-white p-1.5 rounded-full inline-flex items-center justify-center transition-all duration-300 shadow-md hover:shadow-lg">
-                        <i className="fab fa-whatsapp text-sm"></i>
-                      </a>
-                    </p>
                     <p className="text-white/90 flex items-center mt-1">
-                      (11) 91010-1010
-                      <a href="https://wa.me/5511910101010" target="_blank" rel="noopener noreferrer" className="ml-2 bg-[#25D366] hover:bg-[#20BD5C] text-white p-1.5 rounded-full inline-flex items-center justify-center transition-all duration-300 shadow-md hover:shadow-lg">
+                      (11) 99226-8645
+                      <a href="https://wa.me/5511992268645" target="_blank" rel="noopener noreferrer" className="ml-2 bg-[#25D366] hover:bg-[#20BD5C] text-white p-1.5 rounded-full inline-flex items-center justify-center transition-all duration-300 shadow-md hover:shadow-lg">
                         <i className="fab fa-whatsapp text-sm"></i>
                       </a>
                     </p>
